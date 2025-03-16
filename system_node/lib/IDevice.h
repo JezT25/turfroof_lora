@@ -27,11 +27,11 @@ class IDATA
 {
     public:
         
-		float SYSTEM_TEMPERATURE   =   11.111;
+		float SYSTEM_TEMPERATURE   =   0;
 
-		float SYSTEM_HUMIDITY      =   99.999;
+		float SYSTEM_HUMIDITY      =   0;
 
-		float SOIL_MOISTURE        =   55.555;
+		float SOIL_MOISTURE        =   0;
 };
 
 class ISYSTEM

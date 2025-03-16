@@ -42,9 +42,9 @@ void HWIO_class::setGPIO()
 void HWIO_class::getHWID(ISYSTEM *ISystem)
 {
     ISystem->HW_ID = digitalRead(_hwid[0]);
-    ISystem->HW_ID += digitalRead(_hwid[1]) * 4;
-    ISystem->HW_ID += digitalRead(_hwid[2]) * 8;
+    ISystem->HW_ID += digitalRead(_hwid[1]) * 2;
+    ISystem->HW_ID += digitalRead(_hwid[2]) * 4;
 
-    // TODO: remove me lol
-    ISystem->HW_ID = MYHWID;
+    Serial.print("Hardware ID: ");
+    Serial.println(ISystem->HW_ID);
 }

@@ -71,10 +71,45 @@ void LORA_MODULE_class::getMessages(IDATA IData, ISYSTEM ISystem)
 		float newValues[MAX_DEVICES] = {};
 		String new_Payload;
 
+        bool regex = true;
+        for (size_t i = 0; i < lora_payload.length(); i++) {
+            char c = lora_payload[i];
+            if (!((c >= 'A' && c <= 'Z') ||    // A-Z
+                  (c >= '0' && c <= '9') ||    // 0-9
+                  c == '[' || c == ']' ||      // Brackets
+                  c == ',' || c == '.' || c == ':'))
+            {     // Comma and period
+                regex = false;
+                break;  // Invalid character found
+            }
+        }// change this soon to more serious like first 4 must be ____ then : then [ then 0.00 comma 0.00 up to 8 then ]
+
+        if(regex == false)
+        {
+            return;
+        }
+
 		if(lora_payload.startsWith("TEMP:["))
 		{
 			new_Payload = "TEMP:[";
-			newValues[ISystem.HW_ID] = IData.SYSTEM_TEMPERATURE;
+			// newValues[ISystem.HW_ID] = IData.SYSTEM_TEMPERATURE;
+            if(ISystem.HW_ID == 7)
+            {
+                newValues[ISystem.HW_ID] = 69.420;
+            }
+            else if (ISystem.HW_ID == 1)
+            {
+                newValues[ISystem.HW_ID] = 11.111;
+            }
+            else if(ISystem.HW_ID == 2)
+            {
+                newValues[ISystem.HW_ID] = 22.222;
+            }
+            else if(ISystem.HW_ID == 3)
+            {
+                newValues[ISystem.HW_ID] = 33.333;
+            }
+            // todo hoy
 		}
 		else if(lora_payload.startsWith("HUMI:["))
 		{
@@ -154,9 +189,14 @@ void LORA_MODULE_class::getMessages(IDATA IData, ISYSTEM ISystem)
 		{
 			relay_data = newValues[i] != myData[i];
 		}
+        if (relay_data)
+        {
+            sends = 0;
+        }
 		
 		// Data has updated and needs to be resent
-        if (relay_data)
+        // if (relay_data)
+        if (sends < 1)
         {
             // Copy newValues into myData
             memcpy(myData, newValues, sizeof(myData));
@@ -175,46 +215,72 @@ void LORA_MODULE_class::getMessages(IDATA IData, ISYSTEM ISystem)
             }
             
             // CSMA/CA (Carrier Sense Multiple Access with Collision Avoidance)
-			uint8_t backoffTime = random(BACKOFF_MIN, BACKOFF_MAX);
-			uint16_t startTime = millis() & 0xFFFF;
-			uint16_t lastCheckTime = 0;
+			// uint8_t backoffTime = random(BACKOFF_MIN, BACKOFF_MAX) * (1 + ISystem.HW_ID/10);
+            // uint8_t backoffTime = random(BACKOFF_MIN, BACKOFF_MAX) + (ISystem.HW_ID * 95);
+            int backoffTime = ISystem.HW_ID * 75;
+			
 
-			while (millis() - startTime < CSMA_TIMEOUT)
-			{
-                // Check for incoming messages
-                if (LoRa.available())
-				{ 
-                    lora_payload = "";
-                    while (LoRa.available())
-					{
-                        lora_payload += (char)LoRa.read();
-                    }
+            Serial.print("Backoff Time: ");
+            Serial.println(backoffTime);
 
-                    if(lora_payload.startsWith("TEMP:[") || lora_payload.startsWith("HUMI:[") || lora_payload.startsWith("SOIL:["))
-                    {
-                        new_incomingPayload = true;
-                        break;
-                    }
-                }
-            
-                // Perform backoff without blocking execution
-                if (millis() - lastCheckTime >= backoffTime)
-				{
-					Serial.println(LoRa.packetRssi());
-					if(LoRa.packetRssi() < CSMA_NOISE_LIM) break;
-
-                    lastCheckTime = millis() & 0xFFFF;
-                    backoffTime = random(BACKOFF_MIN, BACKOFF_MAX);
-                }
-            }
-
-            if(!new_incomingPayload)
+            while(sends < 1)
             {
-                LoRa.beginPacket();
-                LoRa.print(new_Payload + relay_message + "]");
-                LoRa.endPacket();
+                unsigned long startTime = millis();
+			    unsigned long lastCheckTime = millis();
 
-                Serial.println("Message sent successfully: TEMP:[" + relay_message + "]");
+                // while (millis() - startTime < random(CSMA_TOUT_MIN, CSMA_TOUT_MAX))
+                while (millis() - startTime < (3000 + (500 * ISystem.HW_ID)))
+                {
+                    // Check for incoming messages
+                    if (LoRa.parsePacket())
+                    { 
+                        lora_payload = "";
+                        while (LoRa.available())
+                        {
+                            lora_payload += (char)LoRa.read();
+                        }
+
+                        if(lora_payload.startsWith("TEMP:[") || lora_payload.startsWith("HUMI:[") || lora_payload.startsWith("SOIL:["))
+                        {
+                            Serial.println("New Data: " + lora_payload);
+                            Serial.println("New Data Available. Resetting");
+                            new_incomingPayload = true;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        // Perform backoff without blocking execution
+                        if (millis() - lastCheckTime >= backoffTime)
+                        {
+                            // Serial.print("Noise: ");
+                            // Serial.print(LoRa.packetRssi());
+                            // Serial.print(" dBm | ");
+                            Serial.print(".");
+                            // if(LoRa.packetRssi() < CSMA_NOISE_LIM) break;
+                            if(LoRa.packetRssi() < -90) break;
+
+                            lastCheckTime = millis();
+                            // backoffTime = random(BACKOFF_MIN, BACKOFF_MAX);
+                        }
+                    }
+                }
+                Serial.println();
+
+                if(!new_incomingPayload)
+                {
+                    Serial.println("Sends: " + String(sends + 1) + "/" + String(1));
+                    LoRa.beginPacket();
+                    LoRa.print(new_Payload + relay_message + "]");
+                    LoRa.endPacket();
+
+                    Serial.println("Message sent successfully: TEMP:[" + relay_message + "]");
+                    sends++;
+                }
+                else
+                {
+                    break;
+                }
             }
         }
 		else

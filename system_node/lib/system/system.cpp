@@ -33,5 +33,21 @@ void SYSTEM_class::Initialize()
 
 void SYSTEM_class::Run()
 {
+	// Device is always sleeping here
+
+	{
+	// lora interrupt wakes device
+
+	// do the lora stuff
 	_lora_module.getMessages(_IData, _ISystem);
+
+	// log in sd card
+	}
+
+	{
+	// clock interrupt wakes device
+	// log in sd card
+	}
+
+	// go back to sleep
 }

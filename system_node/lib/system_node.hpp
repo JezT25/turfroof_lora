@@ -26,10 +26,6 @@
 #define SERIAL_BAUD     115200
 #define DECIMAL_VALUES  3
 
-/* DEBUG SETTINGS | OVERRIDE PARAMETERS FOR TESTING */
-#define MYHWID 1
-#define LORA_SERIAL 1
-
 #include <Arduino.h>
 #include <SPI.h>
 #include <LoRa.h>

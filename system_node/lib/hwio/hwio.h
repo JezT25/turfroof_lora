@@ -26,9 +26,9 @@
 #define MAX_DEVICES 8
 
 #define HWID_PINS   3
-#define HWID_A      14
-#define HWID_B      15
-#define HWID_C      16
+#define HWID_A      A0
+#define HWID_B      A1
+#define HWID_C      A2
 
 #include "../system_node.hpp"
 

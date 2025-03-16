@@ -40,6 +40,8 @@ class SYSTEM_class {
         // maybe signal mesh checking?
         // sleep mode
 
+        // logbook write and serial write
+
     public:
         SYSTEM_class(SystemComponents& class_lib) : _IData(class_lib._IData), _ISystem(class_lib._ISystem), _hwio(class_lib._hwio), _lora_module(class_lib._lora_module) {}
         
