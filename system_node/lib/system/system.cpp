@@ -24,11 +24,17 @@
 
 void SYSTEM_class::Initialize()
 {
-    // Initialize Hardware
-    _hwio.Initialize(&_ISystem);
+	// Initialize Hardware
+	_hwio.Initialize(&_ISystem);
 
-    // Initialize Lora Module
-    _lora_module.Initialize();
+	// Initialize Lora Module
+	_lora_module.Initialize(_ISystem);
+
+	#ifdef DEBUG_ON
+		Serial.print("System Version: v");
+		Serial.println(SYSTEM_VER);
+		Serial.println(".........................\n");
+	#endif
 }
 
 void SYSTEM_class::Run()
@@ -37,8 +43,9 @@ void SYSTEM_class::Run()
 
 	{
 	// lora interrupt wakes device
-
+	// get details
 	// do the lora stuff
+	// while not moving for 2 minute finish lora stuff
 	_lora_module.getMessages(_IData, _ISystem);
 
 	// log in sd card

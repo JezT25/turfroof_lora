@@ -25,9 +25,9 @@
 SYSTEM_class system_node(class_lib);
 
 void setup() {
-  system_node.Initialize();
+	system_node.Initialize();
 }
 
 void loop() {
-  system_node.Run();
+	system_node.Run();
 }

@@ -23,6 +23,10 @@
 #ifndef system_node_hpp_included
 #define system_node_hpp_included
 
+#define SYSTEM_VER      0.03
+
+#define DEBUG_ON
+
 #define SERIAL_BAUD     115200
 #define DECIMAL_VALUES  3
 
