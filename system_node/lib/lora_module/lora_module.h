@@ -37,7 +37,7 @@
 #define CODING_RATE     	5
 #define PREAMBLE        	8
 
-#define SEND_ATTEMPTS		1
+#define SEND_ATTEMPTS		2
 #define BACKOFF_MUL			75
 #define CSMA_NOISE_LIM		-90
 #define CSMA_TOUT_MUL		500

@@ -65,12 +65,19 @@ void LORA_MODULE_class::getMessages(IDATA IData, ISYSTEM ISystem)
 
 	while(millis() - lastSystemUpdateTime <= LORA_WAKE_TIMEOUT)
 	{
-		if (!LoRa.parsePacket() && !new_incomingPayload) continue;
-		getPayloadData();
-		if(!checkMessageValidity()) return;
-		if(!preloadMessageData(IData, ISystem)) return;
-		processPayloadData(ISystem);
-		sendPayloadData(ISystem);
+		if(LoRa.parsePacket() || new_incomingPayload)
+		{
+			getPayloadData();
+			if(checkMessageValidity() && preloadMessageData(IData, ISystem))
+			{
+				processPayloadData(ISystem);
+			}
+			else if(!new_incomingPayload)
+			{
+				continue;
+			}
+			sendPayloadData(ISystem);
+		}
 	}
 }
 
@@ -104,7 +111,6 @@ void LORA_MODULE_class::getPayloadData()
 			lora_payload += (char)LoRa.read();
 		}
 	}
-	new_incomingPayload = false;
 
 	#ifdef DEBUG_ON
 		//	Print LoRa Payload
@@ -129,9 +135,21 @@ bool LORA_MODULE_class::checkMessageValidity()
         char c = lora_payload[i];
         if (!((c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '[' || c == ']' || c == ',' || c == '.' || c == ':' || c == '-'))
         {
+			#ifdef DEBUG_ON
+				Serial.println("Invalid Character Found!");
+			#endif
+
             return false;
         }
     }
+	if(lora_payload.indexOf('[') == -1 && lora_payload.indexOf(']') == -1)
+	{
+		#ifdef DEBUG_ON
+			Serial.println("Unable to Locate Data!");
+		#endif
+
+		return false;
+	}
     return true;
 }
 
@@ -155,6 +173,10 @@ bool LORA_MODULE_class::preloadMessageData(IDATA IData, ISYSTEM ISystem)
 	}
 	else
 	{
+		#ifdef DEBUG_ON
+			Serial.println("Invalid Packet Header!");
+		#endif
+
 		return false;
 	}
 
@@ -265,6 +287,8 @@ void LORA_MODULE_class::sendPayloadData(ISYSTEM ISystem)
 			relay_message += ",";
 		}
 	}
+
+	new_incomingPayload = false;
 	
 	// CSMA/CA (Carrier Sense Multiple Access with Collision Avoidance)
 	while(num_attempts < SEND_ATTEMPTS)
