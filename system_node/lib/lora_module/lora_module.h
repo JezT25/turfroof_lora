@@ -51,14 +51,13 @@ class LORA_MODULE_class {
 		int csmaTimeout;
 		bool new_incomingPayload;
 		float systemValues[MAX_DEVICES];
-		float newValues[MAX_DEVICES];
 		uint8_t num_attempts;
 		unsigned long lastSystemUpdateTime;
 		String lora_payload;
 		String lora_previousRequest;
 
 		void resetValues();
-		void getPayloadData();
+		bool getPayloadData();
 		bool checkMessageValidity();
 		bool preloadMessageData(IDATA IData, ISYSTEM ISystem);
 		void processPayloadData(ISYSTEM ISystem);

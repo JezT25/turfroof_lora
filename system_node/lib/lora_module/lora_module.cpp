@@ -67,18 +67,16 @@ void LORA_MODULE_class::getMessages(IDATA IData, ISYSTEM ISystem)
 	{
 		if(LoRa.parsePacket() || new_incomingPayload)
 		{
-			getPayloadData();
-			if(checkMessageValidity() && preloadMessageData(IData, ISystem))
-			{
-				processPayloadData(ISystem);
-			}
-			else if(!new_incomingPayload)
-			{
-				continue;
-			}
+			if(!new_incomingPayload && !getPayloadData()) continue;
+			preloadMessageData(IData, ISystem);
+			processPayloadData(ISystem);
 			sendPayloadData(ISystem);
 		}
 	}
+
+	// more thorough data checking
+	// rework functions
+	// issue where non labot is apil apil like [0.000,11.111,22.222,33.333,0.000,0.000,0.900,69.420] sol {0.000,[11.111],[22.222],[33.333],0.000,0.000,0.000,[69.420]}
 }
 
 void LORA_MODULE_class::resetValues()
@@ -88,12 +86,11 @@ void LORA_MODULE_class::resetValues()
 	lora_previousRequest = "";
 	new_incomingPayload = false;
 	memset(systemValues, 0, sizeof(systemValues));
-	memset(newValues, 0, sizeof(newValues));
 
 	lastSystemUpdateTime = millis();
 }
 
-void LORA_MODULE_class::getPayloadData()
+bool LORA_MODULE_class::getPayloadData()
 {
 	#ifdef DEBUG_ON
 		//	Display Signal Strength (RSSI) of the Received Packet
@@ -103,37 +100,35 @@ void LORA_MODULE_class::getPayloadData()
 	#endif
 
 	//	Get Payload Content 
-	if(!new_incomingPayload)
+	lora_payload = "";
+	while (LoRa.available())
 	{
-		lora_payload = "";
-		while (LoRa.available())
-		{
-			lora_payload += (char)LoRa.read();
-		}
+		lora_payload += (char)LoRa.read();
 	}
 
 	#ifdef DEBUG_ON
 		//	Print LoRa Payload
 		Serial.println("Payload: " + lora_payload);
-
-		//	Print Current Database
-		Serial.print("Current Data: [");
-		for (uint8_t i = 0; i < MAX_DEVICES; i++)
-		{
-			Serial.print(systemValues[i], DECIMAL_VALUES);
-			if(i < (MAX_DEVICES - 1)) Serial.print(",");
-		}
-		Serial.println("]");
 	#endif
+
+	return checkMessageValidity();
 }
 
 bool LORA_MODULE_class::checkMessageValidity()
 {
+	if(!lora_payload.startsWith("TEMP:[") && !lora_payload.startsWith("HUMI:[") && !lora_payload.startsWith("SOIL:["))
+	{
+		#ifdef DEBUG_ON
+			Serial.println("Invalid Packet Header!");
+		#endif
+
+		return false;
+	}
     // Check message for invalid chars
-    for(size_t i = 0; i < lora_payload.length(); i++)
+    for(size_t i = 6; i < lora_payload.length(); i++)
     {
         char c = lora_payload[i];
-        if (!((c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '[' || c == ']' || c == ',' || c == '.' || c == ':' || c == '-'))
+        if (!((c >= '0' && c <= '9') || c == ']' || c == ',' || c == '.' || c == '-'))
         {
 			#ifdef DEBUG_ON
 				Serial.println("Invalid Character Found!");
@@ -155,49 +150,64 @@ bool LORA_MODULE_class::checkMessageValidity()
 
 bool LORA_MODULE_class::preloadMessageData(IDATA IData, ISYSTEM ISystem)
 {
-	// Clear newValues to accomodate Payload data
-	memset(newValues, 0, sizeof(newValues));
+	uint8_t startIdx = lora_payload.indexOf('[');
+	uint8_t endIdx = lora_payload.indexOf(']');
 
-	// Load Value
-	if(lora_payload.startsWith("TEMP:["))
-	{
-		newValues[ISystem.HW_ID] = IData.SYSTEM_TEMPERATURE;
-	}
-	else if(lora_payload.startsWith("HUMI:["))
-	{
-		newValues[ISystem.HW_ID] = IData.SYSTEM_HUMIDITY;
-	}
-	else if(lora_payload.startsWith("SOIL:["))
-	{
-		newValues[ISystem.HW_ID] = IData.SOIL_MOISTURE;
-	}
-	else
-	{
-		#ifdef DEBUG_ON
-			Serial.println("Invalid Packet Header!");
-		#endif
+	new_incomingPayload = false;
 
-		return false;
+	if (lora_payload.substring(0, 6) != lora_previousRequest || startIdx == endIdx - 1)	// Wipe systemValues if fresh request (e.g. [])
+	{
+		memset(systemValues, 0, sizeof(systemValues));
+
+		// Load Value
+		if(lora_payload.startsWith("TEMP:["))
+		{
+			systemValues[ISystem.HW_ID] = IData.SYSTEM_TEMPERATURE;
+		}
+		else if(lora_payload.startsWith("HUMI:["))
+		{
+			systemValues[ISystem.HW_ID] = IData.SYSTEM_HUMIDITY;
+		}
+		else if(lora_payload.startsWith("SOIL:["))
+		{
+			systemValues[ISystem.HW_ID] = IData.SOIL_MOISTURE;
+		}
+
+		////////////////////////////////// DELETE ME SOON
+		{
+			if(ISystem.HW_ID == 7)
+			{
+				systemValues[ISystem.HW_ID] = 69.420;
+			}
+			else if (ISystem.HW_ID == 1)
+			{
+				systemValues[ISystem.HW_ID] = 11.111;
+			}
+			else if(ISystem.HW_ID == 2)
+			{
+				systemValues[ISystem.HW_ID] = 22.222;
+			}
+			else if(ISystem.HW_ID == 3)
+			{
+				systemValues[ISystem.HW_ID] = 33.333;
+			}
+		}
+		////////////////////////////////// DELETE ME SOON
+
+		// Get new request
+		lora_previousRequest = lora_payload.substring(0, 6);
 	}
 
-	////////////////////////////////// DELETE ME SOON
-	if(ISystem.HW_ID == 7)
-	{
-		newValues[ISystem.HW_ID] = 69.420;
-	}
-	else if (ISystem.HW_ID == 1)
-	{
-		newValues[ISystem.HW_ID] = 11.111;
-	}
-	else if(ISystem.HW_ID == 2)
-	{
-		newValues[ISystem.HW_ID] = 22.222;
-	}
-	else if(ISystem.HW_ID == 3)
-	{
-		newValues[ISystem.HW_ID] = 33.333;
-	}
-	////////////////////////////////// DELETE ME SOON
+	#ifdef DEBUG_ON
+		//	Print Current Database
+		Serial.print("Current Data: [");
+		for (uint8_t i = 0; i < MAX_DEVICES; i++)
+		{
+			Serial.print(systemValues[i], DECIMAL_VALUES);
+			if(i < (MAX_DEVICES - 1)) Serial.print(",");
+		}
+		Serial.println("]");
+	#endif
 
 	return true;
 }
@@ -208,62 +218,30 @@ void LORA_MODULE_class::processPayloadData(ISYSTEM ISystem)
 	uint8_t startIdx = lora_payload.indexOf('[');
 	uint8_t endIdx = lora_payload.indexOf(']');
 
-	if (lora_payload.substring(0, 6) != lora_previousRequest || startIdx == endIdx - 1)	// Wipe systemValues if fresh request (e.g. [])
-	{
-		memset(systemValues, 0, sizeof(systemValues));
-	}
-	else	// Check if Payload has existing data
-	{
-		String arrayContent = lora_payload.substring(startIdx + 1, endIdx);
+	String arrayContent = lora_payload.substring(startIdx + 1, endIdx);
 
-		// Parse the numbers into the float array
-		uint8_t index = 0;
-		char buffer[arrayContent.length() + 1];
-		arrayContent.toCharArray(buffer, arrayContent.length() + 1);
-
-		char *token = strtok(buffer, ",");
-		while (token != nullptr && index < MAX_DEVICES)
-		{
-			tempValues[index] = atof(token);
-			index++;
-			token = strtok(nullptr, ",");
-		}
+	// Parse the numbers into the float array
+	uint8_t index = 0;
+	char buffer[arrayContent.length() + 1];
+	arrayContent.toCharArray(buffer, arrayContent.length() + 1);
+	char *token = strtok(buffer, ",");
+	while (token != nullptr && index < MAX_DEVICES)
+	{
+		tempValues[index] = atof(token);
+		index++;
+		token = strtok(nullptr, ",");
 	}
 
-	// Get new request
-	lora_previousRequest = lora_payload.substring(0, 6);
-
-	//	Merge current values with data from Payload
-	for(uint8_t i = 0; i < MAX_DEVICES; i++)
-	{
-		if(i == ISystem.HW_ID) continue;
-		newValues[i] = systemValues[i] == 0 ? (tempValues[i] == 0 ? 0 : tempValues[i]) : systemValues[i];
-	}
-
-	#ifdef DEBUG_ON
-		//	Print Merged Values
-		Serial.print("Merged Data: [");
-		for (uint8_t i = 0; i < MAX_DEVICES; i++)
-		{
-			Serial.print(newValues[i], DECIMAL_VALUES);
-			if(i < (MAX_DEVICES - 1)) Serial.print(",");
-		}
-		Serial.println("]");
-	#endif
-}
-
-void LORA_MODULE_class::sendPayloadData(ISYSTEM ISystem)
-{
 	// Check if data needs to be relayed
 	for (uint8_t i = 0; i < MAX_DEVICES; i++)
 	{
-		if(newValues[i] != systemValues[i])
+		if(tempValues[i] != systemValues[i])
 		{
 			num_attempts = 0;
 			break;
 		}
 	}
-   
+
 	if (num_attempts >= SEND_ATTEMPTS)
 	{
 		#ifdef DEBUG_ON
@@ -273,8 +251,28 @@ void LORA_MODULE_class::sendPayloadData(ISYSTEM ISystem)
 		return;
 	}
 
-	// Copy newValues into systemValues
-	memcpy(systemValues, newValues, sizeof(systemValues));
+	//	Merge current values with data from Payload
+	for(uint8_t i = 0; i < MAX_DEVICES; i++)
+	{
+		if(i == ISystem.HW_ID) continue;
+		systemValues[i] = systemValues[i] == 0 ? (tempValues[i] == 0 ? 0 : tempValues[i]) : systemValues[i];
+	}
+
+	#ifdef DEBUG_ON
+		//	Print Merged Values
+		Serial.print("Merged Data: [");
+		for (uint8_t i = 0; i < MAX_DEVICES; i++)
+		{
+			Serial.print(systemValues[i], DECIMAL_VALUES);
+			if(i < (MAX_DEVICES - 1)) Serial.print(",");
+		}
+		Serial.println("]");
+	#endif
+}
+
+void LORA_MODULE_class::sendPayloadData(ISYSTEM ISystem)
+{
+	if (num_attempts >= SEND_ATTEMPTS)	return;
 
 	// Preallocate buffer for efficient concatenation
 	String relay_message;
@@ -287,8 +285,6 @@ void LORA_MODULE_class::sendPayloadData(ISYSTEM ISystem)
 			relay_message += ",";
 		}
 	}
-
-	new_incomingPayload = false;
 	
 	// CSMA/CA (Carrier Sense Multiple Access with Collision Avoidance)
 	while(num_attempts < SEND_ATTEMPTS)
@@ -301,13 +297,7 @@ void LORA_MODULE_class::sendPayloadData(ISYSTEM ISystem)
 			// Check for incoming messages
 			if (LoRa.parsePacket())
 			{ 
-				lora_payload = "";
-				while (LoRa.available())
-				{
-					lora_payload += (char)LoRa.read();
-				}
-
-				if(lora_payload.startsWith("TEMP:[") || lora_payload.startsWith("HUMI:[") || lora_payload.startsWith("SOIL:["))
+				if(getPayloadData())
 				{
 					#ifdef DEBUG_ON
 						Serial.println("\nNew Data: " + lora_payload);
@@ -315,7 +305,7 @@ void LORA_MODULE_class::sendPayloadData(ISYSTEM ISystem)
 					#endif
 
 					new_incomingPayload = true;
-					break;
+					return;
 				}
 			}
 			else
@@ -332,8 +322,6 @@ void LORA_MODULE_class::sendPayloadData(ISYSTEM ISystem)
 				}
 			}
 		}
-		
-		if(new_incomingPayload) break;
 
 		LoRa.beginPacket();
 		LoRa.print(lora_previousRequest + relay_message + "]");
