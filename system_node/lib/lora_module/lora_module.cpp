@@ -28,7 +28,8 @@ bool LORA_MODULE_class::Initialize(ISYSTEM ISystem)
     LoRa.setPins(LORA_NSS, LORA_RST, LORA_DI0);
 
 	// Start LoRa
-    if (!LoRa.begin(FREQUENCY)) {
+    if (!LoRa.begin(FREQUENCY))
+	{
 		#ifdef DEBUG_ON
 			Serial.println("LoRa Initialization Failed!");
 		#endif
@@ -74,9 +75,7 @@ void LORA_MODULE_class::getMessages(IDATA IData, ISYSTEM ISystem)
 		}
 	}
 
-	// more thorough data checking
 	// rework functions
-	// issue where non labot is apil apil like [0.000,11.111,22.222,33.333,0.000,0.000,0.900,69.420] sol {0.000,[11.111],[22.222],[33.333],0.000,0.000,0.000,[69.420]}
 }
 
 void LORA_MODULE_class::resetValues()
@@ -124,20 +123,7 @@ bool LORA_MODULE_class::checkMessageValidity()
 
 		return false;
 	}
-    // Check message for invalid chars
-    for(size_t i = 6; i < lora_payload.length(); i++)
-    {
-        char c = lora_payload[i];
-        if (!((c >= '0' && c <= '9') || c == ']' || c == ',' || c == '.' || c == '-'))
-        {
-			#ifdef DEBUG_ON
-				Serial.println("Invalid Character Found!");
-			#endif
-
-            return false;
-        }
-    }
-	if(lora_payload.indexOf('[') == -1 && lora_payload.indexOf(']') == -1)
+    if(lora_payload.indexOf('[') == -1 && lora_payload.indexOf(']') == -1)
 	{
 		#ifdef DEBUG_ON
 			Serial.println("Unable to Locate Data!");
@@ -145,6 +131,65 @@ bool LORA_MODULE_class::checkMessageValidity()
 
 		return false;
 	}
+
+	if (lora_payload[5] == '[' && lora_payload[6] == ']' && lora_payload.length() == 7) return true;
+
+	bool numbermode = false;
+
+    for(size_t i = 5; i < lora_payload.length(); i++)
+    {
+        char c = lora_payload[i];
+
+		if(!numbermode)
+		{
+			if(c == '*')
+			{
+				continue;
+			}
+			else if (!(c == '[' || c == ']' || c == ','))
+			{
+				#ifdef DEBUG_ON
+					Serial.print("Invalid Character Found at ");
+					Serial.println(i);
+				#endif
+
+				return false;
+			}
+
+			if ((c == '[' && (lora_payload[i + 2] == ',') || (c == ',' && lora_payload[i + 2] == ',') || (c == ',' && lora_payload[i + 2] == ']')))
+			{
+				if(lora_payload[i + 1] != '*')
+				{
+					#ifdef DEBUG_ON
+						Serial.println("Invalid Data Found!");
+					#endif
+
+					return false;
+				}
+			}
+			else
+			{
+				numbermode = true;
+			}
+		}
+		else
+		{
+			if (!((c >= '0' && c <= '9') || c == '.' || c == '-'))
+			{
+				#ifdef DEBUG_ON
+					Serial.print("Invalid Number Found at ");
+					Serial.println(i);
+				#endif
+
+				return false;
+			}
+
+			if(lora_payload[i + 1] == ',' || lora_payload[i + 1] == ']')
+			{
+				numbermode = false;
+			}
+		}
+    }
     return true;
 }
 
@@ -276,14 +321,18 @@ void LORA_MODULE_class::sendPayloadData(ISYSTEM ISystem)
 
 	// Preallocate buffer for efficient concatenation
 	String relay_message;
-	relay_message.reserve(MAX_DEVICES * (DECIMAL_VALUES + 2)); // Approximate size
+	relay_message.reserve(MAX_DEVICES * (DECIMAL_VALUES + 2)); // Approximate size // todo figure this out
 	for (uint8_t i = 0; i < MAX_DEVICES; i++)
 	{
-		relay_message += String(systemValues[i], DECIMAL_VALUES);
-		if (i < MAX_DEVICES - 1)
+		if (systemValues[i] == 0)
 		{
-			relay_message += ",";
+			relay_message += "*";
 		}
+		else
+		{
+			relay_message += String(systemValues[i], DECIMAL_VALUES);
+		}
+		if (i < MAX_DEVICES - 1) relay_message += ",";
 	}
 	
 	// CSMA/CA (Carrier Sense Multiple Access with Collision Avoidance)
@@ -295,31 +344,20 @@ void LORA_MODULE_class::sendPayloadData(ISYSTEM ISystem)
 		while (millis() - startTime < csmaTimeout)
 		{
 			// Check for incoming messages
-			if (LoRa.parsePacket())
+			if (LoRa.parsePacket() && getPayloadData())
 			{ 
-				if(getPayloadData())
-				{
-					#ifdef DEBUG_ON
-						Serial.println("\nNew Data: " + lora_payload);
-						Serial.println("New Data Available. Resetting");
-					#endif
-
-					new_incomingPayload = true;
-					return;
-				}
+				new_incomingPayload = true;
+				return;
 			}
-			else
+			else if(millis() - lastCheckTime >= backoffTime)
 			{
 				// Perform backoff without blocking execution
-				if (millis() - lastCheckTime >= backoffTime)
-				{
-					#ifdef DEBUG_ON
-						Serial.print(".");
-					#endif
+				#ifdef DEBUG_ON
+					Serial.print(".");
+				#endif
 
-					if(LoRa.packetRssi() < CSMA_NOISE_LIM) break;
-					lastCheckTime = millis();
-				}
+				if(LoRa.packetRssi() < CSMA_NOISE_LIM) break;
+				lastCheckTime = millis();
 			}
 		}
 
