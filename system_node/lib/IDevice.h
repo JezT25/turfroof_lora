@@ -25,22 +25,22 @@
 
 class IDATA
 {
-    public:
-        
-      float SYSTEM_TEMPERATURE	=   0;
+	public:
 
-      float SYSTEM_HUMIDITY		=   0;
+		float SYSTEM_TEMPERATURE  =   0;
 
-      float SOIL_MOISTURE       =   0;
+		float SYSTEM_HUMIDITY     =   0;
 
-      float BATTERY_VOLTAGE     =	0;
+		float SOIL_MOISTURE       =   0;
+
+		float BATTERY_VOLTAGE     =   0;
 };
 
 class ISYSTEM
 {
     public:
 
-        uint8_t HW_ID	=	0;
+    	uint8_t HW_ID	=	0;
 };
 
 #endif

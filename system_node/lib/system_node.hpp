@@ -23,16 +23,19 @@
 #ifndef system_node_hpp_included
 #define system_node_hpp_included
 
-#define SYSTEM_VER      0.03
+#define SYSTEM_VER      0.04
 
 #define DEBUG_ON
 
 #define SERIAL_BAUD     115200
 #define DECIMAL_VALUES  3
 
-#include <Arduino.h>
-#include <SPI.h>
+#include <Wire.h>
+// #include <SPI.h>
 #include <LoRa.h>
+// #include <SD.h>
+// #include <DS3231.h>
+// #include <Adafruit_AHTX0.h>
 
 #include "IDevice.h"
 #include "hwio/hwio.h"

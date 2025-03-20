@@ -38,7 +38,7 @@ void HWIO_class::Initialize(ISYSTEM *ISystem)
 
 void HWIO_class::setGPIO()
 {
-    for(int i = 0; i < HWID_PINS; i++)
+    for (int i = 0; i < HWID_PINS; i++)
     {
         digitalWrite(_hwid[i], INPUT_PULLUP);
     }

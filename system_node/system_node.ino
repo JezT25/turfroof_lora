@@ -24,10 +24,12 @@
 
 SYSTEM_class system_node(class_lib);
 
-void setup() {
+void setup()
+{
 	system_node.Initialize();
 }
 
-void loop() {
+void loop()
+{
 	system_node.Run();
 }

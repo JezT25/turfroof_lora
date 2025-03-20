@@ -39,6 +39,13 @@ void SYSTEM_class::Initialize()
 
 void SYSTEM_class::Run()
 {
+	// TODO: BUY
+	// buy ds18b20 temp sensor
+	// sht31 for humidity outside
+	// soil moisture sensor
+	// battery module
+
+
 	// Device is always sleeping here
 
 	{
@@ -46,7 +53,8 @@ void SYSTEM_class::Run()
 	// get details
 	// do the lora stuff
 	// while not moving for 2 minute finish lora stuff
-	_lora_module.getMessages(_IData, _ISystem);
+	_lora_module.loadSensorData(_IData);
+	_lora_module.startLoRaMesh();
 
 	// log in sd card
 	}
