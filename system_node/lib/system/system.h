@@ -31,11 +31,9 @@ class SYSTEM_class
         IDATA&              _IData;
         HWIO_class&         _hwio;	        // battery level? voltage divider
         LORA_MODULE_class&  _lora_module;	// encryption
-
         // DS3231_class
-        // TEMP_HUMI_class
-        // SOIL_MOISTURE
         // SD_CARD
+
 		static volatile bool _wokenbyLoRa;
 
 		static inline void wakeonRTC();

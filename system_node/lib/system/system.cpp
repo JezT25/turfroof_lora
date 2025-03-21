@@ -30,6 +30,9 @@ void SYSTEM_class::Initialize()
 	// Initialize Hardware
 	_hwio.Initialize(&_IData);
 
+	// Intialize Modules
+	_hwio.Initialize_Modules(&_IData);
+
 	// Initialize Lora Module
 	_lora_module.Initialize(_IData);
 
@@ -42,43 +45,9 @@ void SYSTEM_class::Initialize()
 
 void SYSTEM_class::Run()
 {
-	// TODO: BUY
-	// CHANGE TO PRO MINI 3.3V
-	// buy ds18b20 temp sensor
-	// sht31 for humidity outside
-	// soil moisture sensor
-	// battery 3.3!
-
-	// MAKE SURE TO POWER SENSORS USING GPIO PINS FOR SAVING POWER!!!!!!!!
-	// CAN LORA SLEEP?
-
-	// make sure to power in proper pin to reduce current
-
-	/*
-		Summary of methods
-
-		Use as many of the techniques listed here as are practical in your application. They are described in further detail below.
-
-
-		Run the processor at a lower frequency
-		Run the processor at a lower voltage
-		Turn off unneeded internal modules in software (eg. SPI, I2C, Serial, ADC)
-		Turn off brownout detection
-		Turn off the Analog-to-Digital converter (ADC)
-		Turn off the watchdog timer
-		Put the processor to sleep
-		Don't use inefficient voltage regulators - if possible run directly from batteries
-		Don't use power-hungry displays (eg. indicator LEDs, backlit LCDs)
-		Arrange to wake the processor from sleep only when needed
-		Turn off (with a MOSFET) external devices (eg. SD cards, temperature sensors) until needed
-	*/
-
-	////////////////////////////////////////////////////////////////////////
-
-
 	entersleepMode();
 
-	// get sensor data
+	_hwio.loadSensorData(&_IData);
 
 	if (_wokenbyLoRa)
 	{
@@ -87,7 +56,7 @@ void SYSTEM_class::Run()
 		_wokenbyLoRa = false;
 	}
 
-	// log in sd card
+	// _sd_module.logdatatoSD();
 }
 
 
@@ -138,7 +107,7 @@ void SYSTEM_class::entersleepMode()
 	interrupts();
 	sleep_cpu();
 
-	////////////// zzz Goodnight zzz //////////////
+	////////////// zzz Goodnight! zzz //////////////
 
 	// Wake up here!
 	sleep_disable();

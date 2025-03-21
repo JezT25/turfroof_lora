@@ -27,7 +27,7 @@ class IDATA
 {
 	public:
 
-    	uint8_t HW_ID	          =	  0;
+		uint8_t HW_ID	            =	  0;
 
 		float SYSTEM_TEMPERATURE  =   0;
 

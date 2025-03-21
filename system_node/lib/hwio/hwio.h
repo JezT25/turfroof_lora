@@ -40,11 +40,17 @@ class HWIO_class
     private:
         uint8_t _hwid[HWID_PINS] = { HWID_A, HWID_B, HWID_C };
 
+        Adafruit_AHTX0 _aht10;
+
         void setGPIO();
         void getHWID(uint8_t &hwid);
+        void setAHT10();
+        void getAHT10(float &temperature, float &humidity);
 
     public:
         void Initialize(IDATA *IData);
+        void Initialize_Modules(IDATA *IData);
+        void loadSensorData(IDATA *IData);
 };
 
 #endif

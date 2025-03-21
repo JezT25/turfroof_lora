@@ -32,8 +32,19 @@ void HWIO_class::Initialize(IDATA *IData)
 
     setGPIO();
     getHWID(IData->HW_ID);
-    
+
     interrupts();
+}
+
+void HWIO_class::Initialize_Modules(IDATA *IData)
+{
+    setAHT10();
+}
+
+
+void HWIO_class::loadSensorData(IDATA *IData)
+{
+    getAHT10(IData->SYSTEM_TEMPERATURE, IData->SYSTEM_HUMIDITY);
 }
 
 void HWIO_class::setGPIO()
@@ -54,4 +65,47 @@ void HWIO_class::getHWID(uint8_t &hwid)
         Serial.print("System Hardware ID: ");
         Serial.println(hwid);
     #endif
+}
+
+void HWIO_class::setAHT10()
+{
+    if (!_aht10.begin())
+    {
+        #ifdef DEBUGGING
+            Serial.println("ERROR: Failed to Initialize AHT10!");
+        #endif
+
+        return;
+    }
+
+    #ifdef DEBUGGING
+        Serial.println("AHT10 Setup Complete!");
+    #endif
+}
+
+void HWIO_class::getAHT10(float &temperature, float &humidity)
+{
+    sensors_event_t aht10_humidity, aht10_temperature;
+    
+    if (_aht10.getEvent(&aht10_humidity, &aht10_temperature))
+    {
+        #ifdef DEBUGGING
+            Serial.print("Temperature: ");
+            Serial.print(aht10_temperature.temperature);
+            Serial.println(" C");
+
+            Serial.print("Humidity: ");
+            Serial.print(aht10_humidity.relative_humidity);
+            Serial.println("% rH");
+        #endif
+
+        temperature = aht10_temperature.temperature;
+        humidity = aht10_humidity.relative_humidity;
+    }
+    else
+    {
+        #ifdef DEBUGGING
+            Serial.println("ERROR: Failed to read AHT10 sensor data.");
+        #endif
+    }
 }

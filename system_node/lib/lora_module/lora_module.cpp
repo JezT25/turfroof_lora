@@ -31,7 +31,7 @@ bool LORA_MODULE_class::Initialize(IDATA IData)
     if (!LoRa.begin(FREQUENCY))
 	{
 		#ifdef DEBUGGING
-			Serial.println("LoRa Initialization Failed!");
+			Serial.println("ERROR: LoRa Initialization Failed!");
 		#endif
 
 		return false;
@@ -66,28 +66,10 @@ bool LORA_MODULE_class::Initialize(IDATA IData)
 void LORA_MODULE_class::loadSensorData(IDATA IData)
 {
 	_sensorData[TEMPERATURE] = IData.SYSTEM_TEMPERATURE;
-	_sensorData[HUMIDITY] = IData.SYSTEM_TEMPERATURE;
-	_sensorData[MOISTURE] = IData.SYSTEM_TEMPERATURE;
-	_sensorData[BATT_VOLTAGE] = IData.SYSTEM_TEMPERATURE;
-
-	////////////////////////////////// DELETE ME SOON
-	if (_hwid == 7)
-	{
-		_sensorData[TEMPERATURE] = 69.420;
-	}
-	else if (_hwid == 1)
-	{
-		_sensorData[TEMPERATURE] = 11.111;
-	}
-	else if (_hwid == 2)
-	{
-		_sensorData[TEMPERATURE] = 22.222;
-	}
-	else if (_hwid == 3)
-	{
-		_sensorData[TEMPERATURE] = 33.333;
-	}
-	////////////////////////////////// DELETE ME SOON
+	_sensorData[HUMIDITY] = IData.SYSTEM_HUMIDITY;
+	_sensorData[SOIL_TEMPERATURE] = IData.SOIL_TEMPERATURE;
+	_sensorData[SOIL_MOISTURE] = IData.SOIL_MOISTURE;
+	_sensorData[BATT_VOLTAGE] = IData.BATTERY_VOLTAGE;
 }
 
 void LORA_MODULE_class::startLoRaMesh()
