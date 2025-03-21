@@ -22,7 +22,7 @@
 
 #include "../system_node.hpp"
 
-bool LORA_MODULE_class::Initialize(ISYSTEM ISystem)
+bool LORA_MODULE_class::Initialize(IDATA IData)
 {	
 	// Configure Pins
     LoRa.setPins(LORA_NSS, LORA_RST, LORA_DI0);
@@ -46,7 +46,7 @@ bool LORA_MODULE_class::Initialize(ISYSTEM ISystem)
     LoRa.setPreambleLength(PREAMBLE);
 
 	// Set HW ID
-	_hwid = ISystem.HW_ID;
+	_hwid = IData.HW_ID;
 
 	// CSMA/CA (Carrier Sense Multiple Access with Collision Avoidance) Parameters
 	_backoffTime = _hwid * BACKOFF_MUL;

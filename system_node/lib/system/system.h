@@ -29,7 +29,6 @@ class SYSTEM_class
 {
     private:
         IDATA&              _IData;
-        ISYSTEM&            _ISystem;
         HWIO_class&         _hwio;	        // battery level? voltage divider
         LORA_MODULE_class&  _lora_module;	// encryption
 
@@ -44,7 +43,7 @@ class SYSTEM_class
         void entersleepMode();
 
     public:
-        SYSTEM_class(SystemComponents& class_lib) : _IData(class_lib._IData), _ISystem(class_lib._ISystem), _hwio(class_lib._hwio), _lora_module(class_lib._lora_module) {}
+        SYSTEM_class(SystemComponents& class_lib) : _IData(class_lib._IData), _hwio(class_lib._hwio), _lora_module(class_lib._lora_module) {}
         
         void Initialize();
         void Run();

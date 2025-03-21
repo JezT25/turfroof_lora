@@ -22,7 +22,7 @@
 
 #include "../system_node.hpp"
 
-void HWIO_class::Initialize(ISYSTEM *ISystem)
+void HWIO_class::Initialize(IDATA *IData)
 {
     noInterrupts();
 
@@ -31,7 +31,7 @@ void HWIO_class::Initialize(ISYSTEM *ISystem)
     #endif
 
     setGPIO();
-    getHWID(ISystem);
+    getHWID(IData->HW_ID);
     
     interrupts();
 }
@@ -44,14 +44,14 @@ void HWIO_class::setGPIO()
     }
 }
 
-void HWIO_class::getHWID(ISYSTEM *ISystem)
+void HWIO_class::getHWID(uint8_t &hwid)
 {
-    ISystem->HW_ID = digitalRead(_hwid[0]);
-    ISystem->HW_ID += digitalRead(_hwid[1]) * 2;
-    ISystem->HW_ID += digitalRead(_hwid[2]) * 4;
+    hwid = digitalRead(_hwid[0]);
+    hwid += digitalRead(_hwid[1]) * 2;
+    hwid += digitalRead(_hwid[2]) * 4;
 
     #ifdef DEBUGGING
         Serial.print("System Hardware ID: ");
-        Serial.println(ISystem->HW_ID);
+        Serial.println(hwid);
     #endif
 }

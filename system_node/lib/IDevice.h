@@ -26,6 +26,8 @@
 class IDATA
 {
 	public:
+  
+    uint8_t HW_ID	            =	  0;
 
 		float SYSTEM_TEMPERATURE  =   0;
 
@@ -34,13 +36,6 @@ class IDATA
 		float SOIL_MOISTURE       =   0;
 
 		float BATTERY_VOLTAGE     =   0;
-};
-
-class ISYSTEM
-{
-    public:
-
-    	uint8_t HW_ID	=	0;
 };
 
 #endif

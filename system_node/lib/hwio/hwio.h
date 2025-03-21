@@ -41,10 +41,10 @@ class HWIO_class
         uint8_t _hwid[HWID_PINS] = { HWID_A, HWID_B, HWID_C };
 
         void setGPIO();
-        void getHWID(ISYSTEM *ISystem);
+        void getHWID(uint8_t &hwid);
 
     public:
-        void Initialize(ISYSTEM *ISystem);
+        void Initialize(IDATA *IData);
 };
 
 #endif

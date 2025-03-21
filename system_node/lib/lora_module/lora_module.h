@@ -93,7 +93,7 @@ class LORA_MODULE_class
 		void sendPayloadData();
 
     public:
-		bool Initialize(ISYSTEM ISystem);
+		bool Initialize(IDATA IData);
 		void loadSensorData(IDATA IData);
 		void startLoRaMesh();
 };

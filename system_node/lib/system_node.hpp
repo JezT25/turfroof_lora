@@ -49,7 +49,6 @@ struct SystemComponents
 {
     // Data Handling Classes
     IDATA               _IData;
-    ISYSTEM             _ISystem;
 
     // Hardware Classes
     HWIO_class          _hwio;

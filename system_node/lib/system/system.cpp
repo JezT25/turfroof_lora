@@ -28,10 +28,10 @@ volatile bool SYSTEM_class::_wokenbyLoRa = false;
 void SYSTEM_class::Initialize()
 {
 	// Initialize Hardware
-	_hwio.Initialize(&_ISystem);
+	_hwio.Initialize(&_IData);
 
 	// Initialize Lora Module
-	_lora_module.Initialize(_ISystem);
+	_lora_module.Initialize(_IData);
 
 	#ifdef DEBUGGING
 		Serial.print("System Version: v");
