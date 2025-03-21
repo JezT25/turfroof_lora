@@ -26,7 +26,7 @@ void HWIO_class::Initialize(ISYSTEM *ISystem)
 {
     noInterrupts();
 
-    #ifdef DEBUG_ON
+    #ifdef DEBUGGING
         Serial.begin(SERIAL_BAUD);
     #endif
 
@@ -50,7 +50,7 @@ void HWIO_class::getHWID(ISYSTEM *ISystem)
     ISystem->HW_ID += digitalRead(_hwid[1]) * 2;
     ISystem->HW_ID += digitalRead(_hwid[2]) * 4;
 
-    #ifdef DEBUG_ON
+    #ifdef DEBUGGING
         Serial.print("System Hardware ID: ");
         Serial.println(ISystem->HW_ID);
     #endif

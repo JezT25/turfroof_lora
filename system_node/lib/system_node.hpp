@@ -25,7 +25,7 @@
 
 #define SYSTEM_VER      0.04
 
-#define DEBUG_ON
+#define DEBUGGING
 
 #define SERIAL_BAUD     115200
 #define DECIMAL_VALUES  3
@@ -36,6 +36,8 @@
 // #include <SD.h>
 // #include <DS3231.h>
 // #include <Adafruit_AHTX0.h>
+#include <avr/sleep.h>
+#include <avr/power.h>
 
 #include "IDevice.h"
 #include "hwio/hwio.h"

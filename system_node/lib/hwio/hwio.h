@@ -30,9 +30,13 @@
 #define HWID_B      A1
 #define HWID_C      A2
 
+#define OFF         0
+#define ON          1
+
 #include "../system_node.hpp"
 
-class HWIO_class {
+class HWIO_class
+{
     private:
         uint8_t _hwid[HWID_PINS] = { HWID_A, HWID_B, HWID_C };
 

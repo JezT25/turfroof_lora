@@ -25,22 +25,23 @@
 
 #include "../system_node.hpp"
 
-class SYSTEM_class {
+class SYSTEM_class
+{
     private:
         IDATA&              _IData;
         ISYSTEM&            _ISystem;
-        HWIO_class&         _hwio;
-        LORA_MODULE_class&  _lora_module;
-        // battery level?
+        HWIO_class&         _hwio;	        // battery level? voltage divider
+        LORA_MODULE_class&  _lora_module;	// encryption
+
         // DS3231_class
         // TEMP_HUMI_class
         // SOIL_MOISTURE
         // SD_CARD
-        // encryption
-        // maybe signal mesh checking?
-        // sleep mode
+		static volatile bool _wokenbyLoRa;
 
-        // logbook write and serial write
+		static inline void wakeonRTC();
+		static inline void wakeonLoRa();
+        void entersleepMode();
 
     public:
         SYSTEM_class(SystemComponents& class_lib) : _IData(class_lib._IData), _ISystem(class_lib._ISystem), _hwio(class_lib._hwio), _lora_module(class_lib._lora_module) {}

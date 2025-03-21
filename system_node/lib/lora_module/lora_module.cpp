@@ -30,7 +30,7 @@ bool LORA_MODULE_class::Initialize(ISYSTEM ISystem)
 	// Start LoRa
     if (!LoRa.begin(FREQUENCY))
 	{
-		#ifdef DEBUG_ON
+		#ifdef DEBUGGING
 			Serial.println("LoRa Initialization Failed!");
 		#endif
 
@@ -52,7 +52,7 @@ bool LORA_MODULE_class::Initialize(ISYSTEM ISystem)
 	_backoffTime = _hwid * BACKOFF_MUL;
 	_csmaTimeout = CSMA_TOUT_MIN + (CSMA_TOUT_MUL * _hwid);
 
-	#ifdef DEBUG_ON
+	#ifdef DEBUGGING
 		Serial.print("Backoff Time (ms): ");
 		Serial.println(_backoffTime);
 		Serial.print("CSMA Timeout (ms): ");
@@ -119,7 +119,7 @@ void LORA_MODULE_class::resetValues()
 
 bool LORA_MODULE_class::getLoRaPayload()
 {
-	#ifdef DEBUG_ON
+	#ifdef DEBUGGING
 		//	Display Signal Strength (RSSI) of the Received Packet
 		Serial.println("Packet received!");
 		Serial.print("Signal strength [RSSI] (dBm): ");
@@ -133,7 +133,7 @@ bool LORA_MODULE_class::getLoRaPayload()
 		_loraPayload += (char)LoRa.read();
 	}
 
-	#ifdef DEBUG_ON
+	#ifdef DEBUGGING
 		//	Print LoRa Payload
 		Serial.println("Payload: " + _loraPayload);
 	#endif
@@ -155,7 +155,7 @@ bool LORA_MODULE_class::checkMessageValidity()
 
 		if(i == VALID_HEADERS - 1)
 		{
-			#ifdef DEBUG_ON
+			#ifdef DEBUGGING
 				Serial.println("Invalid Packet Header!");
 			#endif
 
@@ -166,7 +166,7 @@ bool LORA_MODULE_class::checkMessageValidity()
 	// Check Payload data brackets
     if (startIdx == -1 && endIdx == -1)
 	{
-		#ifdef DEBUG_ON
+		#ifdef DEBUGGING
 			Serial.println("Unable to Locate Data!");
 		#endif
 
@@ -175,7 +175,7 @@ bool LORA_MODULE_class::checkMessageValidity()
 
 	// Check Payload data strictly
     for (size_t i = START_OF_BRACKET; i < payloadLen; i++)
-    {
+	{
         char payloadChar = _loraPayload[i];
 
 		if (checkforCharacters)
@@ -184,7 +184,7 @@ bool LORA_MODULE_class::checkMessageValidity()
 			
 			if (payloadChar != '[' && payloadChar != ']' && payloadChar != ',')
 			{
-				#ifdef DEBUG_ON
+				#ifdef DEBUGGING
 					Serial.print("Invalid Character Found!");
 				#endif
 
@@ -195,7 +195,7 @@ bool LORA_MODULE_class::checkMessageValidity()
 			{
 				if (_loraPayload[i + 1] != BLANK_PLACEHOLDER)
 				{
-					#ifdef DEBUG_ON
+					#ifdef DEBUGGING
 						Serial.println("Invalid Data Found!");
 					#endif
 
@@ -211,7 +211,7 @@ bool LORA_MODULE_class::checkMessageValidity()
 		{
 			if ((payloadChar < '0' || payloadChar > '9') && payloadChar != '.' && payloadChar != '-')
 			{
-				#ifdef DEBUG_ON
+				#ifdef DEBUGGING
 					Serial.print("Invalid Number Found!");
 				#endif
 
@@ -253,7 +253,7 @@ void LORA_MODULE_class::preloadMessageData()
 		_loraprevHeader = _loraPayload.substring(0, START_OF_BRACKET);
 	}
 
-	#ifdef DEBUG_ON
+	#ifdef DEBUGGING
 		//	Print Current Database
 		Serial.print("Current Data: [");
 		for (uint8_t i = 0; i < MAX_DEVICES; i++)
@@ -299,7 +299,7 @@ void LORA_MODULE_class::processPayloadData()
 				_systemValues[i] = _systemValues[i] == 0 ? (tempValues[i] == 0 ? 0 : tempValues[i]) : _systemValues[i];
 			}
 
-			#ifdef DEBUG_ON
+			#ifdef DEBUGGING
 				//	Print Merged Values
 				Serial.print("Merged Data: [");
 				for (uint8_t i = 0; i < MAX_DEVICES; i++)
@@ -323,7 +323,7 @@ void LORA_MODULE_class::sendPayloadData()
 	// No need to send when reached send limit
 	if (_sendAttempts >= SEND_ATTEMPTS)
 	{
-		#ifdef DEBUG_ON
+		#ifdef DEBUGGING
 			Serial.println("Send Limit Reached!");
 		#endif
 
@@ -356,7 +356,7 @@ void LORA_MODULE_class::sendPayloadData()
 			{
 				lastCheckTime = millis();
 
-				#ifdef DEBUG_ON
+				#ifdef DEBUGGING
 					Serial.print(".");
 				#endif
 				
@@ -370,7 +370,7 @@ void LORA_MODULE_class::sendPayloadData()
 		LoRa.print(_loraprevHeader + "[" + relay_message + "]");
 		LoRa.endPacket();
 
-		#ifdef DEBUG_ON
+		#ifdef DEBUGGING
 			Serial.println("\nSends: " + String(_sendAttempts + 1) + "/" + String(SEND_ATTEMPTS));
 			Serial.println("Message sent successfully: " + _loraprevHeader + "[" + relay_message + "]");
 		#endif

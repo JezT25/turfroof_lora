@@ -38,7 +38,7 @@
 #define SPREAD_FACTOR		7
 #define CODING_RATE			5
 #define PREAMBLE			8
-#define LORA_WAKE_TIMEOUT	120000
+#define LORA_WAKE_TIMEOUT	8000
 
 // CSMA/CA Settings
 #define SEND_ATTEMPTS		2
@@ -51,7 +51,8 @@
 #define START_OF_BRACKET	5
 #define BLANK_PLACEHOLDER	'*'
 
-class LORA_MODULE_class {
+class LORA_MODULE_class
+{
     private:
 		enum _sensorValueNames : uint8_t
 		{
@@ -59,6 +60,8 @@ class LORA_MODULE_class {
 			HUMIDITY,
 			MOISTURE,
 			BATT_VOLTAGE,
+			TIME,
+			DATE,
 			VALID_HEADERS
 		};
 		const char* _validHeaders[VALID_HEADERS] =
@@ -66,7 +69,9 @@ class LORA_MODULE_class {
 			"TEMP:",
 			"HUMI:",
 			"SOIL:",
-			"BATT:"
+			"BATT:",
+			"TIME:",
+			"DATE:"
 		};
 
 		int _backoffTime;
