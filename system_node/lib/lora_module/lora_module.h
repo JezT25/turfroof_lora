@@ -54,11 +54,12 @@
 class LORA_MODULE_class
 {
     private:
-		enum _sensorValueNames : uint8_t
+		enum _LoRaCommands : uint8_t
 		{
 			TEMPERATURE,
 			HUMIDITY,
-			MOISTURE,
+			SOIL_TEMPERATURE,
+			SOIL_MOISTURE,
 			BATT_VOLTAGE,
 			TIME,
 			DATE,
@@ -68,7 +69,8 @@ class LORA_MODULE_class
 		{
 			"TEMP:",
 			"HUMI:",
-			"SOIL:",
+			"STMP:",
+			"SMOI:",
 			"BATT:",
 			"TIME:",
 			"DATE:"
