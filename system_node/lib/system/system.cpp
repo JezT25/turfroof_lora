@@ -51,8 +51,7 @@ void SYSTEM_class::Run()
 
 	if (_wokenbyLoRa)
 	{
-		_lora_module.loadSensorData(_IData);
-		_lora_module.startLoRaMesh();
+		_lora_module.startLoRaMesh(_IData);
 		_wokenbyLoRa = false;
 	}
 

@@ -48,8 +48,8 @@
 #define CSMA_TOUT_MIN		3000
 
 // Algorithm Settings
-#define DECIMAL_VALUES  	5
 #define START_OF_BRACKET	5
+#define DECIMAL_VALUES  	5
 #define EPSILON         	0.0001
 #define BLANK_PLACEHOLDER	'*'
 
@@ -84,11 +84,12 @@ class LORA_MODULE_class
 		uint8_t _hwid;
 		uint8_t _sendAttempts;
 		unsigned long _lastSystemUpdateTime;
-		double _sensorData[VALID_HEADERS];
-		double _systemValues[MAX_DEVICES];
+		float _sensorData[VALID_HEADERS];
+		float _systemValues[MAX_DEVICES];
 		String _loraPayload;
 		String _loraprevHeader;
 		
+		void loadsensorData(IDATA IData);
 		void resetValues();
 		bool getLoRaPayload();
 		bool checkMessageValidity();
@@ -98,8 +99,7 @@ class LORA_MODULE_class
 
     public:
 		bool Initialize(IDATA IData);
-		void loadSensorData(IDATA IData);
-		void startLoRaMesh();
+		void startLoRaMesh(IDATA IData);
 };
 
 #endif

@@ -63,7 +63,7 @@ bool LORA_MODULE_class::Initialize(IDATA IData)
     return true;
 }
 
-void LORA_MODULE_class::loadSensorData(IDATA IData)
+void LORA_MODULE_class::loadsensorData(IDATA IData)
 {
 	_sensorData[TEMPERATURE] = IData.SYSTEM_TEMPERATURE;
 	_sensorData[HUMIDITY] = IData.SYSTEM_HUMIDITY;
@@ -72,8 +72,9 @@ void LORA_MODULE_class::loadSensorData(IDATA IData)
 	_sensorData[BATT_VOLTAGE] = IData.BATTERY_VOLTAGE;
 }
 
-void LORA_MODULE_class::startLoRaMesh()
+void LORA_MODULE_class::startLoRaMesh(IDATA IData)
 {
+	loadsensorData(IData);
 	resetValues();
 
 	while (millis() - _lastSystemUpdateTime <= LORA_WAKE_TIMEOUT)
@@ -125,9 +126,9 @@ bool LORA_MODULE_class::getLoRaPayload()
 
 bool LORA_MODULE_class::checkMessageValidity()
 {
-	int startIdx = _loraPayload.indexOf('[');
-	int endIdx = _loraPayload.indexOf(']');
-	int payloadLen = _loraPayload.length();
+	uint8_t startIdx = _loraPayload.indexOf('[');
+	uint8_t endIdx = _loraPayload.indexOf(']');
+	uint8_t payloadLen = _loraPayload.length();
 	bool checkforCharacters = true;
 
 	// Check header validity
@@ -212,9 +213,9 @@ bool LORA_MODULE_class::checkMessageValidity()
 
 void LORA_MODULE_class::preloadMessageData()
 {
-	int startIdx = _loraPayload.indexOf('[');
-	int endIdx = _loraPayload.indexOf(']');
-	int payloadLen = _loraPayload.length();
+	uint8_t startIdx = _loraPayload.indexOf('[');
+	uint8_t endIdx = _loraPayload.indexOf(']');
+	uint8_t payloadLen = _loraPayload.length();
 
 	if ((startIdx == START_OF_BRACKET && endIdx == START_OF_BRACKET + 1 && payloadLen == START_OF_BRACKET + 2) || _loraPayload.substring(0, START_OF_BRACKET) != _loraprevHeader)
 	{
@@ -250,15 +251,15 @@ void LORA_MODULE_class::preloadMessageData()
 void LORA_MODULE_class::processPayloadData()
 {
 	// Extract data from Payload
-	int startIdx = _loraPayload.indexOf('[');
-	int endIdx = _loraPayload.indexOf(']');
+	uint8_t startIdx = _loraPayload.indexOf('[');
+	uint8_t endIdx = _loraPayload.indexOf(']');
 	String arrayContent = _loraPayload.substring(startIdx + 1, endIdx);
 	char buffer[arrayContent.length() + 1];
 	arrayContent.toCharArray(buffer, arrayContent.length() + 1);
 	char *token = strtok(buffer, ",");
 
 	// Store data to tempValues
-	double tempValues[MAX_DEVICES] = {};
+	float tempValues[MAX_DEVICES] = {};
 	uint8_t index = 0;
 	while (token != nullptr && index < MAX_DEVICES)
 	{
@@ -348,14 +349,15 @@ void LORA_MODULE_class::sendPayloadData()
 			}
 		}
 
-		// Send Payload
+		String sendPayload = _loraprevHeader + "[" + relay_message + "]";
+
 		LoRa.beginPacket();
-		LoRa.print(_loraprevHeader + "[" + relay_message + "]");
+		LoRa.print(sendPayload);
 		LoRa.endPacket();
 
 		#ifdef DEBUGGING
 			Serial.println("\nSends: " + String(_sendAttempts + 1) + "/" + String(SEND_ATTEMPTS));
-			Serial.println("Message sent successfully: " + _loraprevHeader + "[" + relay_message + "]");
+			Serial.println("Message sent successfully: " + sendPayload);
 		#endif
 
 		// Increment attempts

@@ -24,6 +24,7 @@
 #define system_node_hpp_included
 
 #define SYSTEM_VER      0.05
+#define AES_KEY				  "G7v!Xz@pL9#qKd2M"
 
 /* Uncomment for Serial Prints */
 #define DEBUGGING
@@ -32,8 +33,8 @@
 #include <Arduino.h>
 #include <Wire.h>
 #include <SPI.h>
-#include <LoRa.h>
 // #include <SD.h>
+#include <LoRa.h>
 // #include <DS3231.h>
 #include <Adafruit_AHTX0.h>
 #include <avr/sleep.h>

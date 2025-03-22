@@ -49,7 +49,7 @@ void HWIO_class::loadSensorData(IDATA *IData)
 
 void HWIO_class::setGPIO()
 {
-    for (int i = 0; i < HWID_PINS; i++)
+    for (uint8_t i = 0; i < HWID_PINS; i++)
     {
         digitalWrite(_hwid[i], INPUT_PULLUP);
     }
@@ -83,7 +83,7 @@ void HWIO_class::setAHT10()
     #endif
 }
 
-void HWIO_class::getAHT10(double &temperature, double &humidity)
+void HWIO_class::getAHT10(float &temperature, float &humidity)
 {
     sensors_event_t aht10_humidity, aht10_temperature;
     
