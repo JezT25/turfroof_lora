@@ -45,7 +45,7 @@ class HWIO_class
         void setGPIO();
         void getHWID(uint8_t &hwid);
         void setAHT10();
-        void getAHT10(float &temperature, float &humidity);
+        void getAHT10(double &temperature, double &humidity);
 
     public:
         void Initialize(IDATA *IData);

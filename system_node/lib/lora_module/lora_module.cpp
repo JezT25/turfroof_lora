@@ -258,7 +258,7 @@ void LORA_MODULE_class::processPayloadData()
 	char *token = strtok(buffer, ",");
 
 	// Store data to tempValues
-	float tempValues[MAX_DEVICES] = {};
+	double tempValues[MAX_DEVICES] = {};
 	uint8_t index = 0;
 	while (token != nullptr && index < MAX_DEVICES)
 	{
@@ -271,7 +271,7 @@ void LORA_MODULE_class::processPayloadData()
 	for (uint8_t i = 0; i < MAX_DEVICES; i++)
 	{
 		//	Merge current values with data from Payload only when new data is different
-		if (tempValues[i] != _systemValues[i])
+		if (fabs(tempValues[i] - _systemValues[i]) > EPSILON)
 		{
 			_sendAttempts = 0;
 
@@ -299,7 +299,8 @@ void LORA_MODULE_class::processPayloadData()
 
 void LORA_MODULE_class::sendPayloadData()
 {
-	// Reset new Payload alert
+	// Reset new Payload alert and last update to prevent forever looping messages
+	_lastSystemUpdateTime = millis();
 	_newpayloadAlert = false;
 
 	// No need to send when reached send limit

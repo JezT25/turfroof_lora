@@ -29,15 +29,15 @@ class IDATA
 
 		uint8_t HW_ID	            =	  0;
 
-		float SYSTEM_TEMPERATURE  =   0;
+		double SYSTEM_TEMPERATURE  =   0;
 
-		float SYSTEM_HUMIDITY     =   0;
+		double SYSTEM_HUMIDITY     =   0;
 
-		float SOIL_TEMPERATURE    =   0;
+		double SOIL_TEMPERATURE    =   0;
 
-		float SOIL_MOISTURE       =   0;
+		double SOIL_MOISTURE       =   0;
 
-		float BATTERY_VOLTAGE     =   0;
+		double BATTERY_VOLTAGE     =   0;
 };
 
 #endif

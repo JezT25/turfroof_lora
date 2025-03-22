@@ -25,9 +25,9 @@
 
 #define SYSTEM_VER      0.05
 
+/* Uncomment for Serial Prints */
 #define DEBUGGING
 #define SERIAL_BAUD     115200
-#define DECIMAL_VALUES  3
 
 #include <Arduino.h>
 #include <Wire.h>

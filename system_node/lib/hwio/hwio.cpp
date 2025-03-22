@@ -83,7 +83,7 @@ void HWIO_class::setAHT10()
     #endif
 }
 
-void HWIO_class::getAHT10(float &temperature, float &humidity)
+void HWIO_class::getAHT10(double &temperature, double &humidity)
 {
     sensors_event_t aht10_humidity, aht10_temperature;
     
