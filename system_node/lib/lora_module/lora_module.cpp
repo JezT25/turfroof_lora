@@ -116,6 +116,20 @@ bool LORA_MODULE_class::getLoRaPayload()
 		_loraPayload += (char)LoRa.read();
 	}
 
+	#ifdef ENCRYPTING
+		#ifdef DEBUGGING
+			Serial.println("Encrypted Payload: " + _loraPayload);
+		#endif
+
+		uint8_t lora_len = _loraPayload.length() + 1; // +1 space for null terminator
+		char decryptedPayload[lora_len];
+		_loraPayload.toCharArray(decryptedPayload, lora_len);
+
+		rc4EncryptDecrypt(decryptedPayload, lora_len);
+
+		_loraPayload = String(decryptedPayload);	
+	#endif
+
 	#ifdef DEBUGGING
 		//	Print LoRa Payload
 		Serial.println("Payload: " + _loraPayload);
@@ -254,8 +268,9 @@ void LORA_MODULE_class::processPayloadData()
 	uint8_t startIdx = _loraPayload.indexOf('[');
 	uint8_t endIdx = _loraPayload.indexOf(']');
 	String arrayContent = _loraPayload.substring(startIdx + 1, endIdx);
-	char buffer[arrayContent.length() + 1];
-	arrayContent.toCharArray(buffer, arrayContent.length() + 1);
+	uint8_t array_len = arrayContent.length() + 1;
+	char buffer[array_len];
+	arrayContent.toCharArray(buffer, array_len);
 	char *token = strtok(buffer, ",");
 
 	// Store data to tempValues
@@ -316,11 +331,35 @@ void LORA_MODULE_class::sendPayloadData()
 
 	// Create new Payload
 	String relay_message;
-	relay_message.reserve(MAX_DEVICES * (DECIMAL_VALUES + 2));
+	relay_message.reserve(MAX_MESSAGE_LENGTH);
 	for (uint8_t i = 0; i < MAX_DEVICES; i++)
 	{
-		relay_message += (_systemValues[i] == 0 ? "*" : String(_systemValues[i], DECIMAL_VALUES)) + (i < MAX_DEVICES - 1 ? "," : "");
+		relay_message += (_systemValues[i] == 0 ? String(BLANK_PLACEHOLDER) : String(_systemValues[i], DECIMAL_VALUES)) + (i < MAX_DEVICES - 1 ? "," : "");
 	}
+	String sendPayload = _loraprevHeader + "[" + relay_message + "]";
+	uint8_t payloadLen = sendPayload.length() + 1;	// +1 Space for null terminator
+
+	#ifdef DEBUGGING
+		Serial.println("Payload to Send: " + sendPayload);
+	#endif
+
+	// Encryption
+	#ifdef ENCRYPTING
+		char encryptedPayload[payloadLen] = {0};
+		sendPayload.toCharArray(encryptedPayload, payloadLen);
+
+		// Encrypt Data
+		rc4EncryptDecrypt(encryptedPayload, payloadLen);
+
+		#ifdef DEBUGGING
+			Serial.print("Encrypted Message: ");
+			for (uint8_t i = 0; i < payloadLen; i++)
+			{
+				Serial.print(encryptedPayload[i]);
+			}
+			Serial.println();
+		#endif
+	#endif
 	
 	// CSMA/CA (Carrier Sense Multiple Access with Collision Avoidance)
 	while (_sendAttempts < SEND_ATTEMPTS)
@@ -349,19 +388,58 @@ void LORA_MODULE_class::sendPayloadData()
 			}
 		}
 
-		String sendPayload = _loraprevHeader + "[" + relay_message + "]";
-
+		// Send the payload over LoRa
 		LoRa.beginPacket();
-		LoRa.print(sendPayload);
+		#ifdef ENCRYPTING
+			LoRa.write((uint8_t*)encryptedPayload, payloadLen - 1);	 			// -1 Don't send null terminator
+		#else
+			LoRa.write((const uint8_t*)sendPayload.c_str(), payloadLen - 1);	// -1 Don't send null terminator
+		#endif
 		LoRa.endPacket();
 
+		// Debugging output for the sent message
 		#ifdef DEBUGGING
-			Serial.println("\nSends: " + String(_sendAttempts + 1) + "/" + String(SEND_ATTEMPTS));
-			Serial.println("Message sent successfully: " + sendPayload);
+			Serial.println("\nPayload Sent Sucessfully! (" + String(_sendAttempts + 1) + "/" + String(SEND_ATTEMPTS) + ")");
 		#endif
 
 		// Increment attempts
 		_sendAttempts++;
 		_lastSystemUpdateTime = millis();
 	}
+}
+
+void LORA_MODULE_class::rc4EncryptDecrypt(char *data, uint8_t len)
+{
+	// Using RC4 Modified because originally AES was the plan but the RAM/CPU on this thing cant take it.
+	// RC4 uses 256 bytes to randomize but that needs int. RAM/CPU is dying so switch to uint_8 which is up to 255 🤯
+	// So ok we use 255, RAM/CPU still dies! Kinda works with Serial Off, but for the sake of this I will lower it to 128 or even 64.
+	// Might use 255 for final since serial will be off, depends on reliability
+
+    uint8_t S[RC4_BYTES];
+    for (uint8_t i = 0; i < RC4_BYTES; i++)
+	{
+		S[i] = i;
+	}
+
+    uint8_t j = 0, temp;
+	uint8_t enc_len = strlen(ENCRYPTION_KEY);
+    for (uint8_t i = 0; i < RC4_BYTES; i++)
+	{
+        j = (j + S[i] + ENCRYPTION_KEY[i % enc_len]) % RC4_BYTES;
+        temp = S[i];
+        S[i] = S[j];
+        S[j] = temp;
+    }
+
+    uint8_t rnd = 0, i = 0; j = 0;
+    for (uint8_t n = 0; n < len - 1; n++)	// -1 dont encrypt null terminator
+	{
+        i = (i + 1) % RC4_BYTES;
+        j = (j + S[i]) % RC4_BYTES;
+        temp = S[i];
+        S[i] = S[j];
+        S[j] = temp;
+        rnd = S[(S[i] + S[j]) % RC4_BYTES];
+        data[n] ^= rnd;
+    }
 }

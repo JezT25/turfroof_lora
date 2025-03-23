@@ -24,17 +24,24 @@
 #define system_node_hpp_included
 
 #define SYSTEM_VER      0.05
-#define AES_KEY				  "G7v!Xz@pL9#qKd2M"
 
-/* Uncomment for Serial Prints */
+// Toggles: Comment or Uncomment to Disable or Enable
 #define DEBUGGING
+#define ENCRYPTING
+
+// Debugging Settings
 #define SERIAL_BAUD     115200
+
+// Encryption Settings
+// TODO: 128 with serial off. 64 or dont encrypt with serial on. maybe even try shortening password
+#define RC4_BYTES			  128
+#define ENCRYPTION_KEY  "G7v!Xz@pL9#qKd2M"
 
 #include <Arduino.h>
 #include <Wire.h>
 #include <SPI.h>
-// #include <SD.h>
 #include <LoRa.h>
+#include <SDCore.h>
 // #include <DS3231.h>
 #include <Adafruit_AHTX0.h>
 #include <avr/sleep.h>

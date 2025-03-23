@@ -50,6 +50,7 @@
 // Algorithm Settings
 #define START_OF_BRACKET	5
 #define DECIMAL_VALUES  	5
+#define MAX_MESSAGE_LENGTH  86
 #define EPSILON         	0.0001
 #define BLANK_PLACEHOLDER	'*'
 
@@ -89,6 +90,7 @@ class LORA_MODULE_class
 		String _loraPayload;
 		String _loraprevHeader;
 		
+		void rc4EncryptDecrypt(char *data, uint8_t len);
 		void loadsensorData(IDATA IData);
 		void resetValues();
 		bool getLoRaPayload();
