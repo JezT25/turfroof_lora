@@ -56,6 +56,10 @@ void SYSTEM_class::Run()
 	}
 
 	// _sd_module.logdatatoSD();
+
+	#ifdef DEBUGGING
+		displayfreeRAM();
+	#endif
 }
 
 
@@ -135,3 +139,18 @@ inline void SYSTEM_class::wakeonRTC()
 {
 
 }
+
+#ifdef DEBUGGING
+	uint16_t SYSTEM_class::freeRAM() 
+	{
+		extern uint16_t __heap_start,*__brkval;
+		uint16_t v;
+		return (uint16_t)&v - (__brkval == 0 ? (uint16_t)&__heap_start : (uint16_t) __brkval);  
+	}
+
+	void SYSTEM_class::displayfreeRAM()
+	{
+		Serial.print(F("SRAM Left = "));
+		Serial.println(freeRAM());
+	}
+#endif

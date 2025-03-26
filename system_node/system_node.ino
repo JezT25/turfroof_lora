@@ -21,16 +21,29 @@
 */
 
 	// TODO: BUY
+	// soldering lead!
+	// battery 18650!
+	// SD CARD MODULE 3.3V
+	// LORA broken and alternatives
+	// dip switches
+	// rtc?
+
+	// DONE BUY:
 	// CHANGE TO PRO MINI 3.3V
 	// buy ds18b20 temp sensor
-	// sht31 for humidity outside
 	// soil moisture sensor
-	// battery 3.3!
 
+	// make sure to power in proper pin to reduce current
 	// MAKE SURE TO POWER SENSORS USING GPIO PINS FOR SAVING POWER!!!!!!!!
 	// CAN LORA SLEEP?
 
-	// make sure to power in proper pin to reduce current
+	// check how many bounces and determine somethingd wrong
+	// magic bytes?
+	// for thesis graph the backout and timeout
+
+	//Method:
+	// sleep all > alarm 1 > wake-turn on lora - sleep mcu > lora things > alarm2 > sd card > sleep all
+	
 
 	/*
 		Summary of methods

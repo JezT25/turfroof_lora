@@ -45,6 +45,9 @@ bool LORA_MODULE_class::Initialize(IDATA IData)
     LoRa.setCodingRate4(CODING_RATE);
     LoRa.setPreambleLength(PREAMBLE);
 
+	// Enable CRC
+	LoRa.enableCrc();
+
 	// Set HW ID
 	_hwid = IData.HW_ID;
 
@@ -408,38 +411,40 @@ void LORA_MODULE_class::sendPayloadData()
 	}
 }
 
-void LORA_MODULE_class::rc4EncryptDecrypt(char *data, uint8_t len)
-{
-	// Using RC4 Modified because originally AES was the plan but the RAM/CPU on this thing cant take it.
-	// RC4 uses 256 bytes to randomize but that needs int. RAM/CPU is dying so switch to uint_8 which is up to 255 🤯
-	// So ok we use 255, RAM/CPU still dies! Kinda works with Serial Off, but for the sake of this I will lower it to 128 or even 64.
-	// Might use 255 for final since serial will be off, depends on reliability
-
-    uint8_t S[RC4_BYTES];
-    for (uint8_t i = 0; i < RC4_BYTES; i++)
+#ifdef ENCRYPTING
+	void LORA_MODULE_class::rc4EncryptDecrypt(char *data, uint8_t len)
 	{
-		S[i] = i;
+		// Using RC4 Modified because originally AES was the plan but the RAM/CPU on this thing cant take it.
+		// RC4 uses 256 bytes to randomize but that needs int. RAM/CPU is dying so switch to uint_8 which is up to 255 🤯
+		// So ok we use 255, RAM/CPU still dies! Kinda works with Serial Off, but for the sake of this I will lower it to 128 or even 64.
+		// Might use 255 for final since serial will be off, depends on reliability
+
+		uint8_t S[RC4_BYTES];
+		for (uint8_t i = 0; i < RC4_BYTES; i++)
+		{
+			S[i] = i;
+		}
+
+		uint8_t j = 0, temp;
+		uint8_t enc_len = strlen(ENCRYPTION_KEY);
+		for (uint8_t i = 0; i < RC4_BYTES; i++)
+		{
+			j = (j + S[i] + ENCRYPTION_KEY[i % enc_len]) % RC4_BYTES;
+			temp = S[i];
+			S[i] = S[j];
+			S[j] = temp;
+		}
+
+		uint8_t rnd = 0, i = 0; j = 0;
+		for (uint8_t n = 0; n < len - 1; n++)	// -1 dont encrypt null terminator
+		{
+			i = (i + 1) % RC4_BYTES;
+			j = (j + S[i]) % RC4_BYTES;
+			temp = S[i];
+			S[i] = S[j];
+			S[j] = temp;
+			rnd = S[(S[i] + S[j]) % RC4_BYTES];
+			data[n] ^= rnd;
+		}
 	}
-
-    uint8_t j = 0, temp;
-	uint8_t enc_len = strlen(ENCRYPTION_KEY);
-    for (uint8_t i = 0; i < RC4_BYTES; i++)
-	{
-        j = (j + S[i] + ENCRYPTION_KEY[i % enc_len]) % RC4_BYTES;
-        temp = S[i];
-        S[i] = S[j];
-        S[j] = temp;
-    }
-
-    uint8_t rnd = 0, i = 0; j = 0;
-    for (uint8_t n = 0; n < len - 1; n++)	// -1 dont encrypt null terminator
-	{
-        i = (i + 1) % RC4_BYTES;
-        j = (j + S[i]) % RC4_BYTES;
-        temp = S[i];
-        S[i] = S[j];
-        S[j] = temp;
-        rnd = S[(S[i] + S[j]) % RC4_BYTES];
-        data[n] ^= rnd;
-    }
-}
+#endif

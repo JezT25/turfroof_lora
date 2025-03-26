@@ -27,7 +27,7 @@
 
 // Toggles: Comment or Uncomment to Disable or Enable
 #define DEBUGGING
-#define ENCRYPTING
+// #define ENCRYPTING
 
 // Debugging Settings
 #define SERIAL_BAUD     115200

@@ -41,6 +41,9 @@ void setup() {
   LoRa.setSyncWord(SYNC_WORD);
   LoRa.setTxPower(TX_POWER);
 
+  // Enable CRC
+	LoRa.enableCrc();
+
   String message = "TEMP:[]";  // Message to send
 
   Serial.println("LoRa Transmitter Initialized at 433 MHz!");

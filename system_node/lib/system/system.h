@@ -40,6 +40,11 @@ class SYSTEM_class
 		static inline void wakeonLoRa();
         void entersleepMode();
 
+        #ifdef DEBUGGING
+            uint16_t freeRAM();
+            void displayfreeRAM();
+        #endif
+
     public:
         SYSTEM_class(SystemComponents& class_lib) : _IData(class_lib._IData), _hwio(class_lib._hwio), _lora_module(class_lib._lora_module) {}
         

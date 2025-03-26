@@ -79,8 +79,8 @@ class LORA_MODULE_class
 			"DATE:"
 		};
 
-		int _backoffTime;
-		int _csmaTimeout;
+		uint16_t _backoffTime;
+		uint16_t _csmaTimeout;
 		bool _newpayloadAlert;
 		uint8_t _hwid;
 		uint8_t _sendAttempts;
@@ -90,7 +90,6 @@ class LORA_MODULE_class
 		String _loraPayload;
 		String _loraprevHeader;
 		
-		void rc4EncryptDecrypt(char *data, uint8_t len);
 		void loadsensorData(IDATA IData);
 		void resetValues();
 		bool getLoRaPayload();
@@ -98,6 +97,11 @@ class LORA_MODULE_class
 		void preloadMessageData();
 		void processPayloadData();
 		void sendPayloadData();
+
+		#ifdef ENCRYPTING
+			void rc4EncryptDecrypt(char *data, uint8_t len);
+		#endif
+
 
     public:
 		bool Initialize(IDATA IData);

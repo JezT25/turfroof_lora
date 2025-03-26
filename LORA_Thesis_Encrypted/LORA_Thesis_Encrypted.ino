@@ -67,6 +67,9 @@ void setup() {
     LoRa.setSyncWord(SYNC_WORD);
     LoRa.setTxPower(TX_POWER);
 
+    // Enable CRC
+	LoRa.enableCrc();
+
     // Create message and encrypt it
     char message[] = "TEMP:[]";  
     int msgLen = strlen(message);
