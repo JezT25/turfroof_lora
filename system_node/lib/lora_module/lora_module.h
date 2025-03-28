@@ -27,7 +27,7 @@
 
 // LoRa Pins
 #define LORA_DI0			2
-#define LORA_RST			3
+#define LORA_RST			9
 #define LORA_NSS			4
 
 // LoRa Settings

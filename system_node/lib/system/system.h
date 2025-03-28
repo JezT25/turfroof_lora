@@ -30,8 +30,8 @@ class SYSTEM_class
     private:
         IDATA&              _IData;
         HWIO_class&         _hwio;	        // battery level? voltage divider
+        RTC_MODULE_class&   _rtc_module;
         LORA_MODULE_class&  _lora_module;	// encryption
-        // DS3231_class
         // SD_CARD
 
 		static volatile bool _wokenbyLoRa;
@@ -46,7 +46,7 @@ class SYSTEM_class
         #endif
 
     public:
-        SYSTEM_class(SystemComponents& class_lib) : _IData(class_lib._IData), _hwio(class_lib._hwio), _lora_module(class_lib._lora_module) {}
+        SYSTEM_class(SystemComponents& class_lib) : _IData(class_lib._IData), _hwio(class_lib._hwio), _rtc_module(class_lib._rtc_module), _lora_module(class_lib._lora_module) {}
         
         void Initialize();
         void Run();

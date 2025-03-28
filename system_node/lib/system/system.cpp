@@ -85,7 +85,7 @@ void SYSTEM_class::entersleepMode()
 
 	// Attach interrupts for wake
 	attachInterrupt(digitalPinToInterrupt(LORA_DI0), wakeonLoRa, RISING);
-	// attachInterrupt(digitalPinToInterrupt(xxxxxxxxx), wakeonRTC, RISING);
+	attachInterrupt(digitalPinToInterrupt(RTC_INT), wakeonRTC, FALLING);
 	EIFR = bit(INTF0);
 
 	// Set sleep settings and interrupt wake
@@ -122,7 +122,7 @@ void SYSTEM_class::entersleepMode()
 
 	// Disable interrupts
 	detachInterrupt(digitalPinToInterrupt(LORA_DI0));
-	// detachInterrupt(digitalPinToInterrupt(xxxxxxxxx));
+	detachInterrupt(digitalPinToInterrupt(RTC_INT));
 
 	#ifdef DEBUGGING
 		delay(50);

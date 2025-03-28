@@ -42,7 +42,7 @@
 #include <SPI.h>
 #include <LoRa.h>
 #include <SDCore.h>
-// #include <DS3231.h>
+#include <DS3232RTC.h>
 #include <Adafruit_AHTX0.h>
 #include <avr/sleep.h>
 #include <avr/power.h>
@@ -50,6 +50,8 @@
 #include "IDevice.h"
 #include "hwio/hwio.h"
 #include "hwio/hwio.cpp"
+#include "rtc_module/rtc_module.h"
+#include "rtc_module/rtc_module.cpp"
 #include "lora_module/lora_module.h"
 #include "lora_module/lora_module.cpp"
 
@@ -60,6 +62,7 @@ struct SystemComponents
 
     // Hardware Classes
     HWIO_class          _hwio;
+    RTC_MODULE_class    _rtc_module;
     LORA_MODULE_class   _lora_module;
 };
 SystemComponents class_lib;
