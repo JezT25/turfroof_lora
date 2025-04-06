@@ -20,22 +20,10 @@
   ============================================================
 */
 
-	// TODO: BUY
-	// soldering lead!
-	// battery 18650!
-	// SD CARD MODULE 3.3V
-	// LORA broken and alternatives
-	// dip switches
-	// rtc?
-
-	// DONE BUY:
-	// CHANGE TO PRO MINI 3.3V
-	// buy ds18b20 temp sensor
-	// soil moisture sensor
-
 	// make sure to power in proper pin to reduce current
 	// MAKE SURE TO POWER SENSORS USING GPIO PINS FOR SAVING POWER!!!!!!!!
 	// CAN LORA SLEEP?
+	// if battery lower than x amount forecver sleep and sd card only?
 
 	// check how many bounces and determine somethingd wrong
 	// magic bytes?
@@ -43,6 +31,8 @@
 
 	//Method:
 	// sleep all > alarm 1 > wake-turn on lora - sleep mcu > lora things > alarm2 > sd card > sleep all
+
+	// MAKE VERSION PCB LORA HAS DIFFERENT POWER ON SWITCHEROO
 	
 
 	/*

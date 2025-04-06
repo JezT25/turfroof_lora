@@ -23,11 +23,12 @@
 #ifndef system_node_hpp_included
 #define system_node_hpp_included
 
-#define SYSTEM_VER      0.05
+#define SYSTEM_VER      0.06
 
 // Toggles: Comment or Uncomment to Disable or Enable
 #define DEBUGGING
 // #define ENCRYPTING
+// #define SET_RTC_TIME
 
 // Debugging Settings
 #define SERIAL_BAUD     115200
@@ -37,7 +38,6 @@
 #define RC4_BYTES			  128
 #define ENCRYPTION_KEY  "G7v!Xz@pL9#qKd2M"
 
-#include <Arduino.h>
 #include <Wire.h>
 #include <SPI.h>
 #include <LoRa.h>

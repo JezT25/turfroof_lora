@@ -26,14 +26,29 @@
 #include "../system_node.hpp"
 
 // DS3231 Pins
-#define RTC_INT	3
+#define RTC_INT			3
+
+#define ALARM1_MIN		0
+#define ALARM2_MIN		5
+
+#define NO_TRIGGER		0
+#define ALARM1_TRIGGER	1
+#define ALARM2_TRIGGER	2
 
 class RTC_MODULE_class
 {
     private:
+    	DS3232RTC _rtc;
+		
+		#ifdef DEBUGGING
+			void printtimedate(time_t t);
+			void settimefromPC();
+		#endif
 
     public:
-		bool Initialize();
+        bool Initialize();
+        bool Sync();
+        uint8_t checkAlarm();
 };
 
 #endif

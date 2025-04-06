@@ -66,20 +66,19 @@ bool LORA_MODULE_class::Initialize(IDATA IData)
     return true;
 }
 
-void LORA_MODULE_class::loadsensorData(IDATA IData)
+void LORA_MODULE_class::loadSensorData(IDATA IData)
 {
 	_sensorData[TEMPERATURE] = IData.SYSTEM_TEMPERATURE;
 	_sensorData[HUMIDITY] = IData.SYSTEM_HUMIDITY;
 	_sensorData[SOIL_TEMPERATURE] = IData.SOIL_TEMPERATURE;
 	_sensorData[SOIL_MOISTURE] = IData.SOIL_MOISTURE;
 	_sensorData[BATT_VOLTAGE] = IData.BATTERY_VOLTAGE;
+
+	resetValues();
 }
 
 void LORA_MODULE_class::startLoRaMesh(IDATA IData)
 {
-	loadsensorData(IData);
-	resetValues();
-
 	while (millis() - _lastSystemUpdateTime <= LORA_WAKE_TIMEOUT)
 	{
 		if (LoRa.parsePacket() || _newpayloadAlert)

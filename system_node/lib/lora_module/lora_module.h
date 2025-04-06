@@ -90,7 +90,6 @@ class LORA_MODULE_class
 		String _loraPayload;
 		String _loraprevHeader;
 		
-		void loadsensorData(IDATA IData);
 		void resetValues();
 		bool getLoRaPayload();
 		bool checkMessageValidity();
@@ -105,6 +104,7 @@ class LORA_MODULE_class
 
     public:
 		bool Initialize(IDATA IData);
+		void loadSensorData(IDATA IData);
 		void startLoRaMesh(IDATA IData);
 };
 

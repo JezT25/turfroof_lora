@@ -23,12 +23,16 @@
 #include "../system_node.hpp"
 
 // Define static functions
-volatile bool SYSTEM_class::_wokenbyLoRa = false;  
+volatile bool SYSTEM_class::_interruptbyLoRa = false;
+volatile bool SYSTEM_class::_interruptbyRTC = false;  
 
 void SYSTEM_class::Initialize()
 {
 	// Initialize Hardware
 	_hwio.Initialize(&_IData);
+
+	// Initialize RTC Module
+	_rtc_module.Initialize();
 
 	// Intialize Modules
 	_hwio.Initialize_Modules(&_IData);
@@ -41,27 +45,43 @@ void SYSTEM_class::Initialize()
 		Serial.println(SYSTEM_VER);
 		Serial.println(".........................");
 	#endif
+
+	// Enter Sleep Mode
+	entersleepMode();
 }
 
 void SYSTEM_class::Run()
 {
-	entersleepMode();
-
-	_hwio.loadSensorData(&_IData);
-
-	if (_wokenbyLoRa)
+	if(_interruptbyRTC)
 	{
-		_lora_module.startLoRaMesh(_IData);
-		_wokenbyLoRa = false;
+		uint8_t alarm_trigger = _rtc_module.checkAlarm();
+		_interruptbyRTC = false;
+
+		if (alarm_trigger == ALARM1_TRIGGER)
+		{
+			_hwio.loadSensorData(&_IData);
+			_lora_module.loadSensorData(_IData);
+		}
+		else if (alarm_trigger == ALARM2_TRIGGER)
+		{
+			// _sd_module.logdatatoSD();
+			entersleepMode();
+		}
 	}
+	else if (_interruptbyLoRa)
+	{
+		_interruptbyLoRa = false;
+		_lora_module.startLoRaMesh(_IData);
 
-	// _sd_module.logdatatoSD();
-
-	#ifdef DEBUGGING
-		displayfreeRAM();
-	#endif
+		#ifdef DEBUGGING
+			displayfreeRAM();
+		#endif
+	}
+	else
+	{
+		enterlightsleepMode();
+	}
 }
-
 
 void SYSTEM_class::entersleepMode()
 {
@@ -70,32 +90,65 @@ void SYSTEM_class::entersleepMode()
         delay(50);
     #endif
 
+	// TODO: Turn off other devices
+	// _hwio.toggleModules(GPIO_SLEEP);
+	// _hwio.setGPIO(GPIO_SLEEP);
+
+	// Remove LoRa wake privileges and clear interrupt flags
 	noInterrupts();
-
-	// Set LoRa to Recieve mode to wake on signal
-	// TODO: Set LoRa to lower Power?
-	LoRa.receive();
-
-	// Turn off other devices
-
-
-	// Disable ADC and watchdog to save power
-    ADCSRA = OFF;
-    WDTCSR = OFF;
-
-	// Attach interrupts for wake
-	attachInterrupt(digitalPinToInterrupt(LORA_DI0), wakeonLoRa, RISING);
+	detachInterrupt(digitalPinToInterrupt(LORA_DI0));
 	attachInterrupt(digitalPinToInterrupt(RTC_INT), wakeonRTC, FALLING);
 	EIFR = bit(INTF0);
+	EIFR = bit(INTF1);
+	gotosleep();
+
+	// TODO: Turn on other devices
+	// TODO: Do I have to reinitialize?
+	// _hwio.toggleModules(GPIO_WAKE);
+	// _hwio.setGPIO(GPIO_WAKE);
+	_rtc_module.Sync();
+	attachInterrupt(digitalPinToInterrupt(LORA_DI0), wakeonLoRa, RISING);
+}
+
+void SYSTEM_class::enterlightsleepMode()
+{
+    #ifdef DEBUGGING
+        Serial.println("Entering Light Sleep Mode...");
+        delay(50);
+    #endif
+
+	// For version 2 here: disable sensors while keeping LoRa on
+
+	// TODO: Turn on other devices
+	// _hwio.setGPIO(GPIO_SLEEP);
+	LoRa.receive();	
+
+	// Set Interrupts and Sleep
+	noInterrupts();
+	attachInterrupt(digitalPinToInterrupt(LORA_DI0), wakeonLoRa, RISING);
+	EIFR = bit(INTF0);
+	gotosleep();
+	detachInterrupt(digitalPinToInterrupt(LORA_DI0));
+
+	// TODO: Turn on other devices
+	// _hwio.setGPIO(GPIO_WAKE);
+	_rtc_module.Sync();
+}
+
+inline void SYSTEM_class::gotosleep()
+{
+	// Disable ADC and watchdog to save power
+	ADCSRA = OFF;
+	WDTCSR = OFF;
 
 	// Set sleep settings and interrupt wake
 	set_sleep_mode(SLEEP_MODE_PWR_DOWN);
 	power_adc_disable();
-    power_spi_disable();
-    power_timer0_disable();
-    power_timer1_disable();
-    power_timer2_disable();
-    power_twi_disable();
+	power_spi_disable();
+	power_timer0_disable();
+	power_timer1_disable();
+	power_timer2_disable();
+	power_twi_disable();
 
 	sleep_enable();
 
@@ -117,27 +170,18 @@ void SYSTEM_class::entersleepMode()
 
 	// Power on!
 	power_all_enable();
-    ADCSRA = (ON << ADEN); 
+	ADCSRA = (ON << ADEN); 
 	clock_prescale_set(clock_div_1);
-
-	// Disable interrupts
-	detachInterrupt(digitalPinToInterrupt(LORA_DI0));
-	detachInterrupt(digitalPinToInterrupt(RTC_INT));
-
-	#ifdef DEBUGGING
-		delay(50);
-		_wokenbyLoRa ? Serial.println("LoRa Woke Me Up!") : Serial.println("RTC Woke Me Up!");	
-	#endif
 }
 
 inline void SYSTEM_class::wakeonLoRa()
 {
-	_wokenbyLoRa = true;
+	_interruptbyLoRa = true;
 }
 
 inline void SYSTEM_class::wakeonRTC()
 {
-
+	_interruptbyRTC = true;
 }
 
 #ifdef DEBUGGING

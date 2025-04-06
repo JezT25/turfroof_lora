@@ -29,16 +29,19 @@ class SYSTEM_class
 {
     private:
         IDATA&              _IData;
-        HWIO_class&         _hwio;	        // battery level? voltage divider
+        HWIO_class&         _hwio;	        // battery level? voltage divider / temp sensor and capacitive sensor
         RTC_MODULE_class&   _rtc_module;
-        LORA_MODULE_class&  _lora_module;	// encryption
+        LORA_MODULE_class&  _lora_module;
         // SD_CARD
 
-		static volatile bool _wokenbyLoRa;
+		static volatile bool _interruptbyLoRa;
+        static volatile bool _interruptbyRTC;
 
 		static inline void wakeonRTC();
 		static inline void wakeonLoRa();
+        inline void gotosleep();
         void entersleepMode();
+        void enterlightsleepMode();
 
         #ifdef DEBUGGING
             uint16_t freeRAM();
