@@ -22,7 +22,7 @@
 
 #include "../system_node.hpp"
 
-bool LORA_MODULE_class::Initialize(IDATA IData)
+void LORA_MODULE_class::Initialize(IDATA IData)
 {	
 	// Configure Pins
     LoRa.setPins(LORA_NSS, LORA_RST, LORA_DI0);
@@ -33,8 +33,6 @@ bool LORA_MODULE_class::Initialize(IDATA IData)
 		#ifdef DEBUGGING
 			Serial.println("ERROR: LoRa Initialization Failed!");
 		#endif
-
-		return false;
 	}
 
 	// Setup Settings
@@ -62,8 +60,6 @@ bool LORA_MODULE_class::Initialize(IDATA IData)
 		Serial.println(_csmaTimeout);
     	Serial.println("LoRa Setup Complete!");
 	#endif
-
-    return true;
 }
 
 void LORA_MODULE_class::loadSensorData(IDATA IData)

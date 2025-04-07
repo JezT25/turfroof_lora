@@ -22,7 +22,7 @@
 
 #include "../system_node.hpp"
 
-bool RTC_MODULE_class::Initialize()
+void RTC_MODULE_class::Initialize()
 {
 	// Initialize and Clear Flags
     _rtc.begin();
@@ -57,7 +57,7 @@ bool RTC_MODULE_class::Initialize()
     _rtc.writeRTC(DS3232RTC::DS32_CONTROL, reg);
 }
 
-bool RTC_MODULE_class::Sync()
+void RTC_MODULE_class::Sync()
 {
 	setSyncProvider(_rtc.get);
 	#ifdef DEBUGGING

@@ -57,11 +57,11 @@ void SYSTEM_class::Run()
 		if (alarm_trigger == ALARM1_TRIGGER)
 		{
 			_hwio.loadSensorData(&_IData);
+			_sd_card_module.logData(_IData);
 			_lora_module.loadSensorData(_IData);
 		}
 		else if (alarm_trigger == ALARM2_TRIGGER)
 		{
-			// _sd_module.logdatatoSD();
 			entersleepMode();
 		}
 	}
@@ -127,7 +127,7 @@ void SYSTEM_class::enterlightsleepMode()
 	detachInterrupt(digitalPinToInterrupt(LORA_DI0));
 
 	// Turn on other devices
-	_hwio.toggleModules(_hwio.GPIO_WAKE);
+	_hwio.toggleModules(_hwio.GPIO_WAKE); // todo: u know this can be forever off now since sensor data has been gathered
 	delay(DELAY_SMALL); // Wait for modules to boot
 
 	// Boot Devices

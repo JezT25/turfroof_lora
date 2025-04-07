@@ -29,10 +29,11 @@
 	// magic bytes?
 	// for thesis graph the backout and timeout
 
-	//Method:
-	// sleep all > alarm 1 > wake-turn on lora - sleep mcu > lora things > alarm2 > sd card > sleep all
-
 	// MAKE VERSION PCB LORA HAS DIFFERENT POWER ON SWITCHEROO
+
+	//todo:
+	// check input pullups?
+	// check if all are inputs?
 	
 
 	/*

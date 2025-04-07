@@ -103,7 +103,7 @@ class LORA_MODULE_class
 
 
     public:
-		bool Initialize(IDATA IData);
+		void Initialize(IDATA IData);
 		void loadSensorData(IDATA IData);
 		void startLoRaMesh(IDATA IData);
 };

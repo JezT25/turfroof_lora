@@ -41,7 +41,7 @@
 #include <Wire.h>
 #include <SPI.h>
 #include <LoRa.h>
-#include <SDCore.h>
+// #include <SdFat.h>
 #include <OneWire.h>
 #include <DS3232RTC.h>
 #include <DallasTemperature.h>
@@ -56,16 +56,19 @@
 #include "rtc_module/rtc_module.cpp"
 #include "lora_module/lora_module.h"
 #include "lora_module/lora_module.cpp"
+#include "sd_card_module/sd_card_module.h"
+#include "sd_card_module/sd_card_module.cpp"
 
 struct SystemComponents
 {
     // Data Handling Classes
-    IDATA               _IData;
+    IDATA                 _IData;
 
     // Hardware Classes
-    HWIO_class          _hwio;
-    RTC_MODULE_class    _rtc_module;
-    LORA_MODULE_class   _lora_module;
+    HWIO_class            _hwio;
+    RTC_MODULE_class      _rtc_module;
+    LORA_MODULE_class     _lora_module;
+    SD_CARD_MODULE_class  _sd_card_module;
 };
 SystemComponents class_lib;
 
