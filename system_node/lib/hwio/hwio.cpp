@@ -36,15 +36,12 @@ void HWIO_class::Initialize(IDATA *IData)
     interrupts();
 }
 
-void HWIO_class::Initialize_Modules(IDATA *IData)
-{
-    setAHT10();
-}
-
 void HWIO_class::loadSensorData(IDATA *IData)
 {
     getBattery(IData->BATTERY_VOLTAGE);
     getAHT10(IData->SYSTEM_TEMPERATURE, IData->SYSTEM_HUMIDITY);
+    getSoilTemperature(IData->SOIL_TEMPERATURE);
+    getSoilMoisture(IData->SOIL_MOISTURE);
 }
 
 void HWIO_class::setGPIO()
@@ -114,27 +111,15 @@ void HWIO_class::getBattery(float &battery)
     battery = batteryvoltage;
 }
 
-void HWIO_class::setAHT10()
-{
-    if (!_aht10.begin())
-    {
-        #ifdef DEBUGGING
-            Serial.println("ERROR: Failed to Initialize AHT10!");
-        #endif
-
-        return;
-    }
-
-    #ifdef DEBUGGING
-        Serial.println("AHT10 Setup Complete!");
-    #endif
-}
-
 void HWIO_class::getAHT10(float &temperature, float &humidity)
 {
+    Adafruit_AHTX0 aht10;
     sensors_event_t aht10_humidity, aht10_temperature;
+
+    // Initialize AHT10
+    aht10.begin();
     
-    if (_aht10.getEvent(&aht10_humidity, &aht10_temperature))
+    if (aht10.getEvent(&aht10_humidity, &aht10_temperature))
     {
         #ifdef DEBUGGING
             Serial.print("Temperature: ");
@@ -155,4 +140,37 @@ void HWIO_class::getAHT10(float &temperature, float &humidity)
             Serial.println("ERROR: Failed to read AHT10 sensor data.");
         #endif
     }
+}
+
+void HWIO_class::getSoilTemperature(float &temperature)
+{
+    OneWire oneWire(STEMP_IN);
+    DallasTemperature ds18b20(&oneWire);
+
+    // Initialize DS18B20
+    ds18b20.begin();
+    ds18b20.requestTemperatures();
+
+    float soil_temperature = ds18b20.getTempCByIndex(0); 
+
+    #ifdef DEBUGGING
+        Serial.print("Soil Temperature: ");
+        Serial.print(soil_temperature);
+        Serial.println(" C");
+    #endif
+
+    temperature = soil_temperature;
+}
+
+void HWIO_class::getSoilMoisture(float &moisture)
+{
+    int moisturePercentage = map(analogRead(SMOIS_IN), 0, ADC_RESO, 0, MAX_PERCENT);
+
+    #ifdef DEBUGGING
+        Serial.print("Soil Moisture: ");
+        Serial.print(moisturePercentage);
+        Serial.println(" %");
+    #endif
+
+    moisture = moisturePercentage;
 }

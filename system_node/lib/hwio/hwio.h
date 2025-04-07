@@ -39,6 +39,7 @@
 #define R2          33000
 #define ADC_REF_VOL 3.3
 #define ADC_RESO    1023
+#define MAX_PERCENT 100
 
 #define OFF         0
 #define ON          1
@@ -49,13 +50,13 @@ class HWIO_class
 {
     private:
         uint8_t _hwid[HWID_PINS] = { HWID_A, HWID_B, HWID_C };
-        Adafruit_AHTX0 _aht10;
 
         void setGPIO();
         void getHWID(uint8_t &hwid);
-        void setAHT10();
-        void getAHT10(float &temperature, float &humidity);
         void getBattery(float &battery);
+        void getAHT10(float &temperature, float &humidity);
+        void getSoilTemperature(float &temperature);
+        void getSoilMoisture(float &moisture);
 
     public:
         enum _commandList : uint8_t
@@ -68,7 +69,6 @@ class HWIO_class
         };
 
         void Initialize(IDATA *IData);
-        void Initialize_Modules(IDATA *IData);
         void loadSensorData(IDATA *IData);
         void toggleModules(uint8_t command);
         void toggleModules(uint8_t command1, uint8_t command2);

@@ -42,7 +42,9 @@
 #include <SPI.h>
 #include <LoRa.h>
 #include <SDCore.h>
+#include <OneWire.h>
 #include <DS3232RTC.h>
+#include <DallasTemperature.h>
 #include <Adafruit_AHTX0.h>
 #include <avr/sleep.h>
 #include <avr/power.h>

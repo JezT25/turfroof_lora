@@ -31,7 +31,7 @@ class SYSTEM_class
 {
     private:
         IDATA&              _IData;
-        HWIO_class&         _hwio;	        // battery level? voltage divider / temp sensor and capacitive sensor
+        HWIO_class&         _hwio;
         RTC_MODULE_class&   _rtc_module;
         LORA_MODULE_class&  _lora_module;
         // SD_CARD

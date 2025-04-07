@@ -34,9 +34,6 @@ void SYSTEM_class::Initialize()
 	// Initialize RTC Module
 	_rtc_module.Initialize();
 
-	// Intialize Modules
-	_hwio.Initialize_Modules(&_IData);
-
 	// Initialize Lora Module
 	_lora_module.Initialize(_IData);
 
