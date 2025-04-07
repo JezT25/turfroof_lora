@@ -52,7 +52,7 @@ void SYSTEM_class::Initialize()
 
 void SYSTEM_class::Run()
 {
-	if(_interruptbyRTC)
+	if (_interruptbyRTC)
 	{
 		uint8_t alarm_trigger = _rtc_module.checkAlarm();
 		_interruptbyRTC = false;
@@ -87,12 +87,11 @@ void SYSTEM_class::entersleepMode()
 {
     #ifdef DEBUGGING
         Serial.println("Entering Sleep Mode...");
-        delay(50);
+        delay(DELAY_SMALL);
     #endif
 
-	// TODO: Turn off other devices
-	// _hwio.toggleModules(GPIO_SLEEP);
-	// _hwio.setGPIO(GPIO_SLEEP);
+	// Turn off LoRa and Modules
+	_hwio.toggleModules(_hwio.GPIO_SLEEP, _hwio.LORA_SLEEP);
 
 	// Remove LoRa wake privileges and clear interrupt flags
 	noInterrupts();
@@ -102,10 +101,12 @@ void SYSTEM_class::entersleepMode()
 	EIFR = bit(INTF1);
 	gotosleep();
 
-	// TODO: Turn on other devices
-	// TODO: Do I have to reinitialize?
-	// _hwio.toggleModules(GPIO_WAKE);
-	// _hwio.setGPIO(GPIO_WAKE);
+	// Turn on devices
+	_hwio.toggleModules(_hwio.GPIO_WAKE, _hwio.LORA_WAKE);
+	delay(DELAY_SMALL); // Wait for modules to boot
+
+	// TODO: Do I have to reinitialize lora?
+	// Boot Devices
 	_rtc_module.Sync();
 	attachInterrupt(digitalPinToInterrupt(LORA_DI0), wakeonLoRa, RISING);
 }
@@ -114,13 +115,11 @@ void SYSTEM_class::enterlightsleepMode()
 {
     #ifdef DEBUGGING
         Serial.println("Entering Light Sleep Mode...");
-        delay(50);
+        delay(DELAY_SMALL);
     #endif
 
-	// For version 2 here: disable sensors while keeping LoRa on
-
-	// TODO: Turn on other devices
-	// _hwio.setGPIO(GPIO_SLEEP);
+	// Turn off other devices
+	_hwio.toggleModules(_hwio.GPIO_SLEEP);
 	LoRa.receive();	
 
 	// Set Interrupts and Sleep
@@ -130,8 +129,11 @@ void SYSTEM_class::enterlightsleepMode()
 	gotosleep();
 	detachInterrupt(digitalPinToInterrupt(LORA_DI0));
 
-	// TODO: Turn on other devices
-	// _hwio.setGPIO(GPIO_WAKE);
+	// Turn on other devices
+	_hwio.toggleModules(_hwio.GPIO_WAKE);
+	delay(DELAY_SMALL); // Wait for modules to boot
+
+	// Boot Devices
 	_rtc_module.Sync();
 }
 

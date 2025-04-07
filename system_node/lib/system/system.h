@@ -25,6 +25,8 @@
 
 #include "../system_node.hpp"
 
+#define DELAY_SMALL 50
+
 class SYSTEM_class
 {
     private:

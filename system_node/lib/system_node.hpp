@@ -34,7 +34,7 @@
 #define SERIAL_BAUD     115200
 
 // Encryption Settings
-// TODO: 128 with serial off. 64 or dont encrypt with serial on. maybe even try shortening password
+// TODO: Change up encryption when Serial is Off
 #define RC4_BYTES			  128
 #define ENCRYPTION_KEY  "G7v!Xz@pL9#qKd2M"
 

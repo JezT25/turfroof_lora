@@ -77,7 +77,7 @@ class LORA_MODULE_class
 			"BATT:",
 			"TIME:",
 			"DATE:"
-		};
+		}; // TODO: Code to sync time and date
 
 		uint16_t _backoffTime;
 		uint16_t _csmaTimeout;
