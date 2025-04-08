@@ -23,7 +23,7 @@
 #ifndef system_node_hpp_included
 #define system_node_hpp_included
 
-#define SYSTEM_VER      0.06
+#define SYSTEM_VER      0.061
 
 // Toggles: Comment or Uncomment to Disable or Enable
 #define DEBUGGING
@@ -35,7 +35,7 @@
 // Encryption Settings
 #ifndef DEBUGGING
 	#define ENCRYPTING
-	#define RC4_BYTES		255
+	#define RC4_BYTES		128
 	#define ENCRYPTION_KEY  "G7v!Xz@pL9#qKd2M"
 	#include <SD.h>
 #endif

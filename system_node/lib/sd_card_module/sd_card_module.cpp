@@ -37,17 +37,14 @@ void SD_CARD_MODULE_class::logData(IDATA IData, time_t t)
 	char datetime[20];
 	snprintf(datetime, sizeof(datetime), "%04d-%02d-%02d %02d:%02d:%02d", year(t), month(t), day(t), hour(t), minute(t), second(t));
 
-	// Safely build CSV-formatted data line
-	String dataString = String(datetime) + "," +
-						String(IData.SYSTEM_TEMPERATURE, DECIMAL_VALUES) + "," +
-						String(IData.SYSTEM_HUMIDITY, DECIMAL_VALUES) + "," +
-						String(IData.SOIL_TEMPERATURE, DECIMAL_VALUES) + "," +
-						String(IData.SOIL_MOISTURE, DECIMAL_VALUES) + "," +
-						String(IData.BATTERY_VOLTAGE, DECIMAL_VALUES);
-
 	#ifdef DEBUGGING
 		Serial.print("Writing to SD Card: ");
-		Serial.println(dataString);
+		Serial.print(datetime);Serial.print(",");
+		Serial.print(IData.SYSTEM_TEMPERATURE, DECIMAL_VALUES);Serial.print(",");
+		Serial.print(IData.SYSTEM_HUMIDITY, DECIMAL_VALUES);Serial.print(",");
+		Serial.print(IData.SOIL_TEMPERATURE, DECIMAL_VALUES);Serial.print(",");
+		Serial.print(IData.SOIL_MOISTURE);Serial.print(",");
+		Serial.println(IData.BATTERY_VOLTAGE);
 	#endif
 
 	#ifndef DEBUGGING
@@ -61,7 +58,13 @@ void SD_CARD_MODULE_class::logData(IDATA IData, time_t t)
 			{
 				dataFile.println("Date&Time,Temperature(C),Humidity(%),SoilTemperature(C),SoilMoisture(%),Battery(V)");
 			}
-			dataFile.println(dataString);
+
+			dataFile.print(datetime);dataFile.print(",");
+			dataFile.print(IData.SYSTEM_TEMPERATURE, DECIMAL_VALUES);dataFile.print(",");
+			dataFile.print(IData.SYSTEM_HUMIDITY, DECIMAL_VALUES);dataFile.print(",");
+			dataFile.print(IData.SOIL_TEMPERATURE, DECIMAL_VALUES);dataFile.print(",");
+			dataFile.print(IData.SOIL_MOISTURE);dataFile.print(",");
+			dataFile.println(IData.BATTERY_VOLTAGE);
 			
 			dataFile.close();
 		}

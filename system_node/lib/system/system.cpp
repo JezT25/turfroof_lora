@@ -34,11 +34,11 @@ void SYSTEM_class::Initialize()
 	// Initialize RTC Module
 	_rtc_module.Initialize();
 
-	// Initialize Lora Module
-	_lora_module.Initialize(_IData);
-
 	// Initialize SD Card
 	_sd_card_module.Initialize(_IData);
+
+	// Initialize Lora Module
+	_lora_module.Initialize(_IData);
 
 	#ifdef DEBUGGING
 		Serial.print("System Version: v");
@@ -65,6 +65,10 @@ void SYSTEM_class::Run()
 		}
 		else if (alarm_trigger == ALARM2_TRIGGER)
 		{
+			#ifdef DEBUGGING
+				displayfreeRAM();
+			#endif
+
 			entersleepMode();
 		}
 	}
@@ -72,10 +76,6 @@ void SYSTEM_class::Run()
 	{
 		_interruptbyLoRa = false;
 		_lora_module.startLoRaMesh(_IData);
-
-		#ifdef DEBUGGING
-			displayfreeRAM();
-		#endif
 	}
 	else
 	{

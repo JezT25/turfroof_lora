@@ -38,10 +38,10 @@ void HWIO_class::Initialize(IDATA *IData)
 
 void HWIO_class::loadSensorData(IDATA *IData)
 {
-	getBattery(IData->BATTERY_VOLTAGE);
 	getAHT10(IData->SYSTEM_TEMPERATURE, IData->SYSTEM_HUMIDITY);
 	getSoilTemperature(IData->SOIL_TEMPERATURE);
 	getSoilMoisture(IData->SOIL_MOISTURE);
+	getBattery(IData->BATTERY_VOLTAGE);
 }
 
 void HWIO_class::setGPIO()
@@ -99,7 +99,14 @@ void HWIO_class::toggleModules(uint8_t command1, uint8_t command2)
 
 void HWIO_class::getBattery(float &battery)
 {
-	float pinvoltage = (analogRead(BATT_IN) / ADC_RESO) * ADC_REF_VOL;
+	float totaldatasamples = 0;
+	for (uint8_t i = 0; i < DATA_SAMPLES; i++)
+	{
+		totaldatasamples += analogRead(BATT_IN);
+		delay(SAMPLE_DELAY);
+	}
+
+	float pinvoltage = ((totaldatasamples / DATA_SAMPLES) / ADC_RESO_MAX) * ADC_REF_VOL;
 	float batteryvoltage = pinvoltage * ((R1 + R2) / R2);
 
 	#ifdef DEBUGGING
@@ -162,15 +169,22 @@ void HWIO_class::getSoilTemperature(float &temperature)
 	temperature = soil_temperature;
 }
 
-void HWIO_class::getSoilMoisture(float &moisture)
+void HWIO_class::getSoilMoisture(uint8_t &moisture)
 {
-	int moisturePercentage = map(analogRead(SMOIS_IN), 0, ADC_RESO, 0, MAX_PERCENT);
+	int totaldatasamples = 0;
+	for (uint8_t i = 0; i < DATA_SAMPLES; i++)
+	{
+		totaldatasamples += analogRead(SMOIS_IN);
+		delay(SAMPLE_DELAY);
+	}
+
+	uint8_t moisturepercentage = map((analogRead(SMOIS_IN) / DATA_SAMPLES), ADC_RESO_MIN, ADC_RESO_MAX, MIN_PERCENT, MAX_PERCENT);
 
 	#ifdef DEBUGGING
 		Serial.print("Soil Moisture: ");
-		Serial.print(moisturePercentage);
+		Serial.print(moisturepercentage);
 		Serial.println(" %");
 	#endif
 
-	moisture = moisturePercentage;
+	moisture = moisturepercentage;
 }

@@ -23,26 +23,31 @@
 #ifndef hwio_h
 #define hwio_h
 
-#define MAX_DEVICES 8
-#define HWID_PINS   3
+#define MAX_DEVICES		8
+#define HWID_PINS   	3
 
-#define HWID_A      A0
-#define HWID_B      A1
-#define HWID_C      A2
-#define BATT_IN     A3
-#define SMOIS_IN    A7
-#define SENS_TOGGLE 4
-#define STEMP_IN    6
-#define LORA_TOGGLE 7 
+#define HWID_A      	A0
+#define HWID_B      	A1
+#define HWID_C      	A2
+#define BATT_IN     	A3
+#define SMOIS_IN    	A7
+#define SENS_TOGGLE 	4
+#define STEMP_IN    	6
+#define LORA_TOGGLE 	7 
 
-#define R1          10000
-#define R2          33000
-#define ADC_REF_VOL 3.3
-#define ADC_RESO    1023
-#define MAX_PERCENT 100
+#define R1          	10000
+#define R2          	33000
+#define ADC_REF_VOL 	3.3
+#define ADC_RESO_MIN	0
+#define ADC_RESO_MAX   	1023
+#define MIN_PERCENT		0
+#define MAX_PERCENT 	100
 
-#define OFF         0
-#define ON          1
+#define DATA_SAMPLES	10
+#define SAMPLE_DELAY	50
+
+#define OFF         	0
+#define ON          	1
 
 #include "../system_node.hpp"
 
@@ -56,7 +61,7 @@ class HWIO_class
 		void getBattery(float &battery);
 		void getAHT10(float &temperature, float &humidity);
 		void getSoilTemperature(float &temperature);
-		void getSoilMoisture(float &moisture);
+		void getSoilMoisture(uint8_t &moisture);
 
 	public:
 		enum _commandList : uint8_t
