@@ -5,7 +5,7 @@
   School of Engineering and Natural Sciences, University of Iceland
 
   Title: Design and Implementation of a Low-Power LoRa Mesh Sensor Network 
-         for Monitoring Soil Conditions on Icelandic Turf Roofs
+		 for Monitoring Soil Conditions on Icelandic Turf Roofs
 
   Researcher: Jezreel Tan
   Email: jvt6@hi.is
@@ -25,10 +25,10 @@
 void LORA_MODULE_class::Initialize(IDATA IData)
 {	
 	// Configure Pins
-    LoRa.setPins(LORA_NSS, LORA_RST, LORA_DI0);
+	LoRa.setPins(LORA_NSS, LORA_RST, LORA_DI0);
 
 	// Start LoRa
-    if (!LoRa.begin(FREQUENCY))
+	if (!LoRa.begin(FREQUENCY))
 	{
 		#ifdef DEBUGGING
 			Serial.println("ERROR: LoRa Initialization Failed!");
@@ -36,12 +36,12 @@ void LORA_MODULE_class::Initialize(IDATA IData)
 	}
 
 	// Setup Settings
-    LoRa.setTxPower(TX_POWER);
-    LoRa.setSignalBandwidth(BANDWIDTH);
-    LoRa.setSyncWord(SYNC_WORD);
-    LoRa.setSpreadingFactor(SPREAD_FACTOR);
-    LoRa.setCodingRate4(CODING_RATE);
-    LoRa.setPreambleLength(PREAMBLE);
+	LoRa.setTxPower(TX_POWER);
+	LoRa.setSignalBandwidth(BANDWIDTH);
+	LoRa.setSyncWord(SYNC_WORD);
+	LoRa.setSpreadingFactor(SPREAD_FACTOR);
+	LoRa.setCodingRate4(CODING_RATE);
+	LoRa.setPreambleLength(PREAMBLE);
 
 	// Enable CRC
 	LoRa.enableCrc();
@@ -58,7 +58,7 @@ void LORA_MODULE_class::Initialize(IDATA IData)
 		Serial.println(_backoffTime);
 		Serial.print("CSMA Timeout (ms): ");
 		Serial.println(_csmaTimeout);
-    	Serial.println("LoRa Setup Complete!");
+		Serial.println("LoRa Setup Complete!");
 	#endif
 }
 
@@ -146,7 +146,7 @@ bool LORA_MODULE_class::checkMessageValidity()
 	// Check header validity
 	for (uint8_t i = 0; i < VALID_HEADERS; i++)
 	{
-        if (_loraPayload.startsWith(_validHeaders[i])) break;
+		if (_loraPayload.startsWith(_validHeaders[i])) break;
 
 		if(i == VALID_HEADERS - 1)
 		{
@@ -156,10 +156,10 @@ bool LORA_MODULE_class::checkMessageValidity()
 
 			return false;
 		}
-    }
+	}
 
 	// Check Payload data brackets
-    if (startIdx == -1 && endIdx == -1)
+	if (startIdx == -1 && endIdx == -1)
 	{
 		#ifdef DEBUGGING
 			Serial.println("Unable to Locate Data!");
@@ -169,9 +169,9 @@ bool LORA_MODULE_class::checkMessageValidity()
 	}
 
 	// Check Payload data strictly
-    for (size_t i = START_OF_BRACKET; i < payloadLen; i++)
+	for (size_t i = START_OF_BRACKET; i < payloadLen; i++)
 	{
-        char payloadChar = _loraPayload[i];
+		char payloadChar = _loraPayload[i];
 
 		if (checkforCharacters)
 		{
@@ -218,9 +218,9 @@ bool LORA_MODULE_class::checkMessageValidity()
 				checkforCharacters = true;
 			}
 		}
-    }
+	}
 
-    return true;
+	return true;
 }
 
 void LORA_MODULE_class::preloadMessageData()

@@ -5,7 +5,7 @@
   School of Engineering and Natural Sciences, University of Iceland
 
   Title: Design and Implementation of a Low-Power LoRa Mesh Sensor Network 
-         for Monitoring Soil Conditions on Icelandic Turf Roofs
+		 for Monitoring Soil Conditions on Icelandic Turf Roofs
 
   Researcher: Jezreel Tan
   Email: jvt6@hi.is
@@ -37,6 +37,9 @@ void SYSTEM_class::Initialize()
 	// Initialize Lora Module
 	_lora_module.Initialize(_IData);
 
+	// Initialize SD Card
+	_sd_card_module.Initialize(_IData);
+
 	#ifdef DEBUGGING
 		Serial.print("System Version: v");
 		Serial.println(SYSTEM_VER);
@@ -57,7 +60,7 @@ void SYSTEM_class::Run()
 		if (alarm_trigger == ALARM1_TRIGGER)
 		{
 			_hwio.loadSensorData(&_IData);
-			_sd_card_module.logData(_IData);
+			_sd_card_module.logData(_IData, _rtc_module.getTime());
 			_lora_module.loadSensorData(_IData);
 		}
 		else if (alarm_trigger == ALARM2_TRIGGER)
@@ -82,10 +85,10 @@ void SYSTEM_class::Run()
 
 void SYSTEM_class::entersleepMode()
 {
-    #ifdef DEBUGGING
-        Serial.println("Entering Sleep Mode...");
-        delay(DELAY_SMALL);
-    #endif
+	#ifdef DEBUGGING
+		Serial.println("Entering Sleep Mode...");
+		delay(DELAY_SMALL);
+	#endif
 
 	// Turn off LoRa and Modules
 	_hwio.toggleModules(_hwio.GPIO_SLEEP, _hwio.LORA_SLEEP);
@@ -110,10 +113,10 @@ void SYSTEM_class::entersleepMode()
 
 void SYSTEM_class::enterlightsleepMode()
 {
-    #ifdef DEBUGGING
-        Serial.println("Entering Light Sleep Mode...");
-        delay(DELAY_SMALL);
-    #endif
+	#ifdef DEBUGGING
+		Serial.println("Entering Light Sleep Mode...");
+		delay(DELAY_SMALL);
+	#endif
 
 	// Turn off other devices
 	_hwio.toggleModules(_hwio.GPIO_SLEEP);

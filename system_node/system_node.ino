@@ -5,7 +5,7 @@
   School of Engineering and Natural Sciences, University of Iceland
 
   Title: Design and Implementation of a Low-Power LoRa Mesh Sensor Network 
-         for Monitoring Soil Conditions on Icelandic Turf Roofs
+		 for Monitoring Soil Conditions on Icelandic Turf Roofs
 
   Researcher: Jezreel Tan
   Email: jvt6@hi.is

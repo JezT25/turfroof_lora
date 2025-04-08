@@ -1,23 +1,23 @@
 /*
-  ============================================================
-  Master's Thesis in Electrical and Computer Engineering
-  Faculty of Electrical and Computer Engineering
-  School of Engineering and Natural Sciences, University of Iceland
+	============================================================
+	Master's Thesis in Electrical and Computer Engineering
+	Faculty of Electrical and Computer Engineering
+	School of Engineering and Natural Sciences, University of Iceland
 
-  Title: Design and Implementation of a Low-Power LoRa Mesh Sensor Network 
-         for Monitoring Soil Conditions on Icelandic Turf Roofs
+	Title: Design and Implementation of a Low-Power LoRa Mesh Sensor Network 
+				 for Monitoring Soil Conditions on Icelandic Turf Roofs
 
-  Researcher: Jezreel Tan
-  Email: jvt6@hi.is
+	Researcher: Jezreel Tan
+	Email: jvt6@hi.is
 
-  Supervisors:
-  Helgi Þorbergsson
-  Email: thorberg@hi.is
+	Supervisors:
+	Helgi Þorbergsson
+	Email: thorberg@hi.is
 
-  Dórótea Höeg Sigurðardóttir
-  Email: dorotea@hi.is
+	Dórótea Höeg Sigurðardóttir
+	Email: dorotea@hi.is
 
-  ============================================================
+	============================================================
 */
 
 #ifndef system_node_hpp_included
@@ -27,21 +27,22 @@
 
 // Toggles: Comment or Uncomment to Disable or Enable
 #define DEBUGGING
-// #define ENCRYPTING
 // #define SET_RTC_TIME
 
 // Debugging Settings
 #define SERIAL_BAUD     115200
 
 // Encryption Settings
-// TODO: Change up encryption when Serial is Off
-#define RC4_BYTES			  128
-#define ENCRYPTION_KEY  "G7v!Xz@pL9#qKd2M"
+#ifndef DEBUGGING
+	#define ENCRYPTING
+	#define RC4_BYTES		255
+	#define ENCRYPTION_KEY  "G7v!Xz@pL9#qKd2M"
+	#include <SD.h>
+#endif
 
 #include <Wire.h>
 #include <SPI.h>
 #include <LoRa.h>
-// #include <SdFat.h>
 #include <OneWire.h>
 #include <DS3232RTC.h>
 #include <DallasTemperature.h>
@@ -61,14 +62,14 @@
 
 struct SystemComponents
 {
-    // Data Handling Classes
-    IDATA                 _IData;
+	// Data Handling Classes
+	IDATA                 _IData;
 
-    // Hardware Classes
-    HWIO_class            _hwio;
-    RTC_MODULE_class      _rtc_module;
-    LORA_MODULE_class     _lora_module;
-    SD_CARD_MODULE_class  _sd_card_module;
+	// Hardware Classes
+	HWIO_class            _hwio;
+	RTC_MODULE_class      _rtc_module;
+	LORA_MODULE_class     _lora_module;
+	SD_CARD_MODULE_class  _sd_card_module;
 };
 SystemComponents class_lib;
 

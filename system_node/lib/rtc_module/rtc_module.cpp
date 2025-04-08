@@ -5,7 +5,7 @@
   School of Engineering and Natural Sciences, University of Iceland
 
   Title: Design and Implementation of a Low-Power LoRa Mesh Sensor Network 
-         for Monitoring Soil Conditions on Icelandic Turf Roofs
+		 for Monitoring Soil Conditions on Icelandic Turf Roofs
 
   Researcher: Jezreel Tan
   Email: jvt6@hi.is
@@ -25,36 +25,36 @@
 void RTC_MODULE_class::Initialize()
 {
 	// Initialize and Clear Flags
-    _rtc.begin();
+	_rtc.begin();
 	_rtc.setAlarm(DS3232RTC::ALM1_MATCH_DATE, 0, 0, 0, 1);
-    _rtc.setAlarm(DS3232RTC::ALM2_MATCH_DATE, 0, 0, 0, 1);
-    _rtc.alarm(DS3232RTC::ALARM_1);
-    _rtc.alarm(DS3232RTC::ALARM_2);
-    _rtc.alarmInterrupt(DS3232RTC::ALARM_1, false);
-    _rtc.alarmInterrupt(DS3232RTC::ALARM_2, false);
-    _rtc.squareWave(DS3232RTC::SQWAVE_NONE);
+	_rtc.setAlarm(DS3232RTC::ALM2_MATCH_DATE, 0, 0, 0, 1);
+	_rtc.alarm(DS3232RTC::ALARM_1);
+	_rtc.alarm(DS3232RTC::ALARM_2);
+	_rtc.alarmInterrupt(DS3232RTC::ALARM_1, false);
+	_rtc.alarmInterrupt(DS3232RTC::ALARM_2, false);
+	_rtc.squareWave(DS3232RTC::SQWAVE_NONE);
 
 	#ifdef SET_RTC_TIME
 		settimefromPC();
 	#endif
 
 	// Sync Clock with MCU
-    Sync();
+	Sync();
 
-    // TODO: EDIT ME | Set Alarm1 every hour to wake up
-    _rtc.setAlarm(DS3232RTC::ALM1_MATCH_SECONDS, 30, 0, 0, 1);
-    _rtc.alarm(DS3232RTC::ALARM_1);
-    _rtc.alarmInterrupt(DS3232RTC::ALARM_1, true);
+	// TODO: EDIT ME | Set Alarm1 every hour to wake up
+	_rtc.setAlarm(DS3232RTC::ALM1_MATCH_SECONDS, 30, 0, 0, 1);
+	_rtc.alarm(DS3232RTC::ALARM_1);
+	_rtc.alarmInterrupt(DS3232RTC::ALARM_1, true);
 
-    // TODO: EDIT ME | Set Alarm2 after 5 minutes to go back to sleep
-    _rtc.setAlarm(DS3232RTC::ALM2_EVERY_MINUTE, 0, 0, 0, 1);
-    _rtc.alarm(DS3232RTC::ALARM_2);
-    _rtc.alarmInterrupt(DS3232RTC::ALARM_2, true);
+	// TODO: EDIT ME | Set Alarm2 after 5 minutes to go back to sleep
+	_rtc.setAlarm(DS3232RTC::ALM2_EVERY_MINUTE, 0, 0, 0, 1);
+	_rtc.alarm(DS3232RTC::ALARM_2);
+	_rtc.alarmInterrupt(DS3232RTC::ALARM_2, true);
 
 	// Turn on BBSQW - Battery-Backed Square Wave Enable for battery interrupts
-    byte reg = _rtc.readRTC(DS3232RTC::DS32_CONTROL);
-    reg |= (ON << DS3232RTC::DS32_BBSQW);
-    _rtc.writeRTC(DS3232RTC::DS32_CONTROL, reg);
+	byte reg = _rtc.readRTC(DS3232RTC::DS32_CONTROL);
+	reg |= (ON << DS3232RTC::DS32_BBSQW);
+	_rtc.writeRTC(DS3232RTC::DS32_CONTROL, reg);
 }
 
 void RTC_MODULE_class::Sync()
@@ -63,10 +63,10 @@ void RTC_MODULE_class::Sync()
 	#ifdef DEBUGGING
 		if (timeStatus() != timeSet)
 		{
-            Serial.println("ERROR: Failed to Sync RTC!");
+			Serial.println("ERROR: Failed to Sync RTC!");
 		}
 		printtimedate(_rtc.get());
-    #endif
+	#endif
 }
 
 uint8_t RTC_MODULE_class::checkAlarm()
@@ -91,6 +91,11 @@ uint8_t RTC_MODULE_class::checkAlarm()
 	}
 
 	return NO_TRIGGER;
+}
+
+time_t RTC_MODULE_class::getTime()
+{
+	return _rtc.get();
 }
 
 #ifdef DEBUGGING
@@ -123,18 +128,18 @@ uint8_t RTC_MODULE_class::checkAlarm()
 	void RTC_MODULE_class::printtimedate(time_t t)
 	{
 		Serial.print("RTC Time: ");
-		Serial.print(hour());
+		Serial.print(hour(t));
 		Serial.print(':');
-		if(minute() < 10) Serial.print('0');
-		Serial.print(minute());
+		if(minute(t) < 10) Serial.print('0');
+		Serial.print(minute(t));
 		Serial.print(':');
-		if(second() < 10) Serial.print('0');
-		Serial.print(second());
+		if(second(t) < 10) Serial.print('0');
+		Serial.print(second(t));
 		Serial.print(' ');
-		Serial.print(day());
+		Serial.print(day(t));
 		Serial.print('-');
-		Serial.print(month());
+		Serial.print(month(t));
 		Serial.print('-');
-		Serial.println(year());
+		Serial.println(year(t));
 	}
 #endif

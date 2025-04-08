@@ -5,7 +5,7 @@
   School of Engineering and Natural Sciences, University of Iceland
 
   Title: Design and Implementation of a Low-Power LoRa Mesh Sensor Network 
-         for Monitoring Soil Conditions on Icelandic Turf Roofs
+		 for Monitoring Soil Conditions on Icelandic Turf Roofs
 
   Researcher: Jezreel Tan
   Email: jvt6@hi.is
@@ -48,30 +48,30 @@
 
 class HWIO_class
 {
-    private:
-        uint8_t _hwid[HWID_PINS] = { HWID_A, HWID_B, HWID_C };
+	private:
+		uint8_t _hwid[HWID_PINS] = { HWID_A, HWID_B, HWID_C };
 
-        void setGPIO();
-        void getHWID(uint8_t &hwid);
-        void getBattery(float &battery);
-        void getAHT10(float &temperature, float &humidity);
-        void getSoilTemperature(float &temperature);
-        void getSoilMoisture(float &moisture);
+		void setGPIO();
+		void getHWID(uint8_t &hwid);
+		void getBattery(float &battery);
+		void getAHT10(float &temperature, float &humidity);
+		void getSoilTemperature(float &temperature);
+		void getSoilMoisture(float &moisture);
 
-    public:
-        enum _commandList : uint8_t
-        {
-            NO_COMMAND,
-            GPIO_SLEEP,
-            GPIO_WAKE,
-            LORA_SLEEP,
-            LORA_WAKE
-        };
+	public:
+		enum _commandList : uint8_t
+		{
+			NO_COMMAND,
+			GPIO_SLEEP,
+			GPIO_WAKE,
+			LORA_SLEEP,
+			LORA_WAKE
+		};
 
-        void Initialize(IDATA *IData);
-        void loadSensorData(IDATA *IData);
-        void toggleModules(uint8_t command);
-        void toggleModules(uint8_t command1, uint8_t command2);
+		void Initialize(IDATA *IData);
+		void loadSensorData(IDATA *IData);
+		void toggleModules(uint8_t command);
+		void toggleModules(uint8_t command1, uint8_t command2);
 };
 
 #endif
