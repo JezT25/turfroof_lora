@@ -1,3 +1,5 @@
+# WIP! [todo: setup repository :)]
+
 # LoRa Turf Roof Sensor
 
 ## 📄 License
