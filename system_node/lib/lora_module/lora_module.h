@@ -50,7 +50,9 @@
 // Algorithm Settings
 #define START_OF_BRACKET	5
 #define DECIMAL_VALUES  	5
-#define MAX_MESSAGE_LENGTH  86
+#define MAX_HEADER_LENGTH	6		// TEMP: is 5 actually, but +1 for null terminator
+#define MAX_NUMBER_LENGTH	10		// 000.00000 is 9, but +1 for null terminator
+#define MAX_MESSAGE_LENGTH  87		// TEMP:[000.00000,000.00000,000.00000,000.00000,000.00000,000.00000,000.00000,000.00000] is 86, but + 1 for null terminator
 #define EPSILON         	0.0001
 #define BLANK_PLACEHOLDER	'*'
 
@@ -87,9 +89,10 @@ class LORA_MODULE_class
 		unsigned long _lastSystemUpdateTime;
 		float _sensorData[VALID_HEADERS];
 		float _systemValues[MAX_DEVICES];
-		String _loraPayload;
-		String _loraprevHeader;
+		char _loraPayload[MAX_MESSAGE_LENGTH];
+		char _loraprevHeader[MAX_HEADER_LENGTH];
 		
+		int8_t getcharIndex(char c);
 		void resetValues();
 		bool getLoRaPayload();
 		bool checkMessageValidity();
@@ -100,7 +103,6 @@ class LORA_MODULE_class
 		#ifdef ENCRYPTING
 			void rc4EncryptDecrypt(char *data, uint8_t len);
 		#endif
-
 
 	public:
 		void Initialize(IDATA IData);

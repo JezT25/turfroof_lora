@@ -29,9 +29,9 @@
 	// magic bytes?
 	// for thesis graph the backout and timeout
 
-	// MAKE VERSION PCB LORA HAS DIFFERENT POWER ON SWITCHEROO
-
 	//todo:
+	// CHECK FOR MEMORY LEAKS
+	// we might have to use WDT
 	// check input pullups?
 	// check if all are inputs?
 	

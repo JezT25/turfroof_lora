@@ -55,6 +55,7 @@ class HWIO_class
 {
 	private:
 		uint8_t _hwid[HWID_PINS] = { HWID_A, HWID_B, HWID_C };
+		Adafruit_AHTX0 aht10;
 
 		void setGPIO();
 		void getHWID(uint8_t &hwid);

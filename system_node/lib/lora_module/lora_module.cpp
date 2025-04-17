@@ -91,10 +91,10 @@ void LORA_MODULE_class::resetValues()
 {
 	// Reset values for fresh requests
 	_sendAttempts = 0;
-	_loraPayload = "";
-	_loraprevHeader = "";
 	_newpayloadAlert = false;	
 	_lastSystemUpdateTime = millis();
+	memset(_loraPayload, 0, sizeof(_loraPayload));
+	memset(_loraprevHeader, 0, sizeof(_loraprevHeader));
 	memset(_systemValues, 0, sizeof(_systemValues));
 }
 
@@ -107,12 +107,15 @@ bool LORA_MODULE_class::getLoRaPayload()
 		Serial.println(LoRa.packetRssi());
 	#endif
 
-	//	Get Payload content 
-	_loraPayload = "";
-	while (LoRa.available())
+	//	Get Payload content
+	uint8_t payloadIndex = 0;
+	memset(_loraPayload, 0, sizeof(_loraPayload));
+	while (LoRa.available() && payloadIndex < sizeof(_loraPayload) - 1)
 	{
-		_loraPayload += (char)LoRa.read();
+		_loraPayload[payloadIndex] += (char)LoRa.read();
+		payloadIndex++;
 	}
+	_loraPayload[payloadIndex] = '\0';
 
 	#ifdef ENCRYPTING
 		#ifdef DEBUGGING
@@ -120,13 +123,12 @@ bool LORA_MODULE_class::getLoRaPayload()
 			Serial.println(_loraPayload);
 		#endif
 
-		uint8_t lora_len = _loraPayload.length() + 1; // +1 space for null terminator
-		char decryptedPayload[lora_len];
-		_loraPayload.toCharArray(decryptedPayload, lora_len);
-
-		rc4EncryptDecrypt(decryptedPayload, lora_len);
-
-		_loraPayload = String(decryptedPayload);	
+		char decryptedPayload[MAX_MESSAGE_LENGTH];
+		strncpy(decryptedPayload, _loraPayload, sizeof(decryptedPayload));
+		decryptedPayload[sizeof(decryptedPayload) - 1] = '\0';
+		rc4EncryptDecrypt(decryptedPayload, strlen(decryptedPayload));
+		strncpy(_loraPayload, decryptedPayload, sizeof(_loraPayload));
+		_loraPayload[sizeof(_loraPayload) - 1] = '\0';
 	#endif
 
 	#ifdef DEBUGGING
@@ -138,17 +140,26 @@ bool LORA_MODULE_class::getLoRaPayload()
 	return checkMessageValidity();
 }
 
+int8_t LORA_MODULE_class::getcharIndex(char c)
+{
+	for (uint8_t i = 0; i < sizeof(_loraPayload); i++)
+	{
+		if (_loraPayload[i] == c) return i;
+	}
+	return -1;
+}
+
 bool LORA_MODULE_class::checkMessageValidity()
 {
-	uint8_t startIdx = _loraPayload.indexOf('[');
-	uint8_t endIdx = _loraPayload.indexOf(']');
-	uint8_t payloadLen = _loraPayload.length();
+	uint8_t startIdx = getcharIndex('[');
+	uint8_t endIdx = getcharIndex(']');
+	uint8_t payloadLen = strlen(_loraPayload);
 	bool checkforCharacters = true;
 
 	// Check header validity
 	for (uint8_t i = 0; i < VALID_HEADERS; i++)
 	{
-		if (_loraPayload.startsWith(_validHeaders[i])) break;
+		if (strncmp(_loraPayload, _validHeaders[i], strlen(_validHeaders[i])) == 0) break;
 
 		if(i == VALID_HEADERS - 1)
 		{
@@ -227,11 +238,11 @@ bool LORA_MODULE_class::checkMessageValidity()
 
 void LORA_MODULE_class::preloadMessageData()
 {
-	uint8_t startIdx = _loraPayload.indexOf('[');
-	uint8_t endIdx = _loraPayload.indexOf(']');
-	uint8_t payloadLen = _loraPayload.length();
+	uint8_t startIdx = getcharIndex('[');
+	uint8_t endIdx = getcharIndex(']');
+	uint8_t payloadLen = strlen(_loraPayload);
 
-	if ((startIdx == START_OF_BRACKET && endIdx == START_OF_BRACKET + 1 && payloadLen == START_OF_BRACKET + 2) || _loraPayload.substring(0, START_OF_BRACKET) != _loraprevHeader)
+	if ((startIdx == START_OF_BRACKET && endIdx == START_OF_BRACKET + 1 && payloadLen == START_OF_BRACKET + 2) || strncmp(_loraPayload, _loraprevHeader, START_OF_BRACKET) != 0)
 	{
 		// Reset database
 		memset(_systemValues, 0, sizeof(_systemValues));
@@ -239,7 +250,7 @@ void LORA_MODULE_class::preloadMessageData()
 		// Load values
 		for (uint8_t i = 0; i < VALID_HEADERS; i++)
 		{
-			if (_loraPayload.startsWith(_validHeaders[i]))
+			if (strncmp(_loraPayload, _validHeaders[i], strlen(_validHeaders[i])) == 0)
 			{
 				_systemValues[_hwid] = _sensorData[i];
 				break;
@@ -247,7 +258,8 @@ void LORA_MODULE_class::preloadMessageData()
 		}
 
 		// Get new header
-		_loraprevHeader = _loraPayload.substring(0, START_OF_BRACKET);
+		strncpy(_loraprevHeader, _loraPayload, START_OF_BRACKET);
+		_loraprevHeader[MAX_HEADER_LENGTH - 1] = '\0';
 	}
 
 	#ifdef DEBUGGING
@@ -265,12 +277,12 @@ void LORA_MODULE_class::preloadMessageData()
 void LORA_MODULE_class::processPayloadData()
 {
 	// Extract data from Payload
-	uint8_t startIdx = _loraPayload.indexOf('[');
-	uint8_t endIdx = _loraPayload.indexOf(']');
-	String arrayContent = _loraPayload.substring(startIdx + 1, endIdx);
-	uint8_t array_len = arrayContent.length() + 1;
-	char buffer[array_len];
-	arrayContent.toCharArray(buffer, array_len);
+	uint8_t startIdx = getcharIndex('[');
+	uint8_t endIdx = getcharIndex(']');
+	uint8_t array_len = endIdx - (startIdx + 1);
+	char buffer[array_len + 1];
+	strncpy(buffer, &_loraPayload[startIdx + 1], array_len);
+	buffer[array_len] = '\0';
 	char *token = strtok(buffer, ",");
 
 	// Store data to tempValues
@@ -330,14 +342,46 @@ void LORA_MODULE_class::sendPayloadData()
 	}
 
 	// Create new Payload
-	String relay_message;
-	relay_message.reserve(MAX_MESSAGE_LENGTH);
+	char relay_message[MAX_MESSAGE_LENGTH] = {0};
+	uint8_t pos = 0;
 	for (uint8_t i = 0; i < MAX_DEVICES; i++)
 	{
-		relay_message += (_systemValues[i] == 0 ? String(BLANK_PLACEHOLDER) : String(_systemValues[i], DECIMAL_VALUES)) + (i < MAX_DEVICES - 1 ? "," : "");
+		char numStr[MAX_NUMBER_LENGTH];
+		if(_systemValues[i] == 0)
+		{
+			numStr[0] = BLANK_PLACEHOLDER;
+    		numStr[1] = '\0';
+		}
+		else
+		{
+			uint8_t width = MAX_NUMBER_LENGTH;
+
+			// Set width to exact amount
+			if (_systemValues[i] >= 100 || _systemValues[i] <= -10)
+			{
+				width -= 1;
+			}
+			else if ((_systemValues[i] >= 10 && _systemValues[i] < 100) || (_systemValues[i] < 0 && _systemValues[i] > -10))
+			{
+				width -= 2;
+			}
+			else
+			{
+				width -= 3;
+			}
+			
+			dtostrf(_systemValues[i], width, DECIMAL_VALUES, numStr);			
+		}
+
+		strcpy(&relay_message[pos], numStr);
+		pos += strlen(numStr);
+
+		if (i < MAX_DEVICES - 1) relay_message[pos++] = ',';
 	}
-	String sendPayload = _loraprevHeader + "[" + relay_message + "]";
-	uint8_t payloadLen = sendPayload.length() + 1;	// +1 Space for null terminator
+
+	char sendPayload[MAX_MESSAGE_LENGTH];
+	snprintf(sendPayload, sizeof(sendPayload), "%s[%s]", _loraprevHeader, relay_message);
+	uint8_t payloadLen = strlen(sendPayload) + 1;
 
 	#ifdef DEBUGGING
 		Serial.print(F("Payload to Send: "));
@@ -347,7 +391,7 @@ void LORA_MODULE_class::sendPayloadData()
 	// Encryption
 	#ifdef ENCRYPTING
 		char encryptedPayload[payloadLen] = {0};
-		sendPayload.toCharArray(encryptedPayload, payloadLen);
+		strncpy(encryptedPayload, sendPayload, payloadLen);
 
 		// Encrypt Data
 		rc4EncryptDecrypt(encryptedPayload, payloadLen);
@@ -367,7 +411,6 @@ void LORA_MODULE_class::sendPayloadData()
 	{
 		unsigned long startTime = millis();
 		unsigned long lastCheckTime = millis();
-
 
 		while (millis() - startTime < _csmaTimeout)
 		{
@@ -393,9 +436,9 @@ void LORA_MODULE_class::sendPayloadData()
 		// Send the payload over LoRa
 		LoRa.beginPacket();
 		#ifdef ENCRYPTING
-			LoRa.write((uint8_t*)encryptedPayload, payloadLen - 1);	 			// -1 Don't send null terminator
+			LoRa.write((const uint8_t*)encryptedPayload, payloadLen - 1);	// -1 Don't send null terminator
 		#else
-			LoRa.write((const uint8_t*)sendPayload.c_str(), payloadLen - 1);	// -1 Don't send null terminator
+			LoRa.write((const uint8_t*)sendPayload, payloadLen - 1);		// -1 Don't send null terminator
 		#endif
 		LoRa.endPacket();
 
