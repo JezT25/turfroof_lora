@@ -63,9 +63,9 @@ void RTC_MODULE_class::Sync()
 	#ifdef DEBUGGING
 		if (timeStatus() != timeSet)
 		{
-			Serial.print("X: ERROR: Failed to Sync RTC! ");
+			Serial.print(F("X: ERROR: Failed to Sync RTC! "));
 		}
-		Serial.print("RTC Sync: ");
+		Serial.print(F("RTC Sync: "));
 		printtimedate(_rtc.get());
 	#endif
 }
@@ -75,7 +75,7 @@ uint8_t RTC_MODULE_class::checkAlarm()
 	if (_rtc.alarm(DS3232RTC::ALARM_1))
 	{
 		#ifdef DEBUGGING
-			Serial.print("Alarm 1 Triggered! ");
+			Serial.print(F("Alarm 1 Triggered! "));
 			printtimedate(_rtc.get());
 		#endif
 
@@ -84,7 +84,7 @@ uint8_t RTC_MODULE_class::checkAlarm()
 	if (_rtc.alarm(DS3232RTC::ALARM_2))
 	{
 		#ifdef DEBUGGING
-			Serial.print("Alarm 2 Triggered! ");
+			Serial.print(F("Alarm 2 Triggered! "));
 			printtimedate(_rtc.get());
 		#endif
 
@@ -102,7 +102,7 @@ time_t RTC_MODULE_class::getTime()
 #ifdef DEBUGGING
 	void RTC_MODULE_class::settimefromPC()
 	{
-		Serial.println("Setting RTC");
+		Serial.println(F("Setting RTC"));
 
 		// Extract compile-time and compile-date
 		char mth[4];

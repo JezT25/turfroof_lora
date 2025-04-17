@@ -28,19 +28,19 @@ void SD_CARD_MODULE_class::logData(IDATA IData, time_t t)
 	snprintf(datetime, sizeof(datetime), "%04d-%02d-%02d %02d:%02d:%02d", year(t), month(t), day(t), hour(t), minute(t), second(t));
 
 	#ifdef DEBUGGING
-		Serial.print("Writing to SD Card: ");
-		Serial.print(datetime);Serial.print(" | ");
-		Serial.print(IData.SYSTEM_TEMPERATURE, DECIMAL_VALUES);Serial.print("c, ");
-		Serial.print(IData.SYSTEM_HUMIDITY, DECIMAL_VALUES);Serial.print("%RH, ");
-		Serial.print(IData.SOIL_TEMPERATURE, DECIMAL_VALUES);Serial.print("c, ");
-		Serial.print(IData.SOIL_MOISTURE);Serial.print("%, ");
-		Serial.print(IData.BATTERY_VOLTAGE);Serial.println("v");
+		Serial.print(F("Writing to SD Card: "));
+		Serial.print(datetime);Serial.print(F(" | "));
+		Serial.print(IData.SYSTEM_TEMPERATURE, DECIMAL_VALUES);Serial.print(F("c, "));
+		Serial.print(IData.SYSTEM_HUMIDITY, DECIMAL_VALUES);Serial.print(F("%RH, "));
+		Serial.print(IData.SOIL_TEMPERATURE, DECIMAL_VALUES);Serial.print(F("c, "));
+		Serial.print(IData.SOIL_MOISTURE);Serial.print(F("%, "));
+		Serial.print(IData.BATTERY_VOLTAGE);Serial.println('v');
 	#else
-		Serial.print(datetime);Serial.print(",");
-		Serial.print(IData.SYSTEM_TEMPERATURE, DECIMAL_VALUES);Serial.print(",");
-		Serial.print(IData.SYSTEM_HUMIDITY, DECIMAL_VALUES);Serial.print(",");
-		Serial.print(IData.SOIL_TEMPERATURE, DECIMAL_VALUES);Serial.print(",");
-		Serial.print(IData.SOIL_MOISTURE);Serial.print(",");
+		Serial.print(datetime);Serial.print(',');
+		Serial.print(IData.SYSTEM_TEMPERATURE, DECIMAL_VALUES);Serial.print(',');
+		Serial.print(IData.SYSTEM_HUMIDITY, DECIMAL_VALUES);Serial.print(',');
+		Serial.print(IData.SOIL_TEMPERATURE, DECIMAL_VALUES);Serial.print(',');
+		Serial.print(IData.SOIL_MOISTURE);Serial.print(',');
 		Serial.println(IData.BATTERY_VOLTAGE);
 	#endif
 }

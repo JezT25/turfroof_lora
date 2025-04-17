@@ -38,9 +38,9 @@ void SYSTEM_class::Initialize()
 	_lora_module.Initialize(_IData);
 
 	#ifdef DEBUGGING
-		Serial.print("System Version: v");
+		Serial.print(F("System Version: v"));
 		Serial.println(SYSTEM_VER);
-		Serial.println(".........................");
+		Serial.println(F("........................."));
 	#endif
 
 	// Enter Sleep Mode
@@ -83,7 +83,7 @@ void SYSTEM_class::Run()
 void SYSTEM_class::entersleepMode()
 {
 	#ifdef DEBUGGING
-		Serial.println("Entering Sleep Mode...");
+		Serial.println(F("Entering Sleep Mode..."));
 		delay(DELAY_SMALL);
 	#endif
 
@@ -111,7 +111,7 @@ void SYSTEM_class::entersleepMode()
 void SYSTEM_class::enterlightsleepMode()
 {
 	#ifdef DEBUGGING
-		Serial.println("Entering Light Sleep Mode...");
+		Serial.println(F("Entering Light Sleep Mode..."));
 		delay(DELAY_SMALL);
 	#endif
 

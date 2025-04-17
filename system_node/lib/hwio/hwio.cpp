@@ -60,7 +60,7 @@ void HWIO_class::getHWID(uint8_t &hwid)
 	hwid += digitalRead(_hwid[2]) * 4;
 
 	#ifdef DEBUGGING
-		Serial.print("System Hardware ID: ");
+		Serial.print(F("System Hardware ID: "));
 		Serial.println(hwid);
 	#endif
 
@@ -108,9 +108,9 @@ void HWIO_class::getBattery(float &battery)
 	float batteryvoltage = pinvoltage * ((R1 + R2) / R2);
 
 	#ifdef DEBUGGING
-		Serial.print("Battery Voltage: ");
+		Serial.print(F("Battery Voltage: "));
 		Serial.print(batteryvoltage);
-		Serial.println(" Volts");
+		Serial.println(F(" Volts"));
 	#endif
 
 	battery = batteryvoltage;
@@ -127,13 +127,13 @@ void HWIO_class::getAHT10(float &temperature, float &humidity)
 	if (aht10.getEvent(&aht10_humidity, &aht10_temperature))
 	{
 		#ifdef DEBUGGING
-			Serial.print("Temperature: ");
+			Serial.print(F("Temperature: "));
 			Serial.print(aht10_temperature.temperature);
-			Serial.println(" C");
+			Serial.println(F(" C"));
 
-			Serial.print("Humidity: ");
+			Serial.print(F("Humidity: "));
 			Serial.print(aht10_humidity.relative_humidity);
-			Serial.println("% rH");
+			Serial.println(F("% rH"));
 		#endif
 
 		temperature = aht10_temperature.temperature;
@@ -142,7 +142,7 @@ void HWIO_class::getAHT10(float &temperature, float &humidity)
 	else
 	{
 		#ifdef DEBUGGING
-			Serial.println("X: ERROR: Failed to read AHT10 sensor data.");
+			Serial.println(F("X: ERROR: Failed to read AHT10 sensor data."));
 		#endif
 	}
 }
@@ -159,9 +159,9 @@ void HWIO_class::getSoilTemperature(float &temperature)
 	float soil_temperature = ds18b20.getTempCByIndex(0); 
 
 	#ifdef DEBUGGING
-		Serial.print("Soil Temperature: ");
+		Serial.print(F("Soil Temperature: "));
 		Serial.print(soil_temperature);
-		Serial.println(" C");
+		Serial.println(F(" C"));
 	#endif
 
 	temperature = soil_temperature;
@@ -179,9 +179,9 @@ void HWIO_class::getSoilMoisture(uint8_t &moisture)
 	uint8_t moisturepercentage = map((analogRead(SMOIS_IN) / DATA_SAMPLES), ADC_RESO_MIN, ADC_RESO_MAX, MIN_PERCENT, MAX_PERCENT);
 
 	#ifdef DEBUGGING
-		Serial.print("Soil Moisture: ");
+		Serial.print(F("Soil Moisture: "));
 		Serial.print(moisturepercentage);
-		Serial.println(" %");
+		Serial.println(F(" %"));
 	#endif
 
 	moisture = moisturepercentage;

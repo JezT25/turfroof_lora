@@ -31,7 +31,7 @@ void LORA_MODULE_class::Initialize(IDATA IData)
 	if (!LoRa.begin(FREQUENCY))
 	{
 		#ifdef DEBUGGING
-			Serial.println("X: ERROR: LoRa Initialization Failed!");
+			Serial.println(F("X: ERROR: LoRa Initialization Failed!"));
 		#endif
 	}
 
@@ -54,11 +54,11 @@ void LORA_MODULE_class::Initialize(IDATA IData)
 	_csmaTimeout = CSMA_TOUT_MIN + (CSMA_TOUT_MUL * _hwid);
 
 	#ifdef DEBUGGING
-		Serial.print("Backoff Time (ms): ");
+		Serial.print(F("Backoff Time (ms): "));
 		Serial.println(_backoffTime);
-		Serial.print("CSMA Timeout (ms): ");
+		Serial.print(F("CSMA Timeout (ms): "));
 		Serial.println(_csmaTimeout);
-		Serial.println("LoRa Setup Complete!");
+		Serial.println(F("LoRa Setup Complete!"));
 	#endif
 }
 
@@ -102,8 +102,8 @@ bool LORA_MODULE_class::getLoRaPayload()
 {
 	#ifdef DEBUGGING
 		//	Display Signal Strength (RSSI) of the Received Packet
-		Serial.println("Packet received!");
-		Serial.print("Signal strength [RSSI] (dBm): ");
+		Serial.println(F("Packet received!"));
+		Serial.print(F("Signal strength [RSSI] (dBm): "));
 		Serial.println(LoRa.packetRssi());
 	#endif
 
@@ -116,7 +116,8 @@ bool LORA_MODULE_class::getLoRaPayload()
 
 	#ifdef ENCRYPTING
 		#ifdef DEBUGGING
-			Serial.println("Encrypted Payload: " + _loraPayload);
+			Serial.print(F("Encrypted Payload: "));
+			Serial.println(_loraPayload);
 		#endif
 
 		uint8_t lora_len = _loraPayload.length() + 1; // +1 space for null terminator
@@ -130,7 +131,8 @@ bool LORA_MODULE_class::getLoRaPayload()
 
 	#ifdef DEBUGGING
 		//	Print LoRa Payload
-		Serial.println("Payload: " + _loraPayload);
+		Serial.print(F("Payload: "));
+		Serial.println(_loraPayload);
 	#endif
 
 	return checkMessageValidity();
@@ -151,7 +153,7 @@ bool LORA_MODULE_class::checkMessageValidity()
 		if(i == VALID_HEADERS - 1)
 		{
 			#ifdef DEBUGGING
-				Serial.println("X: Invalid Packet Header!");
+				Serial.println(F("X: Invalid Packet Header!"));
 			#endif
 
 			return false;
@@ -162,7 +164,7 @@ bool LORA_MODULE_class::checkMessageValidity()
 	if (startIdx == -1 && endIdx == -1)
 	{
 		#ifdef DEBUGGING
-			Serial.println("X: Unable to Locate Data!");
+			Serial.println(F("X: Unable to Locate Data!"));
 		#endif
 
 		return false;
@@ -180,7 +182,7 @@ bool LORA_MODULE_class::checkMessageValidity()
 			if (payloadChar != '[' && payloadChar != ']' && payloadChar != ',')
 			{
 				#ifdef DEBUGGING
-					Serial.println("X: Invalid Character Found!");
+					Serial.println(F("X: Invalid Character Found!"));
 				#endif
 
 				return false;
@@ -191,7 +193,7 @@ bool LORA_MODULE_class::checkMessageValidity()
 				if (_loraPayload[i + 1] != BLANK_PLACEHOLDER)
 				{
 					#ifdef DEBUGGING
-						Serial.println("X: Invalid Data Found!");
+						Serial.println(F("X: Invalid Data Found!"));
 					#endif
 
 					return false;
@@ -207,7 +209,7 @@ bool LORA_MODULE_class::checkMessageValidity()
 			if ((payloadChar < '0' || payloadChar > '9') && payloadChar != '.' && payloadChar != '-')
 			{
 				#ifdef DEBUGGING
-					Serial.print("Invalid Number Found!");
+					Serial.print(F("Invalid Number Found!"));
 				#endif
 
 				return false;
@@ -250,13 +252,13 @@ void LORA_MODULE_class::preloadMessageData()
 
 	#ifdef DEBUGGING
 		//	Print Current Database
-		Serial.print("Current Data: [");
+		Serial.print(F("Current Data: ["));
 		for (uint8_t i = 0; i < MAX_DEVICES; i++)
 		{
 			Serial.print(_systemValues[i], DECIMAL_VALUES);
-			if (i < (MAX_DEVICES - 1)) Serial.print(",");
+			if (i < (MAX_DEVICES - 1)) Serial.print(',');
 		}
-		Serial.println("]");
+		Serial.println(']');
 	#endif
 }
 
@@ -297,13 +299,13 @@ void LORA_MODULE_class::processPayloadData()
 
 			#ifdef DEBUGGING
 				//	Print Merged Values
-				Serial.print("Merged Data: [");
+				Serial.print(F("Merged Data: ["));
 				for (uint8_t i = 0; i < MAX_DEVICES; i++)
 				{
 					Serial.print(_systemValues[i], DECIMAL_VALUES);
-					if (i < (MAX_DEVICES - 1)) Serial.print(",");
+					if (i < (MAX_DEVICES - 1)) Serial.print(',');
 				}
-				Serial.println("]");
+				Serial.println(']');
 			#endif
 
 			break;
@@ -321,7 +323,7 @@ void LORA_MODULE_class::sendPayloadData()
 	if (_sendAttempts >= SEND_ATTEMPTS)
 	{
 		#ifdef DEBUGGING
-			Serial.println("Send Limit Reached!");
+			Serial.println(F("Send Limit Reached!"));
 		#endif
 
 		return;
@@ -338,7 +340,7 @@ void LORA_MODULE_class::sendPayloadData()
 	uint8_t payloadLen = sendPayload.length() + 1;	// +1 Space for null terminator
 
 	#ifdef DEBUGGING
-		Serial.print("Payload to Send: ");
+		Serial.print(F("Payload to Send: "));
 		Serial.println(sendPayload);
 	#endif
 
@@ -351,7 +353,7 @@ void LORA_MODULE_class::sendPayloadData()
 		rc4EncryptDecrypt(encryptedPayload, payloadLen);
 
 		#ifdef DEBUGGING
-			Serial.print("Encrypted Message: ");
+			Serial.print(F("Encrypted Message: "));
 			for (uint8_t i = 0; i < payloadLen; i++)
 			{
 				Serial.print(encryptedPayload[i]);
@@ -380,7 +382,7 @@ void LORA_MODULE_class::sendPayloadData()
 				lastCheckTime = millis();
 
 				#ifdef DEBUGGING
-					Serial.print(".");
+					Serial.print('.');
 				#endif
 				
 				// Perform backoff without blocking execution
@@ -399,11 +401,11 @@ void LORA_MODULE_class::sendPayloadData()
 
 		// Debugging output for the sent message
 		#ifdef DEBUGGING
-			Serial.print("\nPayload Sent Sucessfully! (");
-			Serial.print(String(_sendAttempts + 1));
+			Serial.print(F("\nPayload Sent Sucessfully! ("));
+			Serial.print(_sendAttempts + 1);
 			Serial.print('/');
-			Serial.print(String(SEND_ATTEMPTS));
-			Serial.println(")");
+			Serial.print(SEND_ATTEMPTS);
+			Serial.println(')');
 		#endif
 
 		// Increment attempts
