@@ -25,17 +25,9 @@
 
 #include "../system_node.hpp"
 
-#define SD_CS				9
-
-#define FILENAME_EXTENSION	"_lora_system_node.csv"
-
 class SD_CARD_MODULE_class
 {
-	private:
-		String _filename;
-
 	public:
-		void Initialize(IDATA IData);
 		void logData(IDATA IData, time_t t);
 
 };

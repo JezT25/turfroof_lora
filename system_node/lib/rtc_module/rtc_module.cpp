@@ -34,7 +34,7 @@ void RTC_MODULE_class::Initialize()
 	_rtc.alarmInterrupt(DS3232RTC::ALARM_2, false);
 	_rtc.squareWave(DS3232RTC::SQWAVE_NONE);
 
-	#ifdef SET_RTC_TIME
+	#if SET_RTC_TIME
 		settimefromPC();
 	#endif
 
@@ -63,8 +63,9 @@ void RTC_MODULE_class::Sync()
 	#ifdef DEBUGGING
 		if (timeStatus() != timeSet)
 		{
-			Serial.println("ERROR: Failed to Sync RTC!");
+			Serial.print("X: ERROR: Failed to Sync RTC! ");
 		}
+		Serial.print("RTC Sync: ");
 		printtimedate(_rtc.get());
 	#endif
 }
@@ -127,7 +128,6 @@ time_t RTC_MODULE_class::getTime()
 
 	void RTC_MODULE_class::printtimedate(time_t t)
 	{
-		Serial.print("RTC Time: ");
 		Serial.print(hour(t));
 		Serial.print(':');
 		if(minute(t) < 10) Serial.print('0');

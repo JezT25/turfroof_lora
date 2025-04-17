@@ -23,21 +23,18 @@
 #ifndef system_node_hpp_included
 #define system_node_hpp_included
 
-#define SYSTEM_VER      0.061
+#define SYSTEM_VER      0.07
 
 // Toggles: Comment or Uncomment to Disable or Enable
 #define DEBUGGING
-// #define SET_RTC_TIME
-
-// Debugging Settings
 #define SERIAL_BAUD     115200
+#define SET_RTC_TIME	0			// Set to 1 to set RTC time from PC
 
 // Encryption Settings
 #ifndef DEBUGGING
 	#define ENCRYPTING
-	#define RC4_BYTES		128
-	#define ENCRYPTION_KEY  "G7v!Xz@pL9#qKd2M"
-	#include <SD.h>
+	#define RC4_BYTES		32
+	#define ENCRYPTION_KEY  "G7v!X"
 #endif
 
 #include <Wire.h>

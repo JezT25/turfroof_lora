@@ -16,8 +16,8 @@
 #define CODING_RATE     5
 #define PREAMBLE        8
 
-#define RC4_BYTES 128
-#define ENCRYPTION_KEY  "G7v!Xz@pL9#qKd2M"
+#define RC4_BYTES 32
+#define ENCRYPTION_KEY  "G7v!X"
 
 void rc4EncryptDecrypt(char *data, int len) {
     int S[RC4_BYTES];
@@ -56,7 +56,7 @@ void setup() {
     LoRa.setPins(LORA_NSS, D1);
 
     if (!LoRa.begin(FREQUENCY)) {
-        Serial.println("LoRa init failed! Check connections.");
+        Serial.println("X: LoRa init failed! Check connections.");
         while (1);
     }
 

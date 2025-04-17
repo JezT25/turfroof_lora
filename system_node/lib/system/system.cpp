@@ -34,9 +34,6 @@ void SYSTEM_class::Initialize()
 	// Initialize RTC Module
 	_rtc_module.Initialize();
 
-	// Initialize SD Card
-	_sd_card_module.Initialize(_IData);
-
 	// Initialize Lora Module
 	_lora_module.Initialize(_IData);
 

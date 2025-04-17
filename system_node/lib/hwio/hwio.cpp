@@ -26,9 +26,7 @@ void HWIO_class::Initialize(IDATA *IData)
 {
 	noInterrupts();
 
-	#ifdef DEBUGGING
-		Serial.begin(SERIAL_BAUD);
-	#endif
+	Serial.begin(SERIAL_BAUD);
 
 	setGPIO();
 	getHWID(IData->HW_ID);
@@ -144,7 +142,7 @@ void HWIO_class::getAHT10(float &temperature, float &humidity)
 	else
 	{
 		#ifdef DEBUGGING
-			Serial.println("ERROR: Failed to read AHT10 sensor data.");
+			Serial.println("X: ERROR: Failed to read AHT10 sensor data.");
 		#endif
 	}
 }

@@ -31,7 +31,7 @@ void LORA_MODULE_class::Initialize(IDATA IData)
 	if (!LoRa.begin(FREQUENCY))
 	{
 		#ifdef DEBUGGING
-			Serial.println("ERROR: LoRa Initialization Failed!");
+			Serial.println("X: ERROR: LoRa Initialization Failed!");
 		#endif
 	}
 
@@ -151,7 +151,7 @@ bool LORA_MODULE_class::checkMessageValidity()
 		if(i == VALID_HEADERS - 1)
 		{
 			#ifdef DEBUGGING
-				Serial.println("Invalid Packet Header!");
+				Serial.println("X: Invalid Packet Header!");
 			#endif
 
 			return false;
@@ -162,7 +162,7 @@ bool LORA_MODULE_class::checkMessageValidity()
 	if (startIdx == -1 && endIdx == -1)
 	{
 		#ifdef DEBUGGING
-			Serial.println("Unable to Locate Data!");
+			Serial.println("X: Unable to Locate Data!");
 		#endif
 
 		return false;
@@ -180,7 +180,7 @@ bool LORA_MODULE_class::checkMessageValidity()
 			if (payloadChar != '[' && payloadChar != ']' && payloadChar != ',')
 			{
 				#ifdef DEBUGGING
-					Serial.print("Invalid Character Found!");
+					Serial.println("X: Invalid Character Found!");
 				#endif
 
 				return false;
@@ -191,7 +191,7 @@ bool LORA_MODULE_class::checkMessageValidity()
 				if (_loraPayload[i + 1] != BLANK_PLACEHOLDER)
 				{
 					#ifdef DEBUGGING
-						Serial.println("Invalid Data Found!");
+						Serial.println("X: Invalid Data Found!");
 					#endif
 
 					return false;
@@ -338,7 +338,8 @@ void LORA_MODULE_class::sendPayloadData()
 	uint8_t payloadLen = sendPayload.length() + 1;	// +1 Space for null terminator
 
 	#ifdef DEBUGGING
-		Serial.println("Payload to Send: " + sendPayload);
+		Serial.print("Payload to Send: ");
+		Serial.println(sendPayload);
 	#endif
 
 	// Encryption
@@ -364,6 +365,7 @@ void LORA_MODULE_class::sendPayloadData()
 	{
 		unsigned long startTime = millis();
 		unsigned long lastCheckTime = millis();
+
 
 		while (millis() - startTime < _csmaTimeout)
 		{
@@ -397,7 +399,11 @@ void LORA_MODULE_class::sendPayloadData()
 
 		// Debugging output for the sent message
 		#ifdef DEBUGGING
-			Serial.println("\nPayload Sent Sucessfully! (" + String(_sendAttempts + 1) + "/" + String(SEND_ATTEMPTS) + ")");
+			Serial.print("\nPayload Sent Sucessfully! (");
+			Serial.print(String(_sendAttempts + 1));
+			Serial.print('/');
+			Serial.print(String(SEND_ATTEMPTS));
+			Serial.println(")");
 		#endif
 
 		// Increment attempts
@@ -411,7 +417,7 @@ void LORA_MODULE_class::sendPayloadData()
 	{
 		// Using RC4 Modified because originally AES was the plan but the RAM/CPU on this thing cant take it.
 		// RC4 uses 256 bytes to randomize but that needs int. RAM/CPU is dying so switch to uint_8 which is up to 255 🤯
-		// So ok we use 255, RAM/CPU still dies! Kinda works with Serial Off, but for the sake of this I will lower it to 128 or even 64.
+		// So ok we use 255, RAM/CPU still dies! Kinda works with Serial Off, but for the sake of this I will lower it to 128 or even 32.
 		// Might use 255 for final since serial will be off, depends on reliability
 
 		uint8_t S[RC4_BYTES];

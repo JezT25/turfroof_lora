@@ -30,7 +30,7 @@ void setup() {
 
   // Start LoRa communication
   if (!LoRa.begin(FREQUENCY)) {
-    Serial.println("LoRa init failed! Check connections.");
+    Serial.println("X: LoRa init failed! Check connections.");
     while (1);  // Halt execution
   }
 
