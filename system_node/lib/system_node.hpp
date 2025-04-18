@@ -46,6 +46,7 @@
 #include <Adafruit_AHTX0.h>
 #include <avr/sleep.h>
 #include <avr/power.h>
+#include <avr/wdt.h>
 
 #include "IDevice.h"
 #include "hwio/hwio.h"

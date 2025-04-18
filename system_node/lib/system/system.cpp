@@ -78,6 +78,8 @@ void SYSTEM_class::Run()
 	{
 		enterlightsleepMode();
 	}
+
+	wdt_reset();
 }
 
 void SYSTEM_class::entersleepMode()
@@ -127,7 +129,6 @@ void SYSTEM_class::enterlightsleepMode()
 	detachInterrupt(digitalPinToInterrupt(LORA_DI0));
 
 	// Turn on other devices
-	_hwio.toggleModules(_hwio.GPIO_WAKE); // todo: u know this can be forever off now since sensor data has been gathered
 	delay(DELAY_SMALL); // Wait for modules to boot
 
 	// Boot Devices
@@ -136,6 +137,9 @@ void SYSTEM_class::enterlightsleepMode()
 
 inline void SYSTEM_class::gotosleep()
 {
+	// Disable WDT
+	wdt_disable();
+
 	// Disable ADC and watchdog to save power
 	ADCSRA = OFF;
 	WDTCSR = OFF;
@@ -171,6 +175,9 @@ inline void SYSTEM_class::gotosleep()
 	power_all_enable();
 	ADCSRA = (ON << ADEN); 
 	clock_prescale_set(clock_div_1);
+
+	// Reenable WDT
+	wdt_enable(WDTO_8S);
 }
 
 inline void SYSTEM_class::wakeonLoRa()

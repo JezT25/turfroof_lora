@@ -84,6 +84,8 @@ void LORA_MODULE_class::startLoRaMesh(IDATA IData)
 			processPayloadData();
 			sendPayloadData();
 		}
+
+		wdt_reset();
 	}
 }
 
@@ -431,6 +433,8 @@ void LORA_MODULE_class::sendPayloadData()
 				// Perform backoff without blocking execution
 				if (LoRa.packetRssi() < CSMA_NOISE_LIM) break;
 			}
+
+			wdt_reset();
 		}
 
 		// Send the payload over LoRa

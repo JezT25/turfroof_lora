@@ -50,9 +50,9 @@
 // Algorithm Settings
 #define START_OF_BRACKET	5
 #define DECIMAL_VALUES  	5
-#define MAX_HEADER_LENGTH	6		// TEMP: is 5 actually, but +1 for null terminator
-#define MAX_NUMBER_LENGTH	10		// 000.00000 is 9, but +1 for null terminator
-#define MAX_MESSAGE_LENGTH  87		// TEMP:[000.00000,000.00000,000.00000,000.00000,000.00000,000.00000,000.00000,000.00000] is 86, but + 1 for null terminator
+#define MAX_HEADER_LENGTH	6		// "TEMP:" is 5 actually, but +1 for null terminator
+#define MAX_NUMBER_LENGTH	10		// "000.00000" is 9, but +1 for null terminator
+#define MAX_MESSAGE_LENGTH  87		// "TEMP:[000.00000,000.00000,000.00000,000.00000,000.00000,000.00000,000.00000,000.00000]" is 86, but + 1 for null terminator
 #define EPSILON         	0.0001
 #define BLANK_PLACEHOLDER	'*'
 
