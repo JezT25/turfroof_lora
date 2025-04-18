@@ -114,10 +114,12 @@ bool LORA_MODULE_class::getLoRaPayload()
 	memset(_loraPayload, 0, sizeof(_loraPayload));
 	while (LoRa.available() && payloadIndex < sizeof(_loraPayload) - 1)
 	{
-		_loraPayload[payloadIndex] += (char)LoRa.read();
-		payloadIndex++;
+		_loraPayload[payloadIndex++] = (char)LoRa.read();
 	}
 	_loraPayload[payloadIndex] = '\0';
+
+	// Flush remaining bytes (if any)
+	while (LoRa.available()) LoRa.read();
 
 	#ifdef ENCRYPTING
 		#ifdef DEBUGGING

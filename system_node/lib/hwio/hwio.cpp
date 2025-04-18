@@ -24,14 +24,16 @@
 
 void HWIO_class::Initialize(IDATA *IData)
 {
+	noInterrupts();
+
+	// Begin Serial Connection
 	Serial.begin(SERIAL_BAUD);
 
 	// Get HW ID
 	setGPIO();
 	getHWID(IData->HW_ID);
 
-	// Initialize AHT10 // TODO: recall this on wake? check ds18b20 as well for leaks
-	aht10.begin();
+	interrupts();
 }
 
 void HWIO_class::loadSensorData(IDATA *IData)
@@ -120,6 +122,9 @@ void HWIO_class::getAHT10(float &temperature, float &humidity)
 {
 	sensors_event_t aht10_humidity, aht10_temperature;
 
+	// Initialize AHT10
+	aht10.begin();
+
 	if (aht10.getEvent(&aht10_humidity, &aht10_temperature))
 	{
 		#ifdef DEBUGGING
@@ -145,11 +150,8 @@ void HWIO_class::getAHT10(float &temperature, float &humidity)
 
 void HWIO_class::getSoilTemperature(float &temperature)
 {
-	OneWire oneWire(STEMP_IN);
-	DallasTemperature ds18b20(&oneWire);
-
 	// Initialize DS18B20
-	ds18b20.begin(); // todo: this must be moved out too to prvent leak. its not leaking now because its failing
+	ds18b20.begin();
 	ds18b20.requestTemperatures();
 
 	float soil_temperature = ds18b20.getTempCByIndex(0); 

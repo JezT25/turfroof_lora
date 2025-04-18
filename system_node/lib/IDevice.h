@@ -23,6 +23,8 @@
 #ifndef IDevice_h
 #define IDevice_h
 
+#include "system_node.hpp"
+
 class IDATA
 {
 	public:

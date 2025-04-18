@@ -58,6 +58,8 @@ class HWIO_class
 	private:
 		uint8_t _hwid[HWID_PINS] = { HWID_A, HWID_B, HWID_C };
 		Adafruit_AHTX0 aht10;
+		OneWire oneWire;
+    	DallasTemperature ds18b20;
 
 		void setGPIO();
 		void getHWID(uint8_t &hwid);
@@ -67,6 +69,8 @@ class HWIO_class
 		void getSoilMoisture(uint8_t &moisture);
 
 	public:
+		HWIO_class() : oneWire(STEMP_IN), ds18b20(&oneWire) {}
+
 		enum _commandList : uint8_t
 		{
 			NO_COMMAND,

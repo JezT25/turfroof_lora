@@ -200,7 +200,8 @@ inline void SYSTEM_class::wakeonRTC()
 
 	void SYSTEM_class::displayfreeRAM()
 	{
-		Serial.print(F("SRAM Left = "));
-		Serial.println(freeRAM());
+		Serial.print(F("\033[31mSRAM Left = "));
+		Serial.print(freeRAM());
+		Serial.println(F("\033[0m"));
 	}
 #endif
