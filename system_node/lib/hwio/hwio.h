@@ -42,6 +42,8 @@
 #define ADC_RESO_MAX   	1023
 #define MIN_PERCENT		0
 #define MAX_PERCENT 	100
+#define MIN_VALUE		-99
+#define MAX_VALUE		100
 
 #define DATA_SAMPLES	10
 #define SAMPLE_DELAY	50

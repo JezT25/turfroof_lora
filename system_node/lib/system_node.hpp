@@ -24,15 +24,18 @@
 #define system_node_hpp_included
 
 #define SYSTEM_VER      0.07
+#define SERIAL_BAUD     115200
 
 // Toggles: Comment or Uncomment to Disable or Enable
 #define DEBUGGING
-#define SERIAL_BAUD     115200
-#define SET_RTC_TIME	0			// Set to 1 to set RTC time from PC
+// #define ENCRYPTING
 
 // Encryption Settings
-#ifndef DEBUGGING
-	#define ENCRYPTING
+#ifdef DEBUGGING
+	#define SET_RTC_TIME	0			// Set to 1 to set RTC time from PC
+#endif
+
+#ifdef ENCRYPTING
 	#define RC4_BYTES		32
 	#define ENCRYPTION_KEY  "G7v!X"
 #endif

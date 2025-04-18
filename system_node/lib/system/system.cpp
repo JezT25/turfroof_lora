@@ -72,7 +72,7 @@ void SYSTEM_class::Run()
 	else if (_interruptbyLoRa)
 	{
 		_interruptbyLoRa = false;
-		_lora_module.startLoRaMesh(_IData);
+		_lora_module.startLoRaMesh(_IData, _rtc_module);
 	}
 	else
 	{

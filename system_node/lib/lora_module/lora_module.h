@@ -66,7 +66,6 @@ class LORA_MODULE_class
 			SOIL_TEMPERATURE,
 			SOIL_MOISTURE,
 			BATT_VOLTAGE,
-			TIME,
 			DATE,
 			VALID_HEADERS
 		};
@@ -77,7 +76,6 @@ class LORA_MODULE_class
 			"STMP:",
 			"SMOI:",
 			"BATT:",
-			"TIME:",
 			"DATE:"
 		}; // TODO: Code to sync time and date
 
@@ -98,7 +96,7 @@ class LORA_MODULE_class
 		bool checkMessageValidity();
 		void preloadMessageData();
 		void processPayloadData();
-		void sendPayloadData();
+		void sendPayloadData(RTC_MODULE_class rtc);
 
 		#ifdef ENCRYPTING
 			void rc4EncryptDecrypt(char *data, uint8_t len);
@@ -107,7 +105,7 @@ class LORA_MODULE_class
 	public:
 		void Initialize(IDATA IData);
 		void loadSensorData(IDATA IData);
-		void startLoRaMesh(IDATA IData);
+		void startLoRaMesh(IDATA IData, RTC_MODULE_class rtc);
 };
 
 #endif

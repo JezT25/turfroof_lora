@@ -73,7 +73,7 @@ void LORA_MODULE_class::loadSensorData(IDATA IData)
 	resetValues();
 }
 
-void LORA_MODULE_class::startLoRaMesh(IDATA IData)
+void LORA_MODULE_class::startLoRaMesh(IDATA IData, RTC_MODULE_class rtc)
 {
 	while (millis() - _lastSystemUpdateTime <= LORA_WAKE_TIMEOUT)
 	{
@@ -82,7 +82,7 @@ void LORA_MODULE_class::startLoRaMesh(IDATA IData)
 			if (!_newpayloadAlert && !getLoRaPayload()) continue;
 			preloadMessageData();
 			processPayloadData();
-			sendPayloadData();
+			sendPayloadData(rtc);
 		}
 
 		wdt_reset();
@@ -250,7 +250,7 @@ void LORA_MODULE_class::preloadMessageData()
 		memset(_systemValues, 0, sizeof(_systemValues));
 
 		// Load values
-		for (uint8_t i = 0; i < VALID_HEADERS; i++)
+		for (uint8_t i = 0; i < VALID_HEADERS - 1; i++)
 		{
 			if (strncmp(_loraPayload, _validHeaders[i], strlen(_validHeaders[i])) == 0)
 			{
@@ -278,7 +278,7 @@ void LORA_MODULE_class::preloadMessageData()
 
 void LORA_MODULE_class::processPayloadData()
 {
-	// Extract data from Payload
+	// Extract data from payload
 	uint8_t startIdx = getcharIndex('[');
 	uint8_t endIdx = getcharIndex(']');
 	uint8_t array_len = endIdx - (startIdx + 1);
@@ -287,7 +287,7 @@ void LORA_MODULE_class::processPayloadData()
 	buffer[array_len] = '\0';
 	char *token = strtok(buffer, ",");
 
-	// Store data to tempValues
+	// Store payload data to tempValues
 	float tempValues[MAX_DEVICES] = {};
 	uint8_t index = 0;
 	while (token != nullptr && index < MAX_DEVICES)
@@ -312,7 +312,7 @@ void LORA_MODULE_class::processPayloadData()
 			}
 
 			#ifdef DEBUGGING
-				//	Print Merged Values
+				//	Print merged values
 				Serial.print(F("Merged Data: ["));
 				for (uint8_t i = 0; i < MAX_DEVICES; i++)
 				{
@@ -327,7 +327,7 @@ void LORA_MODULE_class::processPayloadData()
 	}
 }
 
-void LORA_MODULE_class::sendPayloadData()
+void LORA_MODULE_class::sendPayloadData(RTC_MODULE_class rtc)
 {
 	// Reset new Payload alert and last update to prevent forever looping messages
 	_lastSystemUpdateTime = millis();
@@ -341,6 +341,15 @@ void LORA_MODULE_class::sendPayloadData()
 		#endif
 
 		return;
+	}
+	// Only sync rtc on the first attempt of sending the date & time
+	else if(strncmp(_loraprevHeader, _validHeaders[DATE], sizeof(_loraprevHeader)) == 0 && _sendAttempts == 0)
+	{
+		#ifdef DEBUGGING
+			Serial.println(F("Syncing RTC via LoRa"));
+		#endif
+
+		rtc.syncTime(_systemValues);
 	}
 
 	// Create new Payload

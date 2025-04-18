@@ -70,8 +70,13 @@ void setup() {
     // Enable CRC
 	LoRa.enableCrc();
 
-    // Create message and encrypt it
-    char message[] = "TEMP:[]";  
+    // String message = "TEMP:[]";  // Message to send
+    // String message = "HUMI:[]";  // Message to send
+    // String message = "STMP:[]";  // Message to send
+    // String message = "SMOI:[]";  // Message to send
+    // String message = "BATT:[]";  // Message to send
+    String message = "DATE:[10,11,12,13,01,25]";  // Message to send
+    
     int msgLen = strlen(message);
     rc4EncryptDecrypt(message, msgLen);  // Encrypt
 

@@ -113,7 +113,7 @@ void HWIO_class::getBattery(float &battery)
 		Serial.println(F(" Volts"));
 	#endif
 
-	battery = batteryvoltage;
+	battery = constrain(batteryvoltage, MIN_VALUE, MAX_VALUE);
 }
 
 void HWIO_class::getAHT10(float &temperature, float &humidity)
@@ -132,8 +132,8 @@ void HWIO_class::getAHT10(float &temperature, float &humidity)
 			Serial.println(F("% rH"));
 		#endif
 
-		temperature = aht10_temperature.temperature;
-		humidity = aht10_humidity.relative_humidity;
+		temperature = constrain(aht10_temperature.temperature, MIN_VALUE, MAX_VALUE);
+		humidity = constrain(aht10_humidity.relative_humidity, MIN_VALUE, MAX_VALUE);
 	}
 	else
 	{
@@ -160,7 +160,7 @@ void HWIO_class::getSoilTemperature(float &temperature)
 		Serial.println(F(" C"));
 	#endif
 
-	temperature = soil_temperature;
+	temperature = constrain(soil_temperature, MIN_VALUE, MAX_VALUE);
 }
 
 void HWIO_class::getSoilMoisture(uint8_t &moisture)
@@ -180,5 +180,5 @@ void HWIO_class::getSoilMoisture(uint8_t &moisture)
 		Serial.println(F(" %"));
 	#endif
 
-	moisture = moisturepercentage;
+	moisture = constrain(moisturepercentage, MIN_VALUE, MAX_VALUE);
 }

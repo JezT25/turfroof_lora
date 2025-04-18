@@ -38,6 +38,15 @@
 class RTC_MODULE_class
 {
 	private:
+		enum _timeFormat : uint8_t
+		{
+			HOUR,
+			MINUTE,
+			SECOND,
+			DAY,
+			MONTH,
+			YEAR
+		};
 		DS3232RTC _rtc;
 
 		#ifdef DEBUGGING
@@ -50,6 +59,7 @@ class RTC_MODULE_class
 		void Sync();
 		uint8_t checkAlarm();
 		time_t getTime();
+    	void syncTime(const float* rtctime);
 };
 
 #endif

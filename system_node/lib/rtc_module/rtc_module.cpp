@@ -34,7 +34,7 @@ void RTC_MODULE_class::Initialize()
 	_rtc.alarmInterrupt(DS3232RTC::ALARM_2, false);
 	_rtc.squareWave(DS3232RTC::SQWAVE_NONE);
 
-	#if SET_RTC_TIME
+	#if defined(DEBUGGING) && SET_RTC_TIME
 		settimefromPC();
 	#endif
 
@@ -97,6 +97,43 @@ uint8_t RTC_MODULE_class::checkAlarm()
 time_t RTC_MODULE_class::getTime()
 {
 	return _rtc.get();
+}
+
+void RTC_MODULE_class::syncTime(const float *rtctime)
+{
+	uint8_t hr = (uint8_t)rtctime[HOUR];
+	uint8_t min = (uint8_t)rtctime[MINUTE];
+	uint8_t sec = (uint8_t)rtctime[SECOND];
+	uint8_t dy = (uint8_t)rtctime[DAY];
+	uint8_t mnth = (uint8_t)rtctime[MONTH];
+	uint8_t yr = (uint8_t)rtctime[YEAR];
+
+	// Check data validity if it's in range
+	if(hr > 23 || min > 59 || sec > 59 || dy < 1 || dy > 31 || mnth < 1 || mnth > 12 || yr > 99)
+	{
+		#ifdef DEBUGGING
+			Serial.print(F("X: Invalid datettime Data Found!"));
+		#endif
+
+		return;
+	}
+
+	// Set the RTC module time
+	setTime(hr, min, sec, dy, mnth, yr);
+	_rtc.set(now());
+
+	#ifdef DEBUGGING
+		Serial.print(F("Datetime from LoRa: "));
+		Serial.print(hr);Serial.print(':');
+		Serial.print(min);Serial.print(':');
+		Serial.print(sec);Serial.print(' ');
+		Serial.print(dy);Serial.print('-');
+		Serial.print(mnth);Serial.print('-');
+		Serial.println(yr + 2000);
+	#endif
+
+	// Sync for good measure
+	Sync();
 }
 
 #ifdef DEBUGGING
