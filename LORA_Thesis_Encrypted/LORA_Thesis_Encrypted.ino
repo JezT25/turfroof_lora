@@ -92,7 +92,7 @@ void setup() {
 
     LoRa.beginPacket();
     LoRa.write((uint8_t*)buffer, msgLen);
-    LoRa.endPacket();
+    LoRa.endPacket(true);
     
     Serial.println("Message sent successfully!");
     Serial.println("Waiting for reply...");

@@ -56,7 +56,7 @@ void setup() {
   Serial.println(message);
   LoRa.beginPacket();
   LoRa.print(message);
-  LoRa.endPacket();
+  LoRa.endPacket(true);
   Serial.println("Message sent successfully!");
 
   Serial.println("Waiting for reply...");

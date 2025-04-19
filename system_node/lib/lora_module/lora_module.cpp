@@ -455,7 +455,7 @@ void LORA_MODULE_class::sendPayloadData(RTC_MODULE_class rtc)
 		#else
 			LoRa.write((const uint8_t*)sendPayload, payloadLen - 1);		// -1 Don't send null terminator
 		#endif
-		LoRa.endPacket();
+		LoRa.endPacket(true);												// Set true for non blocking sending
 
 		// Debugging output for the sent message
 		#ifdef DEBUGGING
