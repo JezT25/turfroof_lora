@@ -130,7 +130,7 @@ bool LORA_MODULE_class::getLoRaPayload()
 		char decryptedPayload[MAX_MESSAGE_LENGTH];
 		strncpy(decryptedPayload, _loraPayload, sizeof(decryptedPayload));
 		decryptedPayload[sizeof(decryptedPayload) - 1] = '\0';
-		rc4EncryptDecrypt(decryptedPayload, strlen(decryptedPayload));
+		rc4EncryptDecrypt(decryptedPayload, strlen(decryptedPayload) + 1);
 		strncpy(_loraPayload, decryptedPayload, sizeof(_loraPayload));
 		_loraPayload[sizeof(_loraPayload) - 1] = '\0';
 	#endif
@@ -224,7 +224,7 @@ bool LORA_MODULE_class::checkMessageValidity()
 			if ((payloadChar < '0' || payloadChar > '9') && payloadChar != '.' && payloadChar != '-')
 			{
 				#ifdef DEBUGGING
-					Serial.print(F("Invalid Number Found!"));
+					Serial.println(F("Invalid Number Found!"));
 				#endif
 
 				return false;
@@ -475,10 +475,9 @@ void LORA_MODULE_class::sendPayloadData(RTC_MODULE_class rtc)
 #ifdef ENCRYPTING
 	void LORA_MODULE_class::rc4EncryptDecrypt(char *data, uint8_t len)
 	{
-		// Using RC4 Modified because originally AES was the plan but the RAM/CPU on this thing cant take it.
-		// RC4 uses 256 bytes to randomize but that needs int. RAM/CPU is dying so switch to uint_8 which is up to 255 🤯
-		// So ok we use 255, RAM/CPU still dies! Kinda works with Serial Off, but for the sake of this I will lower it to 128 or even 32.
-		// Might use 255 for final since serial will be off, depends on reliability
+		// Using RC4 because originally AES was the plan but the RAM/CPU on this thing cant take it.
+		// RC4 uses 256 but this code is limited to 255. (uint8_t[255] = 256 bytes | uint16_t[256] = 512 bytes)
+		// Save the RAM!
 
 		uint8_t S[RC4_BYTES];
 		for (uint8_t i = 0; i < RC4_BYTES; i++)
@@ -497,7 +496,7 @@ void LORA_MODULE_class::sendPayloadData(RTC_MODULE_class rtc)
 		}
 
 		uint8_t rnd = 0, i = 0; j = 0;
-		for (uint8_t n = 0; n < len - 1; n++)	// -1 dont encrypt null terminator
+		for (uint8_t n = 0; n < len - 1; n++)	// -1 dont include null terminator
 		{
 			i = (i + 1) % RC4_BYTES;
 			j = (j + S[i]) % RC4_BYTES;

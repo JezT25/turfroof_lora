@@ -16,8 +16,8 @@
 #define CODING_RATE     5
 #define PREAMBLE        8
 
-#define RC4_BYTES 32
-#define ENCRYPTION_KEY  "G7v!X"
+#define RC4_BYTES 		255
+#define ENCRYPTION_KEY  "G7v!Xz@a?>Qp!d$1"
 
 void rc4EncryptDecrypt(char *data, int len) {
     int S[RC4_BYTES];
@@ -76,9 +76,11 @@ void setup() {
     // String message = "SMOI:[]";  // Message to send
     // String message = "BATT:[]";  // Message to send
     String message = "DATE:[10,11,12,13,01,25]";  // Message to send
-    
-    int msgLen = strlen(message);
-    rc4EncryptDecrypt(message, msgLen);  // Encrypt
+    int msgLen = message.length();
+
+    char buffer[msgLen + 1];
+    message.toCharArray(buffer, msgLen + 1);  // +1 for null terminator
+    rc4EncryptDecrypt(buffer, msgLen);  // Encrypt
 
     Serial.println("LoRa Transmitter Initialized at 433 MHz!");
     Serial.print("Sending Encrypted Message: ");
@@ -89,7 +91,7 @@ void setup() {
     Serial.println();
 
     LoRa.beginPacket();
-    LoRa.write((uint8_t*)message, msgLen);
+    LoRa.write((uint8_t*)buffer, msgLen);
     LoRa.endPacket();
     
     Serial.println("Message sent successfully!");

@@ -112,7 +112,7 @@ void RTC_MODULE_class::syncTime(const float *rtctime)
 	if(hr > 23 || min > 59 || sec > 59 || dy < 1 || dy > 31 || mnth < 1 || mnth > 12 || yr > 99)
 	{
 		#ifdef DEBUGGING
-			Serial.print(F("X: Invalid datettime Data Found!"));
+			Serial.println(F("X: Invalid datettime Data Found!"));
 		#endif
 
 		return;

@@ -28,7 +28,7 @@
 
 // Toggles: Comment or Uncomment to Disable or Enable
 #define DEBUGGING
-// #define ENCRYPTING
+#define ENCRYPTING
 
 // Encryption Settings
 #ifdef DEBUGGING
@@ -36,8 +36,8 @@
 #endif
 
 #ifdef ENCRYPTING
-	#define RC4_BYTES		32
-	#define ENCRYPTION_KEY  "G7v!X"
+	#define RC4_BYTES 		255
+	#define ENCRYPTION_KEY  "G7v!Xz@a?>Qp!d$1"
 #endif
 
 #include <Wire.h>
