@@ -41,13 +41,15 @@ void RTC_MODULE_class::Initialize()
 	// Sync Clock with MCU
 	Sync();
 
-	// TODO: EDIT ME | Set Alarm1 every hour to wake up
-	_rtc.setAlarm(DS3232RTC::ALM1_MATCH_SECONDS, 30, 0, 0, 1);
+	// Set Alarm 1 to trigger every hour
+	// _rtc.setAlarm(DS3232RTC::ALM1_MATCH_MINUTES, 0, ALARM1_MIN, 0, 1);
+	_rtc.setAlarm(DS3232RTC::ALM1_MATCH_SECONDS, 30, 0, 0, 1);		// TODO: EDIT ME
 	_rtc.alarm(DS3232RTC::ALARM_1);
 	_rtc.alarmInterrupt(DS3232RTC::ALARM_1, true);
 
-	// TODO: EDIT ME | Set Alarm2 after 5 minutes to go back to sleep
-	_rtc.setAlarm(DS3232RTC::ALM2_EVERY_MINUTE, 0, 0, 0, 1);
+	// Set Alarm 2 to trigger at ALARM2_MIN every hour
+	// _rtc.setAlarm(DS3232RTC::ALM2_MATCH_MINUTES, 0, ALARM2_MIN, 0, 1);
+	_rtc.setAlarm(DS3232RTC::ALM2_EVERY_MINUTE, 0, 0, 0, 1);		// TODO: EDIT ME
 	_rtc.alarm(DS3232RTC::ALARM_2);
 	_rtc.alarmInterrupt(DS3232RTC::ALARM_2, true);
 

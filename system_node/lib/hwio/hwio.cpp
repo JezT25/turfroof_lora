@@ -34,6 +34,8 @@ void HWIO_class::Initialize(IDATA *IData)
 	getHWID(IData->HW_ID);
 
 	interrupts();
+
+	toggleModules(GPIO_WAKE, LORA_WAKE);
 }
 
 void HWIO_class::loadSensorData(IDATA *IData)
@@ -57,9 +59,9 @@ void HWIO_class::setGPIO()
 
 void HWIO_class::getHWID(uint8_t &hwid)
 {
-	hwid = digitalRead(_hwid[0]);
-	hwid += digitalRead(_hwid[1]) * 2;
-	hwid += digitalRead(_hwid[2]) * 4;
+	hwid = !digitalRead(_hwid[0]);
+	hwid += !digitalRead(_hwid[1]) * 2;
+	hwid += !digitalRead(_hwid[2]) * 4;
 
 	#ifdef DEBUGGING
 		Serial.print(F("System Hardware ID: "));

@@ -50,7 +50,7 @@ void LORA_MODULE_class::Initialize(IDATA IData)
 	_hwid = IData.HW_ID;
 
 	// CSMA/CA (Carrier Sense Multiple Access with Collision Avoidance) Parameters
-	_backoffTime = _hwid * BACKOFF_MUL;
+	_backoffTime = BACKOFF_MUL + _hwid * BACKOFF_MUL;
 	_csmaTimeout = CSMA_TOUT_MIN + (CSMA_TOUT_MUL * _hwid);
 
 	#ifdef DEBUGGING
@@ -309,7 +309,7 @@ void LORA_MODULE_class::processPayloadData()
 
 			for (uint8_t i = 0; i < MAX_DEVICES; i++)
 			{
-				if (i == _hwid) continue;
+				if (i == _hwid && strcmp(_loraprevHeader, _validHeaders[DATE]) != 0) continue;
 				_systemValues[i] = _systemValues[i] == 0 ? (tempValues[i] == 0 ? 0 : tempValues[i]) : _systemValues[i];
 			}
 

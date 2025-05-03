@@ -29,7 +29,7 @@
 #define RTC_INT			3
 
 #define ALARM1_MIN		0
-#define ALARM2_MIN		5
+#define ALARM2_MIN		3
 
 #define NO_TRIGGER		0
 #define ALARM1_TRIGGER	1

@@ -26,14 +26,14 @@
 #define MAX_DEVICES		8
 #define HWID_PINS   	3
 
-#define HWID_A      	A0
-#define HWID_B      	A1
-#define HWID_C      	A2
-#define BATT_IN     	A3
+#define HWID_A      	A3
+#define HWID_B      	A2
+#define HWID_C      	A1
+#define BATT_IN     	A0
 #define SMOIS_IN    	A7
 #define SENS_TOGGLE 	4
-#define STEMP_IN    	6
-#define LORA_TOGGLE 	7 
+#define LORA_TOGGLE 	5
+#define STEMP_IN    	7
 
 #define R1          	10000
 #define R2          	33000

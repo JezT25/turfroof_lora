@@ -127,12 +127,6 @@ void SYSTEM_class::enterlightsleepMode()
 	EIFR = bit(INTF0);
 	gotosleep();
 	detachInterrupt(digitalPinToInterrupt(LORA_DI0));
-
-	// Turn on other devices
-	delay(DELAY_SMALL); // Wait for modules to boot
-
-	// Boot Devices
-	_rtc_module.Sync();
 }
 
 inline void SYSTEM_class::gotosleep()

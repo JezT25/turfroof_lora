@@ -27,8 +27,8 @@
 
 // LoRa Pins
 #define LORA_DI0			2
-#define LORA_RST			9
-#define LORA_NSS			4
+#define LORA_RST			6
+#define LORA_NSS			10
 
 // LoRa Settings
 #define FREQUENCY			433E6  // 433 MHz
@@ -77,7 +77,7 @@ class LORA_MODULE_class
 			"SMOI:",
 			"BATT:",
 			"DATE:"
-		}; // TODO: Code to sync time and date
+		};
 
 		uint16_t _backoffTime;
 		uint16_t _csmaTimeout;
