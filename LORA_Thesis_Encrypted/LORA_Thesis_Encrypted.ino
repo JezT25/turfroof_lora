@@ -70,12 +70,12 @@ void setup() {
     // Enable CRC
 	LoRa.enableCrc();
 
-    // String message = "TEMP:[]";  // Message to send
+    String message = "TEMP:[]";  // Message to send
     // String message = "HUMI:[]";  // Message to send
     // String message = "STMP:[]";  // Message to send
     // String message = "SMOI:[]";  // Message to send
     // String message = "BATT:[]";  // Message to send
-    String message = "DATE:[10,11,12,13,01,25]";  // Message to send
+    // String message = "DATE:[10,11,12,13,01,25]";  // Message to send
     int msgLen = message.length();
 
     char buffer[msgLen + 1];

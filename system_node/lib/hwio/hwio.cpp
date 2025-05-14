@@ -176,7 +176,7 @@ void HWIO_class::getSoilMoisture(uint8_t &moisture)
 		delay(SAMPLE_DELAY);
 	}
 
-	uint8_t moisturepercentage = map((analogRead(SMOIS_IN) / DATA_SAMPLES), ADC_RESO_MIN, ADC_RESO_MAX, MIN_PERCENT, MAX_PERCENT);
+	uint8_t moisturepercentage = map((totaldatasamples / DATA_SAMPLES), ADC_RESO_MIN, ADC_RESO_MAX, MIN_PERCENT, MAX_PERCENT);
 
 	#ifdef DEBUGGING
 		Serial.print(F("Soil Moisture: "));

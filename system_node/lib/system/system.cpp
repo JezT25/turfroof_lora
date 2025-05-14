@@ -79,7 +79,7 @@ void SYSTEM_class::Run()
 		enterlightsleepMode();
 	}
 
-	wdt_reset();
+	// wdt_reset();
 }
 
 void SYSTEM_class::entersleepMode()
