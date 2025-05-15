@@ -56,6 +56,7 @@ class RTC_MODULE_class
 
 	public:
 		void Initialize();
+		inline void reInit();
 		void Sync();
 		uint8_t checkAlarm();
 		time_t getTime();

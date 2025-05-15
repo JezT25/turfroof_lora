@@ -92,6 +92,11 @@ void SYSTEM_class::entersleepMode()
 	// Turn off LoRa and Modules
 	_hwio.toggleModules(_hwio.GPIO_SLEEP, _hwio.LORA_SLEEP);
 
+	// Turn off communication to avoid power transmitted in GPIO
+	_lora_module.setPinsOff();
+	Wire.end();
+	SPI.end();
+
 	// Remove LoRa wake privileges and clear interrupt flags
 	noInterrupts();
 	detachInterrupt(digitalPinToInterrupt(LORA_DI0));
@@ -104,9 +109,9 @@ void SYSTEM_class::entersleepMode()
 	_hwio.toggleModules(_hwio.GPIO_WAKE, _hwio.LORA_WAKE);
 	delay(DELAY_SMALL); // Wait for modules to boot
 
-	// TODO: Do I have to reinitialize lora?
 	// Boot Devices
-	_rtc_module.Sync();
+	_rtc_module.reInit();
+	_lora_module.Initialize(_IData);
 	attachInterrupt(digitalPinToInterrupt(LORA_DI0), wakeonLoRa, RISING);
 }
 
@@ -120,6 +125,9 @@ void SYSTEM_class::enterlightsleepMode()
 	// Turn off other devices
 	_hwio.toggleModules(_hwio.GPIO_SLEEP);
 	LoRa.receive();	
+
+	// Turn off communication to avoid power transmitted in GPIO
+	Wire.end();
 
 	// Set Interrupts and Sleep
 	noInterrupts();

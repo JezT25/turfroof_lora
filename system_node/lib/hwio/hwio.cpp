@@ -26,8 +26,10 @@ void HWIO_class::Initialize(IDATA *IData)
 {
 	noInterrupts();
 
-	// Begin Serial Connection
-	Serial.begin(SERIAL_BAUD);
+	#ifdef DEBUGGING
+		// Begin Serial Connection for Debugging
+		Serial.begin(SERIAL_BAUD);
+	#endif
 
 	// Get HW ID
 	setGPIO();
@@ -102,6 +104,15 @@ void HWIO_class::toggleModules(uint8_t command1, uint8_t command2)
 void HWIO_class::getBattery(float &battery)
 {
 	float totaldatasamples = 0;
+
+	// Purge initial boot up readings
+	for (uint8_t i = 0; i < DATA_SAMPLES; i++)
+	{
+		analogRead(BATT_IN);
+		delay(SAMPLE_DELAY);
+	}
+
+	// Actual Readings
 	for (uint8_t i = 0; i < DATA_SAMPLES; i++)
 	{
 		totaldatasamples += analogRead(BATT_IN);
@@ -109,7 +120,7 @@ void HWIO_class::getBattery(float &battery)
 	}
 
 	float pinvoltage = ((totaldatasamples / DATA_SAMPLES) / ADC_RESO_MAX) * ADC_REF_VOL;
-	float batteryvoltage = pinvoltage * ((R1 + R2) / R2);
+	float batteryvoltage = pinvoltage * (((float)R1 + (float)R2) / (float)R2);
 
 	#ifdef DEBUGGING
 		Serial.print(F("Battery Voltage: "));
@@ -170,19 +181,42 @@ void HWIO_class::getSoilTemperature(float &temperature)
 void HWIO_class::getSoilMoisture(uint8_t &moisture)
 {
 	int totaldatasamples = 0;
+
+	// Purge initial boot up readings
+	for (uint8_t i = 0; i < DATA_SAMPLES; i++)
+	{
+		analogRead(SMOIS_IN);
+		delay(SAMPLE_DELAY);
+	}
+
+	// Actual Readings
 	for (uint8_t i = 0; i < DATA_SAMPLES; i++)
 	{
 		totaldatasamples += analogRead(SMOIS_IN);
 		delay(SAMPLE_DELAY);
 	}
 
-	uint8_t moisturepercentage = map((totaldatasamples / DATA_SAMPLES), ADC_RESO_MIN, ADC_RESO_MAX, MIN_PERCENT, MAX_PERCENT);
+	int avgReading = totaldatasamples / DATA_SAMPLES;
+	uint8_t moisturePercentage;
+
+	if (avgReading < SMOIS_DWN_BOUND + SMOIS_BUFFER || avgReading > SMOIS_UP_BOUND + SMOIS_BUFFER)
+	{
+		moisturePercentage = VAL_ERROR;
+	}
+	else
+	{
+		// Map 250 (wet) to 100%, 675 (dry) to 0%
+		moisturePercentage = map(avgReading, SMOIS_UP_BOUND, SMOIS_DWN_BOUND, MIN_PERCENT, MAX_PERCENT);
+	}
 
 	#ifdef DEBUGGING
+		Serial.print(F("Soil analog read: "));
+		Serial.println(avgReading);
 		Serial.print(F("Soil Moisture: "));
-		Serial.print(moisturepercentage);
+		Serial.print(moisturePercentage);
 		Serial.println(F(" %"));
 	#endif
 
-	moisture = constrain(moisturepercentage, MIN_VALUE, MAX_VALUE);
+	// Don't constrain so error can stay as 255
+	moisture = moisturePercentage;
 }

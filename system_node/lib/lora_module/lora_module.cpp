@@ -62,6 +62,13 @@ void LORA_MODULE_class::Initialize(IDATA IData)
 	#endif
 }
 
+void LORA_MODULE_class::setPinsOff()
+{
+	pinMode(LORA_NSS, INPUT);
+	pinMode(LORA_RST, INPUT);
+	pinMode(LORA_DI0, INPUT);
+}
+
 void LORA_MODULE_class::loadSensorData(IDATA IData)
 {
 	_sensorData[TEMPERATURE] = IData.SYSTEM_TEMPERATURE;

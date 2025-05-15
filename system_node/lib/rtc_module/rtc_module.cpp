@@ -59,6 +59,11 @@ void RTC_MODULE_class::Initialize()
 	_rtc.writeRTC(DS3232RTC::DS32_CONTROL, reg);
 }
 
+inline void RTC_MODULE_class::reInit()
+{
+	_rtc.begin();
+}
+
 void RTC_MODULE_class::Sync()
 {
 	setSyncProvider(_rtc.get);

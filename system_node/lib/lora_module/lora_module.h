@@ -106,6 +106,7 @@ class LORA_MODULE_class
 		void Initialize(IDATA IData);
 		void loadSensorData(IDATA IData);
 		void startLoRaMesh(IDATA IData, RTC_MODULE_class rtc);
+		void setPinsOff();
 };
 
 #endif

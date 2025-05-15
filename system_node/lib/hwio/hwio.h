@@ -26,6 +26,9 @@
 #define MAX_DEVICES		8
 #define HWID_PINS   	3
 
+#define PIN_TX 			1  // Digital pin 1, TX (transmit)
+#define PIN_RX 			0  // Digital pin 0, RX (receive)
+
 #define HWID_A      	A3
 #define HWID_B      	A2
 #define HWID_C      	A1
@@ -35,6 +38,9 @@
 #define LORA_TOGGLE 	5
 #define STEMP_IN    	7
 
+#define SMOIS_DWN_BOUND 250
+#define SMOIS_UP_BOUND  700
+#define SMOIS_BUFFER	50
 #define R1          	10000
 #define R2          	33000
 #define ADC_REF_VOL 	3.3
@@ -44,6 +50,8 @@
 #define MAX_PERCENT 	100
 #define MIN_VALUE		-99
 #define MAX_VALUE		100
+
+#define VAL_ERROR		255
 
 #define DATA_SAMPLES	10
 #define SAMPLE_DELAY	50
