@@ -106,13 +106,13 @@ void SYSTEM_class::entersleepMode()
 	gotosleep();
 
 	// Turn on devices
+	attachInterrupt(digitalPinToInterrupt(LORA_DI0), wakeonLoRa, RISING);
 	_hwio.toggleModules(_hwio.GPIO_WAKE, _hwio.LORA_WAKE);
-	delay(DELAY_SMALL); // Wait for modules to boot
 
 	// Boot Devices
+	delay(DELAY_SMALL);
 	_rtc_module.reInit();
 	_lora_module.Initialize(_IData);
-	attachInterrupt(digitalPinToInterrupt(LORA_DI0), wakeonLoRa, RISING);
 }
 
 void SYSTEM_class::enterlightsleepMode()
@@ -134,7 +134,14 @@ void SYSTEM_class::enterlightsleepMode()
 	attachInterrupt(digitalPinToInterrupt(LORA_DI0), wakeonLoRa, RISING);
 	EIFR = bit(INTF0);
 	gotosleep();
+
+	// Turn on devices
 	detachInterrupt(digitalPinToInterrupt(LORA_DI0));
+	_hwio.toggleModules(_hwio.GPIO_WAKE);
+
+	// Boot Devices
+	delay(DELAY_SMALL);
+	_rtc_module.reInit();
 }
 
 inline void SYSTEM_class::gotosleep()
