@@ -67,6 +67,10 @@ void LORA_MODULE_class::setPinsOff()
 	pinMode(LORA_NSS, INPUT);
 	pinMode(LORA_RST, INPUT);
 	pinMode(LORA_DI0, INPUT);
+	pinMode(PIN_SPI, INPUT);
+	pinMode(PIN_MOSI, INPUT);
+	pinMode(PIN_MISO, INPUT);
+	pinMode(PIN_SCK, INPUT);
 }
 
 void LORA_MODULE_class::loadSensorData(IDATA IData)

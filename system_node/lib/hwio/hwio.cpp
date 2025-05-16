@@ -59,6 +59,19 @@ void HWIO_class::setGPIO()
 	pinMode(LORA_TOGGLE, OUTPUT);
 }
 
+void HWIO_class::setPinsOff()
+{
+	#ifndef DEBUGGING
+		// Set Serial Off
+		pinMode(PIN_TX, INPUT);
+		pinMode(PIN_RX, INPUT);
+	#endif
+
+	// Set I2C Off
+	pinMode(PIN_SDA, INPUT);
+	pinMode(PIN_SCL, INPUT);
+}
+
 void HWIO_class::getHWID(uint8_t &hwid)
 {
 	hwid = !digitalRead(_hwid[0]);

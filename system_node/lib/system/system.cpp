@@ -28,6 +28,9 @@ volatile bool SYSTEM_class::_interruptbyRTC = false;
 
 void SYSTEM_class::Initialize()
 {
+	// Turn on modules first!
+	_hwio.toggleModules(_hwio.GPIO_WAKE, _hwio.LORA_WAKE);
+
 	// Initialize Hardware
 	_hwio.Initialize(&_IData);
 
@@ -93,9 +96,10 @@ void SYSTEM_class::entersleepMode()
 	_hwio.toggleModules(_hwio.GPIO_SLEEP, _hwio.LORA_SLEEP);
 
 	// Turn off communication to avoid power transmitted in GPIO
-	_lora_module.setPinsOff();
-	Wire.end();
 	SPI.end();
+	Wire.end();
+	_lora_module.setPinsOff();
+	_hwio.setPinsOff();
 
 	// Remove LoRa wake privileges and clear interrupt flags
 	noInterrupts();
@@ -128,6 +132,7 @@ void SYSTEM_class::enterlightsleepMode()
 
 	// Turn off communication to avoid power transmitted in GPIO
 	Wire.end();
+	_hwio.setPinsOff();
 
 	// Set Interrupts and Sleep
 	noInterrupts();

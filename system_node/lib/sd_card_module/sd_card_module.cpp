@@ -36,18 +36,15 @@ void SD_CARD_MODULE_class::logData(IDATA IData, time_t t)
 		Serial.print(IData.SOIL_MOISTURE);Serial.print(F("%, "));
 		Serial.print(IData.BATTERY_VOLTAGE);Serial.println('v');
 	#else
-		Serial.begin(SERIAL_BAUD);
-
+		Serial.begin(LOGGING_BAUD);
+		delay(LOGGING_DELAY);
 		Serial.print(datetime);Serial.print(',');
 		Serial.print(IData.SYSTEM_TEMPERATURE, DECIMAL_VALUES);Serial.print(',');
 		Serial.print(IData.SYSTEM_HUMIDITY, DECIMAL_VALUES);Serial.print(',');
 		Serial.print(IData.SOIL_TEMPERATURE, DECIMAL_VALUES);Serial.print(',');
 		Serial.print(IData.SOIL_MOISTURE);Serial.print(',');
 		Serial.println(IData.BATTERY_VOLTAGE);
-
-		Serial.End();
-
-		pinMode(PIN_TX, INPUT);	// Set TX pin (D1) as input to stop ghost powers
-		pinMode(PIN_RX, INPUT);	// Set RX pin (D0) as input to stop ghost powers
+		delay(LOGGING_DELAY);
+		Serial.end();
 	#endif
 }

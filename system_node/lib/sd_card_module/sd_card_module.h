@@ -25,6 +25,13 @@
 
 #include "../system_node.hpp"
 
+#define LOGGING_BAUD  9600
+#define LOGGING_DELAY 750
+
+// OpenLog Config Settings
+// 9600,26,3,1,1,1,0
+// baud,escape,esc#,mode,verb,echo,ignoreRX
+
 class SD_CARD_MODULE_class
 {
 	public:

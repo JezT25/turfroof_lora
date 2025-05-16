@@ -26,8 +26,14 @@
 #define MAX_DEVICES		8
 #define HWID_PINS   	3
 
-#define PIN_TX 			1  // Digital pin 1, TX (transmit)
-#define PIN_RX 			0  // Digital pin 0, RX (receive)
+#define PIN_TX 			1
+#define PIN_RX 			0
+#define PIN_SPI			10
+#define PIN_MOSI		11
+#define PIN_MISO		12
+#define PIN_SCK			13
+#define PIN_SDA			A4
+#define PIN_SCL			A5
 
 #define HWID_A      	A3
 #define HWID_B      	A2
@@ -92,6 +98,7 @@ class HWIO_class
 		void loadSensorData(IDATA *IData);
 		void toggleModules(uint8_t command);
 		void toggleModules(uint8_t command1, uint8_t command2);
+		void setPinsOff();
 };
 
 #endif
