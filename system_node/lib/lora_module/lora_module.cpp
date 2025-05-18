@@ -109,7 +109,7 @@ void LORA_MODULE_class::loadSensorData(IDATA IData)
 	resetValues();
 }
 
-void LORA_MODULE_class::startLoRaMesh(IDATA IData, RTC_MODULE_class rtc)
+void LORA_MODULE_class::startLoRaMesh(IDATA IData, HWIO_class *hwio, RTC_MODULE_class *rtc)
 {
 	while (millis() - _lastSystemUpdateTime <= LORA_WAKE_TIMEOUT)
 	{
@@ -118,10 +118,10 @@ void LORA_MODULE_class::startLoRaMesh(IDATA IData, RTC_MODULE_class rtc)
 			if (!_newpayloadAlert && !getLoRaPayload()) continue;
 			preloadMessageData();
 			processPayloadData();
-			sendPayloadData(rtc);
+			sendPayloadData(hwio, rtc);
 		}
 
-		// wdt_reset();
+		wdt_reset();
 	}
 }
 
@@ -365,7 +365,7 @@ void LORA_MODULE_class::processPayloadData()
 	}
 }
 
-void LORA_MODULE_class::sendPayloadData(RTC_MODULE_class rtc)
+void LORA_MODULE_class::sendPayloadData(HWIO_class *hwio, RTC_MODULE_class *rtc)
 {
 	// Reset new Payload alert and last update to prevent forever looping messages
 	_lastSystemUpdateTime = millis();
@@ -387,7 +387,11 @@ void LORA_MODULE_class::sendPayloadData(RTC_MODULE_class rtc)
 			Serial.println(F("Syncing RTC via LoRa"));
 		#endif
 
-		rtc.syncTime(_systemValues);
+		hwio->toggleModules(hwio->GPIO_WAKE);
+		delay(DELAY_SMALL);
+		rtc->reInit();
+		rtc->syncTime(_systemValues);
+		hwio->toggleModules(hwio->GPIO_SLEEP);
 	}
 
 	// Create new Payload
@@ -481,7 +485,7 @@ void LORA_MODULE_class::sendPayloadData(RTC_MODULE_class rtc)
 				if (LoRa.packetRssi() < CSMA_NOISE_LIM) break;
 			}
 
-			// wdt_reset();
+			wdt_reset();
 		}
 
 		// Send the payload over LoRa

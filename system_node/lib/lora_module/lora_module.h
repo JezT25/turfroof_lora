@@ -55,6 +55,7 @@
 #define MAX_MESSAGE_LENGTH  87		// "TEMP:[000.00000,000.00000,000.00000,000.00000,000.00000,000.00000,000.00000,000.00000]" is 86, but + 1 for null terminator
 #define EPSILON         	0.0001
 #define BLANK_PLACEHOLDER	'*'
+#define DELAY_SMALL 		50
 
 class LORA_MODULE_class
 {
@@ -96,7 +97,7 @@ class LORA_MODULE_class
 		bool checkMessageValidity();
 		void preloadMessageData();
 		void processPayloadData();
-		void sendPayloadData(RTC_MODULE_class rtc);
+		void sendPayloadData( HWIO_class *hwio, RTC_MODULE_class *rtc);
 
 		#ifdef ENCRYPTING
 			void rc4EncryptDecrypt(char *data, uint8_t len);
@@ -106,7 +107,7 @@ class LORA_MODULE_class
 		void Initialize(IDATA IData);
 		void reInit();
 		void loadSensorData(IDATA IData);
-		void startLoRaMesh(IDATA IData, RTC_MODULE_class rtc);
+		void startLoRaMesh(IDATA IData, HWIO_class *hwio, RTC_MODULE_class *rtc);
 		void setPinsOff();
 };
 

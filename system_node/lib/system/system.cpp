@@ -54,6 +54,11 @@ void SYSTEM_class::Run()
 {
 	if (_interruptbyRTC)
 	{
+		// Wake RTC First!
+		_hwio.toggleModules(_hwio.GPIO_WAKE);
+		delay(DELAY_SMALL);
+		_rtc_module.reInit();
+
 		uint8_t alarm_trigger = _rtc_module.checkAlarm();
 		_interruptbyRTC = false;
 
@@ -75,14 +80,14 @@ void SYSTEM_class::Run()
 	else if (_interruptbyLoRa)
 	{
 		_interruptbyLoRa = false;
-		_lora_module.startLoRaMesh(_IData, _rtc_module);
+		_lora_module.startLoRaMesh(_IData, &_hwio, &_rtc_module);
 	}
 	else
 	{
 		enterlightsleepMode();
 	}
 
-	// wdt_reset();
+	wdt_reset();
 }
 
 void SYSTEM_class::entersleepMode()
@@ -111,11 +116,10 @@ void SYSTEM_class::entersleepMode()
 
 	// Turn on devices
 	attachInterrupt(digitalPinToInterrupt(LORA_DI0), wakeonLoRa, RISING);
-	_hwio.toggleModules(_hwio.GPIO_WAKE, _hwio.LORA_WAKE);
+	_hwio.toggleModules(_hwio.LORA_WAKE);
 
 	// Boot Devices
 	delay(DELAY_SMALL);
-	_rtc_module.reInit();
 	_lora_module.reInit();
 }
 
@@ -140,13 +144,8 @@ void SYSTEM_class::enterlightsleepMode()
 	EIFR = bit(INTF0);
 	gotosleep();
 
-	// Turn on devices
+	// Remove LoRa Interrupt
 	detachInterrupt(digitalPinToInterrupt(LORA_DI0));
-	_hwio.toggleModules(_hwio.GPIO_WAKE);
-
-	// Boot Devices
-	delay(DELAY_SMALL);
-	_rtc_module.reInit();
 }
 
 inline void SYSTEM_class::gotosleep()
@@ -191,7 +190,7 @@ inline void SYSTEM_class::gotosleep()
 	clock_prescale_set(clock_div_1);
 
 	// Reenable WDT
-	// wdt_enable(WDTO_8S);
+	wdt_enable(WDTO_8S);
 }
 
 inline void SYSTEM_class::wakeonLoRa()
