@@ -62,6 +62,31 @@ void LORA_MODULE_class::Initialize(IDATA IData)
 	#endif
 }
 
+void LORA_MODULE_class::reInit()
+{	
+	// Configure Pins
+	LoRa.setPins(LORA_NSS, LORA_RST, LORA_DI0);
+
+	// Start LoRa
+	if (!LoRa.begin(FREQUENCY))
+	{
+		#ifdef DEBUGGING
+			Serial.println(F("X: ERROR: LoRa Initialization Failed!"));
+		#endif
+	}
+
+	// Setup Settings
+	LoRa.setTxPower(TX_POWER);
+	LoRa.setSignalBandwidth(BANDWIDTH);
+	LoRa.setSyncWord(SYNC_WORD);
+	LoRa.setSpreadingFactor(SPREAD_FACTOR);
+	LoRa.setCodingRate4(CODING_RATE);
+	LoRa.setPreambleLength(PREAMBLE);
+
+	// Enable CRC
+	LoRa.enableCrc();
+}
+
 void LORA_MODULE_class::setPinsOff()
 {
 	pinMode(LORA_NSS, INPUT);

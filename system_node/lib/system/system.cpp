@@ -116,7 +116,7 @@ void SYSTEM_class::entersleepMode()
 	// Boot Devices
 	delay(DELAY_SMALL);
 	_rtc_module.reInit();
-	_lora_module.Initialize(_IData);
+	_lora_module.reInit();
 }
 
 void SYSTEM_class::enterlightsleepMode()
@@ -191,7 +191,7 @@ inline void SYSTEM_class::gotosleep()
 	clock_prescale_set(clock_div_1);
 
 	// Reenable WDT
-	wdt_enable(WDTO_8S);
+	// wdt_enable(WDTO_8S);
 }
 
 inline void SYSTEM_class::wakeonLoRa()

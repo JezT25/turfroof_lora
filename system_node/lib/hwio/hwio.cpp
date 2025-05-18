@@ -223,7 +223,7 @@ void HWIO_class::getSoilMoisture(uint8_t &moisture)
 	}
 
 	#ifdef DEBUGGING
-		Serial.print(F("Soil analog read: "));
+		Serial.print(F("Soil Analog Read: "));
 		Serial.println(avgReading);
 		Serial.print(F("Soil Moisture: "));
 		Serial.print(moisturePercentage);
