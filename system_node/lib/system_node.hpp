@@ -23,12 +23,13 @@
 #ifndef system_node_hpp_included
 #define system_node_hpp_included
 
-#define SYSTEM_VER      0.77
+#define SYSTEM_VER      0.78
 #define SERIAL_BAUD     115200
 
 // Toggles: Comment or Uncomment to Disable or Enable
 #define DEBUGGING
 #define ENCRYPTING
+#define WDT_ENABLE
 
 // Encryption Settings
 #ifdef DEBUGGING

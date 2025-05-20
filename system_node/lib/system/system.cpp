@@ -87,7 +87,9 @@ void SYSTEM_class::Run()
 		enterlightsleepMode();
 	}
 
-	wdt_reset();
+	#ifdef WDT_ENABLE
+		wdt_reset();
+	#endif
 }
 
 void SYSTEM_class::entersleepMode()
@@ -190,7 +192,9 @@ inline void SYSTEM_class::gotosleep()
 	clock_prescale_set(clock_div_1);
 
 	// Reenable WDT
-	wdt_enable(WDTO_8S);
+	#ifdef WDT_ENABLE
+		wdt_enable(WDTO_8S);
+	#endif
 }
 
 inline void SYSTEM_class::wakeonLoRa()

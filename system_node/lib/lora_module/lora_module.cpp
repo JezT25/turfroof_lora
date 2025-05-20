@@ -121,7 +121,9 @@ void LORA_MODULE_class::startLoRaMesh(IDATA IData, HWIO_class *hwio, RTC_MODULE_
 			sendPayloadData(hwio, rtc);
 		}
 
-		wdt_reset();
+		#ifdef WDT_ENABLE
+			wdt_reset();
+		#endif
 	}
 }
 
@@ -485,7 +487,9 @@ void LORA_MODULE_class::sendPayloadData(HWIO_class *hwio, RTC_MODULE_class *rtc)
 				if (LoRa.packetRssi() < CSMA_NOISE_LIM) break;
 			}
 
-			wdt_reset();
+			#ifdef WDT_ENABLE
+				wdt_reset();
+			#endif
 		}
 
 		// Send the payload over LoRa
