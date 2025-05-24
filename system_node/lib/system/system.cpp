@@ -122,7 +122,7 @@ void SYSTEM_class::entersleepMode()
 
 	// Boot Devices
 	delay(DELAY_SMALL);
-	_lora_module.reInit();
+	_lora_module.configureLoRa();
 }
 
 void SYSTEM_class::enterlightsleepMode()

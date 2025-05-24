@@ -23,7 +23,7 @@
 #ifndef hwio_h
 #define hwio_h
 
-#define MAX_DEVICES		8
+#define MAX_DEVICES		9	// 3 Bit HW is 0 to 7, so 8 max devices, but +1 since the last slot will be for checksum
 #define HWID_PINS   	3
 
 #define PIN_TX 			1
@@ -57,7 +57,7 @@
 #define MIN_VALUE		-99
 #define MAX_VALUE		100
 
-#define VAL_ERROR		255
+#define VAL_ERROR		-1
 
 #define DATA_SAMPLES	10
 #define SAMPLE_DELAY	50

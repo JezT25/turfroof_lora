@@ -24,27 +24,7 @@
 
 void LORA_MODULE_class::Initialize(IDATA IData)
 {	
-	// Configure Pins
-	LoRa.setPins(LORA_NSS, LORA_RST, LORA_DI0);
-
-	// Start LoRa
-	if (!LoRa.begin(FREQUENCY))
-	{
-		#ifdef DEBUGGING
-			Serial.println(F("X: ERROR: LoRa Initialization Failed!"));
-		#endif
-	}
-
-	// Setup Settings
-	LoRa.setTxPower(TX_POWER);
-	LoRa.setSignalBandwidth(BANDWIDTH);
-	LoRa.setSyncWord(SYNC_WORD);
-	LoRa.setSpreadingFactor(SPREAD_FACTOR);
-	LoRa.setCodingRate4(CODING_RATE);
-	LoRa.setPreambleLength(PREAMBLE);
-
-	// Enable CRC
-	LoRa.enableCrc();
+	configureLoRa();
 
 	// Set HW ID
 	_hwid = IData.HW_ID;
@@ -62,7 +42,7 @@ void LORA_MODULE_class::Initialize(IDATA IData)
 	#endif
 }
 
-void LORA_MODULE_class::reInit()
+void LORA_MODULE_class::configureLoRa()
 {	
 	// Configure Pins
 	LoRa.setPins(LORA_NSS, LORA_RST, LORA_DI0);
@@ -191,6 +171,29 @@ int8_t LORA_MODULE_class::getcharIndex(char c)
 	return -1;
 }
 
+float *LORA_MODULE_class::getpayloadValues()
+{
+	static float tempValues[MAX_DEVICES];
+	memset(tempValues, 0, sizeof(tempValues));
+
+	uint8_t startIdx = getcharIndex('[');
+	uint8_t endIdx = getcharIndex(']');
+	uint8_t array_len = endIdx - (startIdx + 1);
+	char buffer[array_len + 1];
+	strncpy(buffer, &_loraPayload[startIdx + 1], array_len);
+	buffer[array_len] = '\0';
+
+	char* token = strtok(buffer, ",");
+	uint8_t index = 0;
+	while (token != nullptr && index < MAX_DEVICES)
+	{
+		tempValues[index++] = atof(token);
+		token = strtok(nullptr, ",");
+	}
+
+	return tempValues;
+}
+
 bool LORA_MODULE_class::checkMessageValidity()
 {
 	uint8_t startIdx = getcharIndex('[');
@@ -275,6 +278,27 @@ bool LORA_MODULE_class::checkMessageValidity()
 		}
 	}
 
+	// Check for Checksum
+	if(startIdx == START_OF_BRACKET && endIdx != START_OF_BRACKET + 1)
+	{
+		float* tempValues = getpayloadValues();
+
+		float sum = 0;
+		for (uint8_t i = 0; i < CHECKSUM; i++)
+		{
+			sum += tempValues[i];
+		}
+
+		#ifdef DEBUGGING
+			Serial.print(F("Calculating Checksum: "));
+			Serial.print(sum);
+			Serial.print(F(" vs "));
+			Serial.println(tempValues[CHECKSUM]);
+		#endif
+
+		if(sum != tempValues[CHECKSUM]) return false;
+	}
+
 	return true;
 }
 
@@ -319,36 +343,31 @@ void LORA_MODULE_class::preloadMessageData()
 void LORA_MODULE_class::processPayloadData()
 {
 	// Extract data from payload
-	uint8_t startIdx = getcharIndex('[');
-	uint8_t endIdx = getcharIndex(']');
-	uint8_t array_len = endIdx - (startIdx + 1);
-	char buffer[array_len + 1];
-	strncpy(buffer, &_loraPayload[startIdx + 1], array_len);
-	buffer[array_len] = '\0';
-	char *token = strtok(buffer, ",");
-
-	// Store payload data to tempValues
-	float tempValues[MAX_DEVICES] = {};
-	uint8_t index = 0;
-	while (token != nullptr && index < MAX_DEVICES)
-	{
-		tempValues[index] = atof(token);
-		index++;
-		token = strtok(nullptr, ",");
-	}
+	float* tempValues = getpayloadValues();
 
 	// Compare stored data with new data and determine if we need to resend
-	for (uint8_t i = 0; i < MAX_DEVICES; i++)
+	for (uint8_t i = 0; i < MAX_DEVICES - 1; i++)
 	{
 		//	Merge current values with data from Payload only when new data is different
 		if (fabs(tempValues[i] - _systemValues[i]) > EPSILON)
 		{
+			bool isDate = strcmp(_loraprevHeader, _validHeaders[DATE]);
 			_sendAttempts = 0;
+			_systemValues[CHECKSUM] = 0;
 
-			for (uint8_t i = 0; i < MAX_DEVICES; i++)
+			for (uint8_t i = 0; i < MAX_DEVICES - 1; i++)
 			{
-				if (i == _hwid && strcmp(_loraprevHeader, _validHeaders[DATE]) != 0) continue;
-				_systemValues[i] = _systemValues[i] == 0 ? (tempValues[i] == 0 ? 0 : tempValues[i]) : _systemValues[i];
+				if(isDate == 0)
+				{
+					_systemValues[i] = tempValues[i];
+				}
+				else if (_systemValues[i] == 0)
+				{
+					_systemValues[i] = tempValues[i] == 0 ? 0 : tempValues[i];
+				}
+
+				// Update Checksum
+				_systemValues[CHECKSUM] += _systemValues[i];
 			}
 
 			#ifdef DEBUGGING

@@ -230,6 +230,6 @@ void HWIO_class::getSoilMoisture(uint8_t &moisture)
 		Serial.println(F(" %"));
 	#endif
 
-	// Don't constrain so error can stay as 255
+	// Don't constrain so error can stay as -1
 	moisture = moisturePercentage;
 }

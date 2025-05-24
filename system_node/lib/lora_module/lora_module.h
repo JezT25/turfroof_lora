@@ -48,11 +48,12 @@
 #define CSMA_TOUT_MIN		3000
 
 // Algorithm Settings
+#define CHECKSUM			8
 #define START_OF_BRACKET	5
 #define DECIMAL_VALUES  	5
 #define MAX_HEADER_LENGTH	6		// "TEMP:" is 5 actually, but +1 for null terminator
 #define MAX_NUMBER_LENGTH	10		// "000.00000" is 9, but +1 for null terminator
-#define MAX_MESSAGE_LENGTH  87		// "TEMP:[000.00000,000.00000,000.00000,000.00000,000.00000,000.00000,000.00000,000.00000]" is 86, but + 1 for null terminator
+#define MAX_MESSAGE_LENGTH  97		// "TEMP:[000.00000,000.00000,000.00000,000.00000,000.00000,000.00000,000.00000,000.00000,000.00000]" is 96, but + 1 for null terminator
 #define EPSILON         	0.0001
 #define BLANK_PLACEHOLDER	'*'
 #define DELAY_SMALL 		50
@@ -92,6 +93,7 @@ class LORA_MODULE_class
 		char _loraprevHeader[MAX_HEADER_LENGTH];
 		
 		int8_t getcharIndex(char c);
+		float *getpayloadValues();
 		void resetValues();
 		bool getLoRaPayload();
 		bool checkMessageValidity();
@@ -105,7 +107,7 @@ class LORA_MODULE_class
 
 	public:
 		void Initialize(IDATA IData);
-		void reInit();
+		void configureLoRa();
 		void loadSensorData(IDATA IData);
 		void startLoRaMesh(IDATA IData, HWIO_class *hwio, RTC_MODULE_class *rtc);
 		void setPinsOff();
