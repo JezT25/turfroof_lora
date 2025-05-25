@@ -99,6 +99,8 @@ class LORA_MODULE_class
 		void processPayloadData();
 		void sendPayloadData();
 		void sendRequest(uint8_t index);
+		bool checkComplete();
+		void logData(IDATA *IData, uint8_t index);	
 
 		#ifdef ENCRYPTING
 			void rc4EncryptDecrypt(char *data, uint8_t len);
@@ -106,7 +108,7 @@ class LORA_MODULE_class
 
 	public:
 		void Initialize();
-		void startLoRaMesh(IDATA IData);
+		void startLoRaMesh(IDATA *IData);
 };
 
 #endif

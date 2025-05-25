@@ -291,12 +291,25 @@ bool LORA_MODULE_class::checkMessageValidity()
 
 		#ifdef DEBUGGING
 			Serial.print(F("Calculating Checksum: "));
-			Serial.print(sum);
+			Serial.print(sum, DECIMAL_VALUES);
 			Serial.print(F(" vs "));
-			Serial.println(tempValues[CHECKSUM]);
+			Serial.println(tempValues[CHECKSUM], DECIMAL_VALUES);
 		#endif
 
-		if(sum != tempValues[CHECKSUM]) return false;
+		if (fabs(sum - tempValues[CHECKSUM]) > EPSILON)
+		{
+			#ifdef DEBUGGING
+				Serial.println(F("Checksum is BAD!"));
+			#endif
+
+			return false;
+		}
+		#ifdef DEBUGGING
+			else
+			{
+				Serial.println(F("Checksum is GOOD!"));
+			}
+		#endif
 	}
 
 	return true;

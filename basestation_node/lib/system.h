@@ -33,6 +33,11 @@ class SYSTEM_class
 		LORA_MODULE_class&  _lora_module;
 
     void Initialize_System();
+    void clearData();
+  
+    #ifdef DEBUGGING
+      void displayData();
+    #endif
 
 	public:
 		SYSTEM_class(SystemComponents& class_lib) : _IData(class_lib._IData), _iot(class_lib._iot), _lora_module(class_lib._lora_module) {}

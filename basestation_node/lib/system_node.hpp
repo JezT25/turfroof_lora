@@ -27,6 +27,7 @@
 
 #define DEBUGGING
 #define ENCRYPTING
+// #define SYNC_ON								// Turn this on if we want to sync clocks after query
 #ifdef ENCRYPTING
 	#define RC4_BYTES 		255
 	#define ENCRYPTION_KEY  "G7v!Xz@a?>Qp!d$1"

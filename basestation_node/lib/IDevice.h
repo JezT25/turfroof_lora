@@ -29,21 +29,15 @@ class IDATA
 {
 	public:
 
-		float MODULE_0_DATA		=	0;
-		
-		float MODULE_1_DATA		=	0;
-		
-		float MODULE_2_DATA		=	0;
-		
-		float MODULE_3_DATA		=	0;
-		
-		float MODULE_4_DATA		=	0;
-		
-		float MODULE_5_DATA		=	0;
-		
-		float MODULE_6_DATA		=	0;
+		float TEMP_DATA[MAX_DEVICES]	=	{ 0 };
 
-		float MODULE_7_DATA		=	0;
+		float HUMI_DATA[MAX_DEVICES]	=	{ 0 };
+
+		float STMP_DATA[MAX_DEVICES]	=	{ 0 };
+
+		float SMOI_DATA[MAX_DEVICES]	=	{ 0 };
+
+		float BATT_DATA[MAX_DEVICES]	=	{ 0 };
 };
 
 #endif

@@ -62,9 +62,13 @@ void LORA_MODULE_class::Initialize()
 	#endif
 }
 
-void LORA_MODULE_class::startLoRaMesh(IDATA IData)
+void LORA_MODULE_class::startLoRaMesh(IDATA *IData)
 {
-	for (uint8_t i = 0; i < VALID_HEADERS - 1; i++)
+	#ifdef SYNC_ON
+		for (uint8_t i = 0; i < VALID_HEADERS; i++)
+	#else
+		for (uint8_t i = 0; i < VALID_HEADERS - 1; i++)
+	#endif
 	{
 		// Reset Everything
 		resetValues();
@@ -81,28 +85,60 @@ void LORA_MODULE_class::startLoRaMesh(IDATA IData)
 				sendPayloadData();
 			}
 
-			// check here if we got what we want then break;
-			bool complete = true;
-			for (uint8_t x = 0; x < MAX_DEVICES - 1; x++)
-			{		
-				if (config::ACTIVE_DEVICES[x] == 1 && _systemValues[x] == 0)
-				{
-					complete = false;
-					break;
-				}
-			}
-			if(complete)
+			// Check if all active devices have received data
+			if (checkComplete())
 			{
-				Serial.println("WE FOUND IT BOYS");
+				#ifdef DEBUGGING
+					Serial.println(F("All active devices have reported data!\n\n"));
+				#endif
+
 				break;
 			}
 
 			yield();
 		}
 
-		// store to IDATA
-		delay(15000);
+		// Store data to IDATA
+		logData(IData, i);
 	}
+}
+
+void LORA_MODULE_class::logData(IDATA *IData, uint8_t index)
+{
+	for (uint8_t i = 0; i < MAX_DEVICES - 1; i++)
+	{
+		switch (index)
+		{
+			case TEMPERATURE:
+				IData->TEMP_DATA[i] = _systemValues[i];
+				break;
+			case HUMIDITY:
+				IData->HUMI_DATA[i] = _systemValues[i];
+				break;
+			case SOIL_TEMPERATURE:
+				IData->STMP_DATA[i] = _systemValues[i];
+				break;
+			case SOIL_MOISTURE:
+				IData->SMOI_DATA[i] = _systemValues[i];
+				break;
+			case BATT_VOLTAGE:
+				IData->BATT_DATA[i] = _systemValues[i];
+				break;
+		}
+	}
+}
+
+bool LORA_MODULE_class::checkComplete()
+{
+	for (uint8_t i = 0; i < MAX_DEVICES - 1; i++)
+	{
+		if (config::ACTIVE_DEVICES[i] && _systemValues[i] == 0)
+		{
+			return false;
+		}
+	}
+
+	return true;
 }
 
 void LORA_MODULE_class::resetValues()
@@ -163,7 +199,7 @@ bool LORA_MODULE_class::getLoRaPayload()
 {
 	#ifdef DEBUGGING
 		//	Display Signal Strength (RSSI) of the Received Packet
-		Serial.println(F("Packet received!"));
+		Serial.println(F("\nPacket received!"));
 		Serial.print(F("Signal strength [RSSI] (dBm): "));
 		Serial.println(LoRa.packetRssi());
 	#endif
@@ -332,12 +368,25 @@ bool LORA_MODULE_class::checkMessageValidity()
 
 		#ifdef DEBUGGING
 			Serial.print(F("Calculating Checksum: "));
-			Serial.print(sum);
+			Serial.print(sum, DECIMAL_VALUES);
 			Serial.print(F(" vs "));
-			Serial.println(tempValues[CHECKSUM]);
+			Serial.println(tempValues[CHECKSUM], DECIMAL_VALUES);
 		#endif
 
-		if(sum != tempValues[CHECKSUM]) return false;
+		if (fabs(sum - tempValues[CHECKSUM]) > EPSILON)
+		{
+			#ifdef DEBUGGING
+				Serial.println(F("Checksum is BAD!"));
+			#endif
+
+			return false;
+		}
+		#ifdef DEBUGGING
+			else
+			{
+				Serial.println(F("Checksum is GOOD!"));
+			}
+		#endif
 	}
 
 	return true;
@@ -352,7 +401,7 @@ void LORA_MODULE_class::processPayloadData()
 	for (uint8_t i = 0; i < MAX_DEVICES - 1; i++)
 	{
 		//	Merge current values with data from Payload only when new data is different
-		if (fabs([i] - _systemValues[i]) > EPSILON)
+		if (fabs(tempValues[i] - _systemValues[i]) > EPSILON)
 		{
 			bool isDate = strcmp(_loraprevHeader, _validHeaders[DATE]);
 			_sendAttempts = 0;
