@@ -29,7 +29,7 @@
 // Toggles: Comment or Uncomment to Disable or Enable
 #define DEBUGGING
 #define ENCRYPTING
-#define WDT_ENABLE
+// #define WDT_ENABLE
 
 // Encryption Settings
 #ifdef DEBUGGING
