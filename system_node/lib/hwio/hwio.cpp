@@ -191,7 +191,7 @@ void HWIO_class::getSoilTemperature(float &temperature)
 	temperature = constrain(soil_temperature, MIN_VALUE, MAX_VALUE);
 }
 
-void HWIO_class::getSoilMoisture(uint8_t &moisture)
+void HWIO_class::getSoilMoisture(int8_t &moisture)
 {
 	int totaldatasamples = 0;
 
@@ -210,7 +210,7 @@ void HWIO_class::getSoilMoisture(uint8_t &moisture)
 	}
 
 	int avgReading = totaldatasamples / DATA_SAMPLES;
-	uint8_t moisturePercentage;
+	int8_t moisturePercentage;
 
 	if (avgReading < SMOIS_DWN_BOUND + SMOIS_BUFFER || avgReading > SMOIS_UP_BOUND + SMOIS_BUFFER)
 	{

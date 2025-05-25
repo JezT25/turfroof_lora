@@ -80,7 +80,7 @@ class HWIO_class
 		void getBattery(float &battery);
 		void getAHT10(float &temperature, float &humidity);
 		void getSoilTemperature(float &temperature);
-		void getSoilMoisture(uint8_t &moisture);
+		void getSoilMoisture(int8_t &moisture);
 
 	public:
 		HWIO_class() : oneWire(STEMP_IN), ds18b20(&oneWire) {}
