@@ -85,15 +85,8 @@ void LORA_MODULE_class::startLoRaMesh(IDATA *IData)
 				sendPayloadData();
 			}
 
-			// Check if all active devices have received data
-			if (checkComplete())
-			{
-				#ifdef DEBUGGING
-					Serial.println(F("All active devices have reported data!\n\n"));
-				#endif
-
-				break;
-			}
+			// Check if all active devices have sent data
+			if (checkComplete()) break;
 
 			yield();
 		}
@@ -137,6 +130,10 @@ bool LORA_MODULE_class::checkComplete()
 			return false;
 		}
 	}
+
+	#ifdef DEBUGGING
+		Serial.println(F("All active devices have reported data!\n\n"));
+	#endif
 
 	return true;
 }

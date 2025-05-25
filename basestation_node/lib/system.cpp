@@ -37,7 +37,7 @@ void SYSTEM_class::Initialize()
 
 void SYSTEM_class::Run()
 {
-    // Keep looping get time until we are at HOUR:00:30 then start quereyinh
+    // Keep looping get time until we are at HOUR:00:30 then start quereying
     // _iot.getTime();
     // delay(5000);
 
