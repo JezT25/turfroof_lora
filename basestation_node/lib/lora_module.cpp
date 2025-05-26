@@ -62,12 +62,13 @@ void LORA_MODULE_class::Initialize()
 	#endif
 }
 
+//todo : remove _lastSystemUpdateTime refreshing
 void LORA_MODULE_class::startLoRaMesh(IDATA *IData)
 {
 	#ifdef SYNC_ON
-		for (uint8_t i = 0; i < VALID_HEADERS; i++)
+		for (uint8_t i = TEMPERATURE; i < VALID_HEADERS; i++)
 	#else
-		for (uint8_t i = 0; i < VALID_HEADERS - 1; i++)
+		for (uint8_t i = TEMPERATURE; i < VALID_HEADERS - 1; i++)
 	#endif
 	{
 		// Reset Everything
@@ -153,6 +154,7 @@ void LORA_MODULE_class::sendRequest(uint8_t index)
 {
 	char sendPayload[REQUEST_LENGTH] = {0};
 	snprintf(sendPayload, sizeof(sendPayload), "%s[]", _validHeaders[index]);
+	snprintf(_loraprevHeader, sizeof(_loraprevHeader), "%s", _validHeaders[index]);
 
 	#ifdef DEBUGGING
 		Serial.print(F("Payload to Send: "));

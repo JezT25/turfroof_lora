@@ -43,8 +43,8 @@ namespace config
 	constexpr uint8_t ACTIVE_DEVICES[MAX_DEVICES] =
 	{ 
 		NOT_IN_USE, // HW_ID 0
-		ACTIVE,     // HW_ID 1
-		NOT_IN_USE, // HW_ID 2
+		NOT_IN_USE, // HW_ID 1
+		ACTIVE, 	// HW_ID 2
 		ACTIVE,     // HW_ID 3
 		NOT_IN_USE, // HW_ID 4
 		ACTIVE,     // HW_ID 5

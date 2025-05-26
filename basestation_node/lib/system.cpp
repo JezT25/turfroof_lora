@@ -52,10 +52,22 @@ void SYSTEM_class::Run()
         displayData();
     #endif
 
-    while(1) { yield; }
-
     // Upload data gathered to the cloud
     //_iot
+
+
+    /////////////////////////////////////////// todo remove me
+    // Clear the serial buffer first
+    while (Serial.available() > 0) {
+        Serial.read();
+    }
+    Serial.println("Press any key to continue...");
+    // Wait for user input
+    while (Serial.available() == 0) {
+        yield();
+    }
+    // Optionally read the input to clear it
+    Serial.read();
 }
 
 void SYSTEM_class::clearData()
@@ -80,36 +92,76 @@ void SYSTEM_class::Initialize_System()
         Serial.println("\n---- Sensor Data Contents ----");
 
         Serial.print("Air Temperature: [");
-        for (size_t i = 0; i < MAX_DEVICES; ++i) {
-            Serial.print(_IData.TEMP_DATA[i], DECIMAL_VALUES);
+        for (size_t i = 0; i < MAX_DEVICES; ++i)
+        {
+            if (_IData.TEMP_DATA[i] == 0)
+            {
+                Serial.print(BLANK_PLACEHOLDER);
+            }
+            else
+            {
+                Serial.print(_IData.TEMP_DATA[i], DECIMAL_VALUES);
+            }
             if (i < MAX_DEVICES - 1) Serial.print(", ");
         }
         Serial.println("]");
 
         Serial.print("Humidity: [");
-        for (size_t i = 0; i < MAX_DEVICES; ++i) {
-            Serial.print(_IData.HUMI_DATA[i], DECIMAL_VALUES);
+        for (size_t i = 0; i < MAX_DEVICES; ++i)
+        {
+            if (_IData.HUMI_DATA[i] == 0)
+            {
+                Serial.print(BLANK_PLACEHOLDER);
+            }
+            else
+            {
+                Serial.print(_IData.HUMI_DATA[i], DECIMAL_VALUES);
+            }
             if (i < MAX_DEVICES - 1) Serial.print(", ");
         }
         Serial.println("]");  
 
         Serial.print("Soil Temperature: [");
-        for (size_t i = 0; i < MAX_DEVICES; ++i) {
-            Serial.print(_IData.STMP_DATA[i], DECIMAL_VALUES);
+        for (size_t i = 0; i < MAX_DEVICES; ++i)
+        {
+            if (_IData.STMP_DATA[i] == 0)
+            {
+                Serial.print(BLANK_PLACEHOLDER);
+            }
+            else
+            {
+                Serial.print(_IData.STMP_DATA[i], DECIMAL_VALUES);
+            }
             if (i < MAX_DEVICES - 1) Serial.print(", ");
         }
         Serial.println("]");
 
         Serial.print("Soil Moisture: [");
-        for (size_t i = 0; i < MAX_DEVICES; ++i) {
-            Serial.print(_IData.SMOI_DATA[i], DECIMAL_VALUES);
+        for (size_t i = 0; i < MAX_DEVICES; ++i)
+        {
+            if (_IData.SMOI_DATA[i] == 0)
+            {
+                Serial.print(BLANK_PLACEHOLDER);
+            }
+            else
+            {
+                Serial.print(_IData.SMOI_DATA[i], DECIMAL_VALUES);
+            }
             if (i < MAX_DEVICES - 1) Serial.print(", ");
         }
         Serial.println("]");
 
         Serial.print("Battery Voltage: [");
-        for (size_t i = 0; i < MAX_DEVICES; ++i) {
-            Serial.print(_IData.BATT_DATA[i], DECIMAL_VALUES);
+        for (size_t i = 0; i < MAX_DEVICES; ++i)
+        {
+            if (_IData.BATT_DATA[i] == 0)
+            {
+                Serial.print(BLANK_PLACEHOLDER);
+            }
+            else
+            {
+                Serial.print(_IData.BATT_DATA[i], DECIMAL_VALUES);
+            }
             if (i < MAX_DEVICES - 1) Serial.print(", ");
         }
         Serial.println("]");
