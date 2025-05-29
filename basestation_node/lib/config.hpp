@@ -43,15 +43,15 @@ namespace config
 	constexpr uint8_t ACTIVE_DEVICES[MAX_DEVICES] =
 	{ 
 		NOT_IN_USE, // HW_ID 0
-		NOT_IN_USE, // HW_ID 1
-		ACTIVE, 	// HW_ID 2
+		ACTIVE, 	// HW_ID 1
+		NOT_IN_USE, // HW_ID 2
 		ACTIVE,     // HW_ID 3
 		NOT_IN_USE, // HW_ID 4
 		ACTIVE,     // HW_ID 5
 		NOT_IN_USE, // HW_ID 6
 		ACTIVE,     // HW_ID 7
 
-		// This is us and also for checksum, DO NOT USE!
+		// This is US and also for checksum, WARNING: DO NOT USE!
 		NOT_IN_USE  // HW_ID 8
 	};
 }

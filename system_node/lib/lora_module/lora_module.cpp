@@ -134,7 +134,7 @@ bool LORA_MODULE_class::getLoRaPayload()
 	{
 		_loraPayload[payloadIndex++] = (char)LoRa.read();
 	}
-	_loraPayload[payloadIndex] = '\0';
+	payloadIndex++; // +1 as space for null terminator
 
 	// Flush remaining bytes (if any)
 	while (LoRa.available()) LoRa.read();
@@ -146,11 +146,9 @@ bool LORA_MODULE_class::getLoRaPayload()
 		#endif
 
 		char decryptedPayload[MAX_MESSAGE_LENGTH];
-		strncpy(decryptedPayload, _loraPayload, sizeof(decryptedPayload));
-		decryptedPayload[sizeof(decryptedPayload) - 1] = '\0';
-		rc4EncryptDecrypt(decryptedPayload, strlen(decryptedPayload) + 1);
-		strncpy(_loraPayload, decryptedPayload, sizeof(_loraPayload));
-		_loraPayload[sizeof(_loraPayload) - 1] = '\0';
+		memcpy(decryptedPayload, _loraPayload, payloadIndex);
+		rc4EncryptDecrypt(decryptedPayload, payloadIndex);
+		memcpy(_loraPayload, decryptedPayload, payloadIndex);
 	#endif
 
 	#ifdef DEBUGGING
