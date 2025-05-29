@@ -44,6 +44,7 @@ class IOT_class
 
 		void Initialize();
 		void getTime();
+		void waitUntilQueryTime();
 		void uploadData(IDATA IData);
 };
 

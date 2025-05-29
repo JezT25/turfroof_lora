@@ -54,6 +54,27 @@ void IOT_class::Initialize()
 	timeClient.begin();
 }
 
+void IOT_class::waitUntilQueryTime()
+{
+	while (true)
+	{
+		timeClient.update();
+
+		#ifdef DEBUGGING
+			Serial.print(F("Current time: "));
+			Serial.println(timeClient.getFormattedTime());
+		#endif
+
+		int seconds = timeClient.getSeconds();
+		if (seconds == 0)
+		{
+			break;
+		}
+
+		delay(500);
+	}
+}
+
 void IOT_class::getTime()
 {
 	timeClient.update();

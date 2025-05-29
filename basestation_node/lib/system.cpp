@@ -37,37 +37,22 @@ void SYSTEM_class::Initialize()
 
 void SYSTEM_class::Run()
 {
-    // Keep looping get time until we are at HOUR:00:30 then start quereying
-    // _iot.getTime();
-    // delay(5000);
+    // Wait until the scheduled query time
+    _iot.waitUntilQueryTime();
 
-    // Clear data first!
+    // Clear previous sensor data
     clearData();
 
-    // Start querying data
+    // Collect sensor data via the LoRa mesh network
     _lora_module.startLoRaMesh(&_IData);
 
-    // Display data we gathered
+    // Display collected data if debugging is enabled
     #ifdef DEBUGGING
         displayData();
     #endif
 
-    // Upload data gathered to the cloud
+    // Upload the collected data to the cloud
     _iot.uploadData(_IData);
-
-
-    /////////////////////////////////////////// todo remove me
-    // Clear the serial buffer first
-    while (Serial.available() > 0) {
-        Serial.read();
-    }
-    Serial.println("Press any key to continue...");
-    // Wait for user input
-    while (Serial.available() == 0) {
-        yield();
-    }
-    // Optionally read the input to clear it
-    Serial.read();
 }
 
 void SYSTEM_class::clearData()
