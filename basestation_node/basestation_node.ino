@@ -23,11 +23,8 @@
 #include "lib/system_node.hpp"
 
 // todo: secure API for thingspeak
-// send request twice
 // todo check if the time syncing actually works
 
-// major:
-// greater time out so it wont forever loop
 
 SYSTEM_class system_node(class_lib);
 

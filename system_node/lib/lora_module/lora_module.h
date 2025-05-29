@@ -38,14 +38,14 @@
 #define SPREAD_FACTOR		7
 #define CODING_RATE			5
 #define PREAMBLE			8
-#define LORA_WAKE_TIMEOUT	8000
+#define LORA_WAKE_TIMEOUT	5000
 
 // CSMA/CA Settings
 #define SEND_ATTEMPTS		2
-#define BACKOFF_MUL			75
+#define BACKOFF_MUL			37
 #define CSMA_NOISE_LIM		-90
-#define CSMA_TOUT_MUL		500
-#define CSMA_TOUT_MIN		3000
+#define CSMA_TOUT_MUL		250
+#define CSMA_TOUT_MIN		1500
 
 // Algorithm Settings
 #define CHECKSUM			8

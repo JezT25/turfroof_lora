@@ -62,7 +62,6 @@ void LORA_MODULE_class::Initialize()
 	#endif
 }
 
-//todo : remove _lastSystemUpdateTime refreshing
 void LORA_MODULE_class::startLoRaMesh(IDATA *IData)
 {
 	#ifdef SYNC_ON
@@ -184,7 +183,7 @@ void LORA_MODULE_class::sendRequest(uint8_t index)
 		#else
 			LoRa.write((const uint8_t*)sendPayload, REQUEST_LENGTH - 1);		// -1 Don't send null terminator
 		#endif
-		LoRa.endPacket(true);
+		LoRa.endPacket();	// Set as blocking to ensure we send a proper request
 
 		delay(_backoffTime);
 	}
@@ -438,7 +437,6 @@ void LORA_MODULE_class::processPayloadData()
 void LORA_MODULE_class::sendPayloadData()
 {
 	// Reset new Payload alert and last update to prevent forever looping messages
-	_lastSystemUpdateTime = millis();
 	_newpayloadAlert = false;
 
 	// No need to send when reached send limit
@@ -565,7 +563,6 @@ void LORA_MODULE_class::sendPayloadData()
 
 		// Increment attempts
 		_sendAttempts++;
-		_lastSystemUpdateTime = millis();
 	}
 }
 
