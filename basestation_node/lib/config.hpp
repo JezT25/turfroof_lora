@@ -54,6 +54,22 @@ namespace config
 		// This is US and also for checksum, WARNING: DO NOT USE!
 		NOT_IN_USE  // HW_ID 8
 	};
+
+	// API Write Keys for ThingSpeak
+	constexpr const char* THINGSPEAK_API_KEYS[MAX_DEVICES] =
+	{ 
+		"RESERVED",                    // HW_ID 0
+		"H3DOMD0C33D9ARBO",            // HW_ID 1
+		"RESERVED",                    // HW_ID 2
+		"PKS5JHFL7RRUN92K",            // HW_ID 3
+		"RESERVED",                    // HW_ID 4
+		"WAG41QFEJSYAO9RP",            // HW_ID 5
+		"RESERVED",                    // HW_ID 6
+		"NP59JEAYHD66BAD6",            // HW_ID 7
+
+		// This is US and also for checksum, WARNING: DO NOT USE!
+		"RESERVED"                     // HW_ID 8
+	};
 }
 
 #endif

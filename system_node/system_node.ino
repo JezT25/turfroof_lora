@@ -20,10 +20,7 @@
   ============================================================
 */
 
-// if battery lower than x amount forecver sleep and sd card only?
-
-// check how many bounces and determine somethingd wrong
-// for thesis graph the backout and timeout
+// todo: if battery lower than x amount forecver sleep and sd card only?
 
 #include "lib/system_node.hpp"
 

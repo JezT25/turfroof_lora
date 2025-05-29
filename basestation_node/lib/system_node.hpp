@@ -34,6 +34,8 @@
 #endif
 
 #include <ESP8266WiFi.h>
+#include <ESP8266HTTPClient.h>
+#include <WiFiClient.h>
 #include <WiFiUdp.h>
 #include <NTPClient.h>
 #include <LoRa.h>

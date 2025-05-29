@@ -63,3 +63,48 @@ void IOT_class::getTime()
 		Serial.println(timeClient.getFormattedTime());
 	#endif
 }
+
+void IOT_class::uploadData(IDATA IData)
+{
+	char url[MAX_URL_LEN];
+    WiFiClient client;
+
+	for (uint8_t i = 0; i < MAX_DEVICES; i++)
+	{
+		if(config::ACTIVE_DEVICES[i] == ACTIVE)
+		{
+			snprintf(url, MAX_URL_LEN,
+                "http://api.thingspeak.com/update?api_key=%s&field1=%.5f&field2=%.5f&field3=%.5f&field4=%.5f&field5=%.5f",
+                config::THINGSPEAK_API_KEYS[i],
+                IData.TEMP_DATA[i],
+                IData.HUMI_DATA[i],
+                IData.STMP_DATA[i],
+                IData.SMOI_DATA[i],
+                IData.BATT_DATA[i]);
+
+            HTTPClient http;
+            http.begin(client, url);
+            int httpResponseCode = http.GET();
+
+			#ifdef DEBUGGING
+				Serial.println(F("Uploading Data to ThingSpeak!"));
+				Serial.print(F("Device "));
+				Serial.print(i);
+				Serial.print(F(" Status | "));
+
+				if (httpResponseCode > 0)
+				{
+					Serial.print(F("ThingSpeak Response Code: "));
+					Serial.println(httpResponseCode);
+				}
+				else
+				{
+					Serial.print(F("Error sending to ThingSpeak: "));
+					Serial.println(http.errorToString(httpResponseCode));
+				}
+			#endif
+
+			http.end();
+		}
+	}
+}

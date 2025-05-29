@@ -132,7 +132,7 @@ bool LORA_MODULE_class::checkComplete()
 	}
 
 	#ifdef DEBUGGING
-		Serial.println(F("All active devices have reported data!\n\n"));
+		Serial.println(F("All active devices have reported data!"));
 	#endif
 
 	return true;

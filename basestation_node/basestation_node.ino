@@ -22,9 +22,7 @@
 
 #include "lib/system_node.hpp"
 
-// todo: secure API for thingspeak
 // todo check if the time syncing actually works
-
 
 SYSTEM_class system_node(class_lib);
 

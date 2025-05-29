@@ -53,7 +53,7 @@ void SYSTEM_class::Run()
     #endif
 
     // Upload data gathered to the cloud
-    //_iot
+    _iot.uploadData(_IData);
 
 
     /////////////////////////////////////////// todo remove me

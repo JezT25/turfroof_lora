@@ -25,6 +25,8 @@
 
 #include "system_node.hpp"
 
+#define MAX_URL_LEN		255
+
 #define NTP_SERVER      "pool.ntp.org"
 #define UTC_OFFSET      0           	// UTC+0 for Iceland (in seconds)
 #define NTP_UPDATE_MS   60000       	// Update every 60 seconds
@@ -42,6 +44,7 @@ class IOT_class
 
 		void Initialize();
 		void getTime();
+		void uploadData(IDATA IData);
 };
 
 #endif
