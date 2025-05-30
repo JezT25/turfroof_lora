@@ -65,13 +65,22 @@ void IOT_class::waitUntilQueryTime()
 			Serial.println(timeClient.getFormattedTime());
 		#endif
 
-		int seconds = timeClient.getSeconds();
-		if (seconds == 0)
+		int currentMinute = timeClient.getMinutes();
+		int currentSeconds = timeClient.getSeconds();
+
+		if (currentMinute == MINUTE_BREAK && currentSeconds >= SECOND_BREAK)
 		{
 			break;
 		}
 
-		delay(500);
+		if (currentMinute > UPDATE_THRESH_MIN && currentMinute < UPDATE_THRESH_MAX)
+		{
+			delay(NTP_UPDATE_MS_LONG);
+		}
+		else
+		{
+			delay(NTP_UPDATE_MS);
+		}
 	}
 }
 

@@ -25,13 +25,19 @@
 
 #include "system_node.hpp"
 
-#define MAX_URL_LEN		255
+#define MAX_URL_LEN			255
 
-#define NTP_SERVER      "pool.ntp.org"
-#define UTC_OFFSET      0           	// UTC+0 for Iceland (in seconds)
-#define NTP_UPDATE_MS   60000       	// Update every 60 seconds
+#define NTP_SERVER      	"pool.ntp.org"
+#define UTC_OFFSET      	0           	// UTC+0 for Iceland (in seconds)
+#define NTP_UPDATE_MS   	1000       		// Update every second
+#define NTP_UPDATE_MS_LONG  60000       	// Update every 60 seconds
 
-#define CONN_DELAY		500
+#define MINUTE_BREAK		0
+#define SECOND_BREAK		15
+#define UPDATE_THRESH_MIN	2
+#define UPDATE_THRESH_MAX	58
+
+#define CONN_DELAY			500
 
 class IOT_class
 {
