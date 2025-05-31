@@ -98,7 +98,7 @@ class LORA_MODULE_class
 		bool checkMessageValidity();
 		void processPayloadData();
 		void sendPayloadData();
-		void sendRequest(uint8_t index);
+		void sendRequest(uint8_t index, IOT_class *iot);
 		bool checkComplete();
 		void logData(IDATA *IData, uint8_t index);	
 
@@ -108,7 +108,7 @@ class LORA_MODULE_class
 
 	public:
 		void Initialize();
-		void startLoRaMesh(IDATA *IData);
+		void startLoRaMesh(IDATA *IData, IOT_class *iot);
 };
 
 #endif

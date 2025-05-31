@@ -34,8 +34,8 @@
 #define SECOND_BREAK			30000
 
 #define THRESH_MIN_LONG			20
-#define THRESH_MIN_MID	 		10;
-#define FINAL_THRESH_MIN_SHORT	2;
+#define THRESH_MIN_MID	 		10
+#define FINAL_THRESH_MIN_SHORT	2
 
 #define NTP_UPDATE_MS_LONG  	900000       	// Update every 15 minutes
 #define NTP_UPDATE_MS_MID  		300000     		// Update every 5 minutes
@@ -46,6 +46,8 @@
 
 class IOT_class
 {
+	friend class LORA_MODULE_class;
+
 	private:
 		WiFiUDP ntpUDP;
 		NTPClient timeClient;

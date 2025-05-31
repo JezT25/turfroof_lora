@@ -66,7 +66,6 @@ void IOT_class::waitUntilQueryTime()
 		#endif
 
 		int currentMinute = timeClient.getMinutes();
-
 		if (currentMinute == MINUTE_BREAK)
 		{
 			delay(SECOND_BREAK);

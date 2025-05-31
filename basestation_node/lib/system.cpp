@@ -44,7 +44,7 @@ void SYSTEM_class::Run()
     clearData();
 
     // Collect sensor data via the LoRa mesh network
-    _lora_module.startLoRaMesh(&_IData);
+    _lora_module.startLoRaMesh(&_IData, &_iot);
 
     // Display collected data if debugging is enabled
     #ifdef DEBUGGING

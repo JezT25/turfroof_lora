@@ -27,7 +27,6 @@
 
 #define DEBUGGING
 #define ENCRYPTING
-// #define SYNC_ON								// Turn this on if we want to sync clocks after query
 #ifdef ENCRYPTING
 	#define RC4_BYTES 		255
 	#define ENCRYPTION_KEY  "G7v!Xz@a?>Qp!d$1"
@@ -36,6 +35,7 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
 #include <WiFiClient.h>
+#include <TimeLib.h>
 #include <WiFiUdp.h>
 #include <NTPClient.h>
 #include <LoRa.h>
