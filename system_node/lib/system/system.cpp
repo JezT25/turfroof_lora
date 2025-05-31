@@ -66,7 +66,6 @@ void SYSTEM_class::Run()
 		{
 			_hwio.loadSensorData(&_IData);
 			_sd_card_module.logData(_IData, _rtc_module.getTime());
-			_lora_module.loadSensorData(_IData);
 		}
 		else if (alarm_trigger == ALARM2_TRIGGER)
 		{
@@ -80,6 +79,7 @@ void SYSTEM_class::Run()
 	else if (_interruptbyLoRa)
 	{
 		_interruptbyLoRa = false;
+		_lora_module.loadSensorData(_IData);
 		_lora_module.startLoRaMesh(_IData, &_hwio, &_rtc_module);
 	}
 	else
