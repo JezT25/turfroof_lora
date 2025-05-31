@@ -52,44 +52,44 @@ void SYSTEM_class::Initialize()
 
 void SYSTEM_class::Run()
 {
-	// if (_interruptbyRTC)
-	// {
-	// 	// Wake RTC First!
-	// 	_hwio.toggleModules(_hwio.GPIO_WAKE);
-	// 	delay(DELAY_SMALL);
-	// 	_rtc_module.reInit();
+	if (_interruptbyRTC)
+	{
+		// Wake RTC First!
+		_hwio.toggleModules(_hwio.GPIO_WAKE);
+		delay(DELAY_SMALL);
+		_rtc_module.reInit();
 
-	// 	uint8_t alarm_trigger = _rtc_module.checkAlarm();
-	// 	_interruptbyRTC = false;
+		uint8_t alarm_trigger = _rtc_module.checkAlarm();
+		_interruptbyRTC = false;
 
-	// 	if (alarm_trigger == ALARM1_TRIGGER)
-	// 	{
+		if (alarm_trigger == ALARM1_TRIGGER)
+		{
 			_hwio.loadSensorData(&_IData);
 			_sd_card_module.logData(_IData, _rtc_module.getTime());
 			_lora_module.loadSensorData(_IData);
-	// 	}
-	// 	else if (alarm_trigger == ALARM2_TRIGGER)
-	// 	{
-	// 		#ifdef DEBUGGING
+		}
+		else if (alarm_trigger == ALARM2_TRIGGER)
+		{
+			#ifdef DEBUGGING
 				displayfreeRAM();
-	// 		#endif
+			#endif
 
-	// 		entersleepMode();
-	// 	}
-	// }
-	// else if (_interruptbyLoRa)
-	// {
-	// 	_interruptbyLoRa = false;
+			entersleepMode();
+		}
+	}
+	else if (_interruptbyLoRa)
+	{
+		_interruptbyLoRa = false;
 		_lora_module.startLoRaMesh(_IData, &_hwio, &_rtc_module);
-	// }
-	// else
-	// {
-	// 	enterlightsleepMode();
-	// }
+	}
+	else
+	{
+		enterlightsleepMode();
+	}
 
-	// #ifdef WDT_ENABLE
-	// 	wdt_reset();
-	// #endif
+	#ifdef WDT_ENABLE
+		wdt_reset();
+	#endif
 }
 
 void SYSTEM_class::entersleepMode()
@@ -117,6 +117,7 @@ void SYSTEM_class::entersleepMode()
 	gotosleep();
 
 	// Turn on devices
+	detachInterrupt(digitalPinToInterrupt(RTC_INT));
 	attachInterrupt(digitalPinToInterrupt(LORA_DI0), wakeonLoRa, RISING);
 	_hwio.toggleModules(_hwio.LORA_WAKE);
 

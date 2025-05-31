@@ -29,7 +29,7 @@ void SYSTEM_class::Initialize()
     Initialize_System();
 
     // Initialize IoT
-    _iot.Initialize();
+    // _iot.Initialize();
 
     // Initialize LoRa
     _lora_module.Initialize();
@@ -38,7 +38,23 @@ void SYSTEM_class::Initialize()
 void SYSTEM_class::Run()
 {
     // Wait until the scheduled query time
-    _iot.waitUntilQueryTime();
+    // _iot.waitUntilQueryTime();
+
+    #ifdef DEBUGGING
+        Serial.println("Type 'ok' to proceed...");
+        while (true) {
+            if (Serial.available()) {
+                String input = Serial.readStringUntil('\n');
+                input.trim();
+                if (input.equalsIgnoreCase("ok")) {
+                    break;
+                } else {
+                    Serial.println("Please type 'ok' to continue.");
+                }
+            }
+            delay(10);
+        }
+    #endif
 
     // Clear previous sensor data
     clearData();
@@ -52,7 +68,7 @@ void SYSTEM_class::Run()
     #endif
 
     // Upload the collected data to the cloud
-    _iot.uploadData(_IData);
+    // _iot.uploadData(_IData);
 }
 
 void SYSTEM_class::clearData()
