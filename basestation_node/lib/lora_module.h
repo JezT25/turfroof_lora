@@ -34,8 +34,8 @@
 #define TX_POWER			20     // dBm
 #define BANDWIDTH			125E3  // 125 kHz
 #define SYNC_WORD			0x12
-#define SPREAD_FACTOR		7
-#define CODING_RATE			5
+#define SPREAD_FACTOR		12
+#define CODING_RATE			8
 #define PREAMBLE			8
 #define LORA_REQ_TIMEOUT	40000
 
@@ -98,7 +98,7 @@ class LORA_MODULE_class
 		bool checkMessageValidity();
 		void processPayloadData();
 		void sendPayloadData();
-		void sendRequest(uint8_t index);
+		void sendRequest(uint8_t index, IOT_class *iot);
 		bool checkComplete();
 		void logData(IDATA *IData, uint8_t index);	
 
@@ -108,7 +108,7 @@ class LORA_MODULE_class
 
 	public:
 		void Initialize();
-		void startLoRaMesh(IDATA *IData);
+		void startLoRaMesh(IDATA *IData, IOT_class *iot);
 };
 
 #endif

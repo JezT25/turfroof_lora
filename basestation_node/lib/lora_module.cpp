@@ -62,19 +62,15 @@ void LORA_MODULE_class::Initialize()
 	#endif
 }
 
-void LORA_MODULE_class::startLoRaMesh(IDATA *IData)
+void LORA_MODULE_class::startLoRaMesh(IDATA *IData, IOT_class *iot)
 {
-	#ifdef SYNC_ON
-		for (uint8_t i = TEMPERATURE; i < VALID_HEADERS; i++)
-	#else
-		for (uint8_t i = TEMPERATURE; i < VALID_HEADERS - 1; i++)
-	#endif
+	for (uint8_t i = TEMPERATURE; i < VALID_HEADERS; i++)
 	{
 		// Reset Everything
 		resetValues();
 		
 		// Send Requests
-		sendRequest(i);
+		sendRequest(i, iot);
 
 		while (millis() - _lastSystemUpdateTime <= LORA_REQ_TIMEOUT)
 		{
@@ -149,25 +145,54 @@ void LORA_MODULE_class::resetValues()
 	memset(_systemValues, 0, sizeof(_systemValues));
 }
 
-void LORA_MODULE_class::sendRequest(uint8_t index)
+void LORA_MODULE_class::sendRequest(uint8_t index, IOT_class *iot)
 {
-	char sendPayload[REQUEST_LENGTH] = {0};
-	snprintf(sendPayload, sizeof(sendPayload), "%s[]", _validHeaders[index]);
+	char sendPayload[index == DATE ? MAX_MESSAGE_LENGTH : REQUEST_LENGTH] = {0};
 	snprintf(_loraprevHeader, sizeof(_loraprevHeader), "%s", _validHeaders[index]);
+
+	if (index == DATE)
+	{
+		iot->timeClient.update();
+		unsigned long epochTime = iot->timeClient.getEpochTime();
+		uint8_t currentHour   = hour(epochTime);
+		uint8_t currentMinute = minute(epochTime);
+		uint8_t currentSecond = second(epochTime);
+		uint8_t currentDay    = day(epochTime);
+		uint8_t currentMonth  = month(epochTime);
+		uint8_t currentYear   = year(epochTime) % 100;
+		uint8_t checkSum = currentHour + currentMinute + currentSecond + currentDay + currentMonth + currentYear;
+
+		snprintf(sendPayload, sizeof(sendPayload), "%s[%02d,%02d,%02d,%02d,%02d,%02d,*,*,%02d]",
+			_validHeaders[index],
+			currentHour,
+			currentMinute,
+			currentSecond,
+			currentDay,
+			currentMonth,
+			currentYear,
+			checkSum
+		);
+	}
+	else
+	{
+		snprintf(sendPayload, sizeof(sendPayload), "%s[]", _validHeaders[index]);
+	}
 
 	#ifdef DEBUGGING
 		Serial.print(F("Payload to Send: "));
 		Serial.println(sendPayload);
 	#endif
 
+	uint8_t payloadSize = strlen(sendPayload) + 1;
+
 	#ifdef ENCRYPTING
-		char encryptedPayload[REQUEST_LENGTH] = {0};
-		strncpy(encryptedPayload, sendPayload, REQUEST_LENGTH);
-		rc4EncryptDecrypt(encryptedPayload, REQUEST_LENGTH);
+		char encryptedPayload[payloadSize] = {0};
+		strncpy(encryptedPayload, sendPayload, payloadSize);
+		rc4EncryptDecrypt(encryptedPayload, payloadSize);
 
 		#ifdef DEBUGGING
 			Serial.print(F("Encrypted Message: "));
-			for (uint8_t i = 0; i < REQUEST_LENGTH - 1; i++)
+			for (uint8_t i = 0; i < payloadSize - 1; i++)
 			{
 				Serial.print(encryptedPayload[i]);
 			}
@@ -179,18 +204,22 @@ void LORA_MODULE_class::sendRequest(uint8_t index)
 	{
 		LoRa.beginPacket();
 		#ifdef ENCRYPTING
-			LoRa.write((const uint8_t*)encryptedPayload, REQUEST_LENGTH - 1);	// -1 Don't send null terminator
+			LoRa.write((const uint8_t*)encryptedPayload, payloadSize - 1);	// -1 Don't send null terminator
 		#else
-			LoRa.write((const uint8_t*)sendPayload, REQUEST_LENGTH - 1);		// -1 Don't send null terminator
+			LoRa.write((const uint8_t*)sendPayload, payloadSize - 1);		// -1 Don't send null terminator
 		#endif
 		LoRa.endPacket();	// Set as blocking to ensure we send a proper request
 
-		delay(_backoffTime);
-	}
+		#ifdef DEBUGGING
+			Serial.print(F("\nPayload Sent Sucessfully! ("));
+			Serial.print(j + 1);
+			Serial.print('/');
+			Serial.print(SEND_ATTEMPTS);
+			Serial.println(')');
+		#endif
 
-	#ifdef DEBUGGING
-		Serial.println(F("Payload Sent Sucessfully!"));
-	#endif
+		delay(_csmaTimeout);
+	}
 }
 
 bool LORA_MODULE_class::getLoRaPayload()

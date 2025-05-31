@@ -32,13 +32,13 @@
 
 // LoRa Settings
 #define FREQUENCY			433E6  // 433 MHz
-#define TX_POWER			20     // dBm
+#define TX_POWER			17     // dBm
 #define BANDWIDTH			125E3  // 125 kHz
 #define SYNC_WORD			0x12
-#define SPREAD_FACTOR		7
-#define CODING_RATE			5
+#define SPREAD_FACTOR		12
+#define CODING_RATE			8
 #define PREAMBLE			8
-#define LORA_WAKE_TIMEOUT	5000
+#define LORA_WAKE_TIMEOUT	7500
 
 // CSMA/CA Settings
 #define SEND_ATTEMPTS		2
