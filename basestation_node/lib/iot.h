@@ -25,19 +25,24 @@
 
 #include "system_node.hpp"
 
-#define MAX_URL_LEN			255
+#define MAX_URL_LEN				255
 
-#define NTP_SERVER      	"pool.ntp.org"
-#define UTC_OFFSET      	0           	// UTC+0 for Iceland (in seconds)
-#define NTP_UPDATE_MS   	1000       		// Update every second
-#define NTP_UPDATE_MS_LONG  60000       	// Update every 60 seconds
+#define NTP_SERVER      		"pool.ntp.org"
+#define UTC_OFFSET      		0           	// UTC+0 for Iceland (in seconds)
 
-#define MINUTE_BREAK		0
-#define SECOND_BREAK		15
-#define UPDATE_THRESH_MIN	2
-#define UPDATE_THRESH_MAX	58
+#define MINUTE_BREAK			0
+#define SECOND_BREAK			30000
 
-#define CONN_DELAY			500
+#define THRESH_MIN_LONG			20
+#define THRESH_MIN_MID	 		10;
+#define FINAL_THRESH_MIN_SHORT	2;
+
+#define NTP_UPDATE_MS_LONG  	900000       	// Update every 15 minutes
+#define NTP_UPDATE_MS_MID  		300000     		// Update every 5 minutes
+#define NTP_UPDATE_MS_SHORT		60000      		// Update every minute
+#define NTP_UPDATE_MS_FINAL		1000			// Update every second
+
+#define CONN_DELAY				500
 
 class IOT_class
 {
@@ -46,7 +51,7 @@ class IOT_class
 		NTPClient timeClient;
 
 	public:
-		IOT_class() : timeClient(ntpUDP, NTP_SERVER, UTC_OFFSET, NTP_UPDATE_MS) {}
+		IOT_class() : timeClient(ntpUDP, NTP_SERVER, UTC_OFFSET, NTP_UPDATE_MS_FINAL) {}
 
 		void Initialize();
 		void getTime();

@@ -66,20 +66,29 @@ void IOT_class::waitUntilQueryTime()
 		#endif
 
 		int currentMinute = timeClient.getMinutes();
-		int currentSeconds = timeClient.getSeconds();
 
-		if (currentMinute == MINUTE_BREAK && currentSeconds >= SECOND_BREAK)
+		if (currentMinute == MINUTE_BREAK)
 		{
+			delay(SECOND_BREAK);
 			break;
 		}
 
-		if (currentMinute > UPDATE_THRESH_MIN && currentMinute < UPDATE_THRESH_MAX)
+		int minutesLeft = (MINUTE_BREAK - currentMinute + 60) % 60;
+		if (minutesLeft >= THRESH_MIN_LONG)
 		{
 			delay(NTP_UPDATE_MS_LONG);
 		}
+		else if (minutesLeft >= THRESH_MIN_MID)
+		{
+			delay(NTP_UPDATE_MS_MID);
+		}
+		else if (minutesLeft >= FINAL_THRESH_MIN_SHORT)
+		{
+			delay(NTP_UPDATE_MS_SHORT);
+		}
 		else
 		{
-			delay(NTP_UPDATE_MS);
+			delay(NTP_UPDATE_MS_FINAL);
 		}
 	}
 }
