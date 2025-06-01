@@ -20,7 +20,8 @@
   ============================================================
 */
 
-// todo: if battery lower than x amount forecver sleep and sd card only?
+// todo: figure out how long the whole lora process is like < 5 minutes? and then we can trim 2nd alarm.
+// maybe also trim the timouets? or maybe not.... LORA_WAKE_TIMEOUT? idk seems ok
 
 #include "lib/system_node.hpp"
 
