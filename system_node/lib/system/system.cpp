@@ -197,7 +197,7 @@ inline void SYSTEM_class::gotosleep()
 	#endif
 }
 
-inline void SYSTEM_class::isBatteryLevelSufficient()
+inline bool SYSTEM_class::isBatteryLevelSufficient()
 {
 	return _IData.BATTERY_VOLTAGE > BATTERY_LEVEL_CUTOFF ? true : false;
 }

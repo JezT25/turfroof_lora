@@ -43,7 +43,7 @@ class SYSTEM_class
 		static inline void wakeonRTC();
 		static inline void wakeonLoRa();
 		inline void gotosleep();
-		inline void isBatteryLevelSufficient();
+		inline bool isBatteryLevelSufficient();
 		void entersleepMode();
 		void enterlightsleepMode();
 
