@@ -23,7 +23,7 @@
 #ifndef system_node_hpp_included
 #define system_node_hpp_included
 
-#define SYSTEM_VER      0.81
+#define SYSTEM_VER      0.82
 #define SERIAL_BAUD     115200
 
 // Toggles: Comment or Uncomment to Disable or Enable

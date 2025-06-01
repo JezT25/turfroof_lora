@@ -31,7 +31,7 @@
 #define UTC_OFFSET      		0           	// UTC+0 for Iceland (in seconds)
 
 #define MINUTE_BREAK			0
-#define SECOND_BREAK			40000
+#define SECOND_BREAK			30000
 
 #define THRESH_MIN_LONG			20
 #define THRESH_MIN_MID	 		10

@@ -31,7 +31,6 @@
 #define ALARM1_MIN		59
 #define ALARM1_SEC		30
 #define ALARM2_MIN		5
-#define ALARM2_SEC		30
 
 #define NO_TRIGGER		0
 #define ALARM1_TRIGGER	1

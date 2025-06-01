@@ -180,6 +180,8 @@ void HWIO_class::getSoilTemperature(float &temperature)
 	ds18b20.begin();
 	ds18b20.requestTemperatures();
 
+	delay(LONG_DELAY);
+
 	float soil_temperature = ds18b20.getTempCByIndex(0); 
 
 	#ifdef DEBUGGING
