@@ -22,8 +22,6 @@
 
 #include "lib/system_node.hpp"
 
-// some issue, sometimes temp request cannot be received bec lora asleep?
-
 SYSTEM_class system_node(class_lib);
 
 void setup()

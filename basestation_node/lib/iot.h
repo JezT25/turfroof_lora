@@ -31,7 +31,7 @@
 #define UTC_OFFSET      		0           	// UTC+0 for Iceland (in seconds)
 
 #define MINUTE_BREAK			0
-#define SECOND_BREAK			30000
+#define SECOND_BREAK			40000
 
 #define THRESH_MIN_LONG			20
 #define THRESH_MIN_MID	 		10
@@ -40,7 +40,7 @@
 #define NTP_UPDATE_MS_LONG  	900000       	// Update every 15 minutes
 #define NTP_UPDATE_MS_MID  		300000     		// Update every 5 minutes
 #define NTP_UPDATE_MS_SHORT		60000      		// Update every minute
-#define NTP_UPDATE_MS_FINAL		1000			// Update every second
+#define NTP_UPDATE_MS_FINAL		5000			// Update every 5 seconds
 
 #define CONN_DELAY				500
 
