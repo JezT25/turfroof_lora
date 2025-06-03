@@ -38,7 +38,7 @@
 #define SPREAD_FACTOR   	7
 #define CODING_RATE     	5
 #define PREAMBLE        	8
-#define LORA_WAKE_TIMEOUT	7500
+#define LORA_WAKE_TIMEOUT	8000
 
 // CSMA/CA Settings
 #define SEND_ATTEMPTS		2
