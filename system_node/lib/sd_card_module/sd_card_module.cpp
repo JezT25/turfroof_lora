@@ -29,6 +29,7 @@ void SD_CARD_MODULE_class::logData(IDATA IData, time_t t)
 
 	#ifdef DEBUGGING
 		Serial.print(F("Writing to SD Card: "));
+		Serial.print(IData.HW_ID);Serial.print(F(", "));
 		Serial.print(datetime);Serial.print(F(" | "));
 		Serial.print(IData.SYSTEM_TEMPERATURE, DECIMAL_VALUES);Serial.print(F("c, "));
 		Serial.print(IData.SYSTEM_HUMIDITY, DECIMAL_VALUES);Serial.print(F("%RH, "));
@@ -38,6 +39,7 @@ void SD_CARD_MODULE_class::logData(IDATA IData, time_t t)
 	#else
 		Serial.begin(LOGGING_BAUD);
 		delay(LOGGING_DELAY);
+		Serial.print(IData.HW_ID);Serial.print(',');
 		Serial.print(datetime);Serial.print(',');
 		Serial.print(IData.SYSTEM_TEMPERATURE, DECIMAL_VALUES);Serial.print(',');
 		Serial.print(IData.SYSTEM_HUMIDITY, DECIMAL_VALUES);Serial.print(',');
