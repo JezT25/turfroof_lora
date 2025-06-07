@@ -3,8 +3,9 @@
 # LoRa Turf Roof Sensor
 
 Todo: 
-1. check how many bounces and determine something wrong
-2. for thesis graph the backout and timeout
+1. Special LORA command to avoid sleep mode and special lora command to return back to sleepy mode
+2. check how many bounces and determine something wrong
+3. for thesis graph the backout and timeout
 
 Unsure of:
 1. Waterproofing
