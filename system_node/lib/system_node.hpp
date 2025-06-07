@@ -27,13 +27,13 @@
 #define SERIAL_BAUD     115200
 
 // Toggles: Comment or Uncomment to Disable or Enable
-#define DEBUGGING
+// #define DEBUGGING
 #define ENCRYPTING
 #define WDT_ENABLE
 
 // Encryption Settings
 #ifdef DEBUGGING
-	#define SET_RTC_TIME	0			// Set to 1 to set RTC time from PC
+	#define SET_RTC_TIME	1			// Set to 1 to set RTC time from PC
 #endif
 
 #ifdef ENCRYPTING
