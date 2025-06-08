@@ -57,6 +57,7 @@
 #define EPSILON         	0.0001
 #define BLANK_PLACEHOLDER	'*'
 #define DELAY_SMALL 		50
+#define DELAY_DIVIDER		2
 
 class LORA_MODULE_class
 {

@@ -2,24 +2,27 @@
 
 # LoRa Turf Roof Sensor
 
-Todo: 
-1. Special LORA command to avoid sleep mode and special lora command to return back to sleepy mode
-2. check how many bounces and determine something wrong
-3. for thesis graph the backout and timeout
+## Project To-Do
+### High Priority
+1. **LoRa Settings Optimization:**  
+    - Current configuration prioritizes speed over range, resulting in limited communication distance (line of sight or a few meters).
+    - Action: Adjust LoRa parameters to increase range, understanding this may reduce data transmission speed.
 
-Unsure of:
-1. Waterproofing
-2. is the smois better if raw data?
+### Medium/Low Priority
+- Implement a special LoRa command to prevent the device from entering sleep mode, and add a command to return it to sleep mode.
+- Monitor the number of message retransmissions ("bounces") to detect potential issues.
+- Graph backoff and timeout events for inclusion in the thesis.
 
-To Buy More!
-> 18650 Hafnarfordur
-> Coin battery!
+### Open Questions
+- Evaluate waterproofing solutions for the sensor hardware.
+- Assess whether using raw soil moisture data provides better results.
 
-----
+### Procurement
+- Purchase additional 18650 batteries (Hafnarfjörður).
+- Acquire coin cell batteries.
 
-Refund:
-1. refund the sd card reader in aliexpress
-
+### Refunds
+- Initiate a refund for the SD card reader purchased from AliExpress.
 
 ## 📄 License
 MIT License.
