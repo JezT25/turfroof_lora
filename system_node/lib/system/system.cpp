@@ -68,7 +68,7 @@ void SYSTEM_class::Run()
 			_sd_card_module.logData(_IData, _rtc_module.getTime());
 			_lora_module.loadSensorData(_IData);
 		}
-		else if (alarm_trigger == ALARM2_TRIGGER)
+		if (alarm_trigger == ALARM2_TRIGGER || !isBatteryLevelSufficient())
 		{
 			#ifdef DEBUGGING
 				displayfreeRAM();
@@ -196,6 +196,11 @@ inline void SYSTEM_class::gotosleep()
 	#ifdef WDT_ENABLE
 		wdt_enable(WDTO_8S);
 	#endif
+}
+
+inline bool SYSTEM_class::isBatteryLevelSufficient()
+{
+	return _IData.BATTERY_VOLTAGE > BATTERY_LEVEL_CUTOFF ? true : false;
 }
 
 inline void SYSTEM_class::wakeonLoRa()

@@ -25,7 +25,8 @@
 
 #include "../system_node.hpp"
 
-#define DELAY_SMALL 50
+#define BATTERY_LEVEL_CUTOFF	3.25000
+#define DELAY_SMALL 			50
 
 class SYSTEM_class
 {
@@ -42,6 +43,7 @@ class SYSTEM_class
 		static inline void wakeonRTC();
 		static inline void wakeonLoRa();
 		inline void gotosleep();
+		inline bool isBatteryLevelSufficient();
 		void entersleepMode();
 		void enterlightsleepMode();
 

@@ -208,8 +208,7 @@ void LORA_MODULE_class::sendRequest(uint8_t index, IOT_class *iot)
 		#else
 			LoRa.write((const uint8_t*)sendPayload, payloadSize - 1);		// -1 Don't send null terminator
 		#endif
-		LoRa.endPacket();	// Set as blocking to ensure we send a proper request
-
+		LoRa.endPacket(true);
 		#ifdef DEBUGGING
 			Serial.print(F("\nPayload Sent Sucessfully! ("));
 			Serial.print(j + 1);
@@ -218,7 +217,7 @@ void LORA_MODULE_class::sendRequest(uint8_t index, IOT_class *iot)
 			Serial.println(')');
 		#endif
 
-		delay(_csmaTimeout);
+		delay(_csmaTimeout / DELAY_DIVIDER);
 	}
 }
 

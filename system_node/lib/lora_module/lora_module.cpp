@@ -423,6 +423,8 @@ void LORA_MODULE_class::sendPayloadData(HWIO_class *hwio, RTC_MODULE_class *rtc)
 		delay(DELAY_SMALL);
 		rtc->reInit();
 		rtc->syncTime(_systemValues);
+		delay(DELAY_SMALL);
+		Wire.end();
 		hwio->toggleModules(hwio->GPIO_SLEEP);
 	}
 

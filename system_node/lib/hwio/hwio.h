@@ -61,6 +61,7 @@
 
 #define DATA_SAMPLES	10
 #define SAMPLE_DELAY	50
+#define LONG_DELAY		1000
 
 #define OFF         	0
 #define ON          	1

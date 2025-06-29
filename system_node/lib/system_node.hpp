@@ -23,17 +23,17 @@
 #ifndef system_node_hpp_included
 #define system_node_hpp_included
 
-#define SYSTEM_VER      0.8
+#define SYSTEM_VER      0.82
 #define SERIAL_BAUD     115200
 
 // Toggles: Comment or Uncomment to Disable or Enable
-#define DEBUGGING
+// #define DEBUGGING
 #define ENCRYPTING
 // #define WDT_ENABLE
 
 // Encryption Settings
 #ifdef DEBUGGING
-	#define SET_RTC_TIME	0			// Set to 1 to set RTC time from PC
+	#define SET_RTC_TIME	1			// Set to 1 to set RTC time from PC
 #endif
 
 #ifdef ENCRYPTING

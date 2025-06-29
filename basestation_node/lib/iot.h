@@ -40,7 +40,7 @@
 #define NTP_UPDATE_MS_LONG  	900000       	// Update every 15 minutes
 #define NTP_UPDATE_MS_MID  		300000     		// Update every 5 minutes
 #define NTP_UPDATE_MS_SHORT		60000      		// Update every minute
-#define NTP_UPDATE_MS_FINAL		1000			// Update every second
+#define NTP_UPDATE_MS_FINAL		5000			// Update every 5 seconds
 
 #define CONN_DELAY				500
 

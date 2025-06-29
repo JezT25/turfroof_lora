@@ -42,8 +42,7 @@ void RTC_MODULE_class::Initialize()
 	Sync();
 
 	// Set Alarm 1 to trigger every hour
-	// _rtc.setAlarm(DS3232RTC::ALM1_MATCH_MINUTES, 0, ALARM1_MIN, 0, 1);
-	_rtc.setAlarm(DS3232RTC::ALM1_MATCH_SECONDS, 30, 0, 0, 1);		// TODO: EDIT ME
+	_rtc.setAlarm(DS3232RTC::ALM1_MATCH_SECONDS, 30, 0, 0, 1);
 	_rtc.alarm(DS3232RTC::ALARM_1);
 	_rtc.alarmInterrupt(DS3232RTC::ALARM_1, true);
 

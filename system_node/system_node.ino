@@ -20,8 +20,6 @@
   ============================================================
 */
 
-// todo: if battery lower than x amount forecver sleep and sd card only?
-
 #include "lib/system_node.hpp"
 
 SYSTEM_class system_node(class_lib);

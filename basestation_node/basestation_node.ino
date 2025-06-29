@@ -22,9 +22,6 @@
 
 #include "lib/system_node.hpp"
 
-// todo check if the time syncing actually works
-// some issue, sometimes temp request cannot be received bec lora asleep?
-
 SYSTEM_class system_node(class_lib);
 
 void setup()
