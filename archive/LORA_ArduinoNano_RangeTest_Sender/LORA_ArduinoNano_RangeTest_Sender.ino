@@ -1,13 +1,13 @@
 #include <SPI.h>
 #include <LoRa.h>
 
-#define FREQUENCY 433E6
-#define TX_POWER 20
-#define BANDWIDTH 125E3
-#define SYNC_WORD 0x12
-#define SPREAD_FACTOR 12
-#define CODING_RATE 5
-#define PREAMBLE 8
+#define FREQUENCY     433E6     // 433 MHz
+#define TX_POWER      20        // Max for PA_BOOST
+#define BANDWIDTH     62.5E3    // Wider = faster, still decent range
+#define SPREAD_FACTOR 10         // Faster than SF12, still long range
+#define CODING_RATE   5         // 4/5, good balance
+#define PREAMBLE      8         // Default, good for most cases
+#define SYNC_WORD     0x12      // For private networks
 
 #define LORA_SS 4
 #define LORA_RST 3
@@ -70,6 +70,7 @@ void setup()
     LoRa.setCodingRate4(CODING_RATE);
     LoRa.setSyncWord(SYNC_WORD);
     LoRa.setPreambleLength(PREAMBLE);
+    LoRa.enableCrc();
 
     Serial.println("LoRa init succeeded.");
     Serial.println("Type message to send:");
@@ -89,55 +90,35 @@ void printHex(char *data, int length)
 
 void loop()
 {
-    // Receive LoRa packets
-    int packetSize = LoRa.parsePacket();
-    if (packetSize)
-    {
-        Serial.println("\nReceived:");
+    static unsigned long lastSend = 0;
+    static bool toggle = false;
+    unsigned long now = millis();
 
-        char encrypted[packetSize];
-        int i = 0;
-        while (LoRa.available() && i < packetSize)
-        {
-            encrypted[i++] = (char)LoRa.read();
-        }
+    // Send message every 1 second
+    if (now - lastSend >= 1000)
+    {
+        lastSend = now;
+        // Prepare message with ON or OFF at the end
+        char msg[100];
+        snprintf(msg, sizeof(msg),
+                 "TEMP:[123.45678,234.56789,345.67890,456.78901,567.89012,678.90123,789.01234,890.12345,901.234%s]",
+                 toggle ? "ON" : "OFF");
+        toggle = !toggle;
+
+        int len = strlen(msg);
+        char buf[len + 1];
+        strcpy(buf, msg);
+
+        rc4EncryptDecrypt(buf, len);
+
+        Serial.print("\nSent: ");
+        Serial.println(msg);
 
         Serial.print("Encrypted: ");
-        printHex(encrypted, i);
+        printHex(buf, len);
 
-        rc4EncryptDecrypt(encrypted, i);
-        encrypted[i] = '\0'; // Null-terminate after decrypting
-
-        Serial.print("Decrypted: ");
-        Serial.println(encrypted);
-
-        int rssi = LoRa.packetRssi();
-        Serial.print("RSSI: ");
-        Serial.println(rssi);
-    }
-
-    // Send messages entered on Serial
-    if (Serial.available())
-    {
-        String input = Serial.readStringUntil('\n');
-        input.trim();
-        if (input.length() > 0)
-        {
-            Serial.print("\nSent: ");
-            Serial.println(input);
-
-            int len = input.length();
-            char buf[len + 1];
-            input.toCharArray(buf, len + 1);
-
-            rc4EncryptDecrypt(buf, len);
-
-            Serial.print("Encrypted: ");
-            printHex(buf, len);
-
-            LoRa.beginPacket();
-            LoRa.write((uint8_t *)buf, len);
-            LoRa.endPacket();
-        }
+        LoRa.beginPacket();
+        LoRa.write((uint8_t *)buf, len);
+        LoRa.endPacket();
     }
 }
