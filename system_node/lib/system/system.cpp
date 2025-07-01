@@ -146,7 +146,7 @@ inline void SYSTEM_class::gotosleep()
 
 	// Enter sleep mode (Execution Stops Here)
 	interrupts();
-	sleep_cpu();
+	// sleep_cpu();
 
 	////////////// zzz Goodnight! zzz //////////////
 
