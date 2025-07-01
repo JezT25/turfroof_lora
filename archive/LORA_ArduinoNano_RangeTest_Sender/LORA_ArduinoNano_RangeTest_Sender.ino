@@ -1,17 +1,18 @@
 #include <SPI.h>
 #include <LoRa.h>
 
-#define FREQUENCY     433E6     // 433 MHz
-#define TX_POWER      20        // Max for PA_BOOST
-#define BANDWIDTH     62.5E3    // Wider = faster, still decent range
-#define SPREAD_FACTOR 10         // Faster than SF12, still long range
-#define CODING_RATE   5         // 4/5, good balance
-#define PREAMBLE      8         // Default, good for most cases
-#define SYNC_WORD     0x12      // For private networks
+#define FREQUENCY			433E6  // 433 MHz
+#define TX_POWER			20     // dBm
+#define BANDWIDTH			125E3  // 125 kHz
+#define SYNC_WORD			0x12
+#define SPREAD_FACTOR   	7
+#define CODING_RATE     	5
+#define PREAMBLE        	8
 
-#define LORA_SS 4
-#define LORA_RST 3
-#define LORA_DIO0 2
+#define SCK   D5   // GPIO14
+#define MISO  D6   // GPIO12
+#define MOSI  D7   // GPIO13
+#define LORA_NSS   D8   // Chip Select (NSS)
 
 #define RC4_BYTES 255
 #define ENCRYPTION_KEY "G7v!Xz@a?>Qp!d$1"
@@ -56,7 +57,7 @@ void setup()
 
     Serial.println("LoRa Encrypted Send/Receive");
 
-    LoRa.setPins(LORA_SS, LORA_RST, LORA_DIO0);
+    LoRa.setPins(LORA_NSS, D1);
     if (!LoRa.begin(FREQUENCY))
     {
         Serial.println("Starting LoRa failed!");
