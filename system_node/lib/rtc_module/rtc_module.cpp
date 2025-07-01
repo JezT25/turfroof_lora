@@ -42,14 +42,14 @@ void RTC_MODULE_class::Initialize()
 	Sync();
 
 	// Set Alarm 1 to trigger every hour
-	_rtc.setAlarm(DS3232RTC::ALM1_MATCH_MINUTES, ALARM1_SEC, ALARM1_MIN, 0, 1);
+	_rtc.setAlarm(DS3232RTC::ALM1_MATCH_SECONDS, 30, 0, 0, 1);
 	_rtc.alarm(DS3232RTC::ALARM_1);
 	_rtc.alarmInterrupt(DS3232RTC::ALARM_1, true);
 
 	// Set Alarm 2 to trigger at ALARM2_MIN every hour
 	_rtc.setAlarm(DS3232RTC::ALM2_MATCH_MINUTES, 0, ALARM2_MIN, 0, 1);
 	_rtc.alarm(DS3232RTC::ALARM_2);
-	_rtc.alarmInterrupt(DS3232RTC::ALARM_2, true);
+	_rtc.alarmInterrupt(DS3232RTC::ALARM_2, false);
 
 	// Turn on BBSQW - Battery-Backed Square Wave Enable for battery interrupts
 	byte reg = _rtc.readRTC(DS3232RTC::DS32_CONTROL);

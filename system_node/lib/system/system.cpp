@@ -4,7 +4,7 @@
   Faculty of Electrical and Computer Engineering
   School of Engineering and Natural Sciences, University of Iceland
 
-  Title: Design and Implementation of a Low-Power LoRa Mesh Sensor Network 
+  Title: Design and Implementation of a Low-Power LoRa Mesh Sensor Network
 		 for Monitoring Soil Conditions on Icelandic Turf Roofs
 
   Researcher: Jezreel Tan
@@ -24,7 +24,7 @@
 
 // Define static functions
 volatile bool SYSTEM_class::_interruptbyLoRa = false;
-volatile bool SYSTEM_class::_interruptbyRTC = false;  
+volatile bool SYSTEM_class::_interruptbyRTC = false;
 
 void SYSTEM_class::Initialize()
 {
@@ -40,64 +40,30 @@ void SYSTEM_class::Initialize()
 	// Initialize Lora Module
 	_lora_module.Initialize(_IData);
 
-	#ifdef DEBUGGING
-		Serial.print(F("System Version: v"));
-		Serial.println(SYSTEM_VER);
-		Serial.println(F("........................."));
-	#endif
+#ifdef DEBUGGING
+	Serial.print(F("System Version: v"));
+	Serial.println(SYSTEM_VER);
+	Serial.println(F("........................."));
+#endif
 
-	// Enter Sleep Mode
-	entersleepMode();
+	attachInterrupt(digitalPinToInterrupt(LORA_DI0), wakeonLoRa, RISING);
+
+	_hwio.loadSensorData(&_IData);
+	_sd_card_module.logData(_IData, _rtc_module.getTime());
+	_lora_module.loadSensorData(_IData);
 }
 
 void SYSTEM_class::Run()
 {
-	if (_interruptbyRTC)
-	{
-		// Wake RTC First!
-		_hwio.toggleModules(_hwio.GPIO_WAKE);
-		delay(DELAY_SMALL);
-		_rtc_module.reInit();
-
-		uint8_t alarm_trigger = _rtc_module.checkAlarm();
-		_interruptbyRTC = false;
-
-		if (alarm_trigger == ALARM1_TRIGGER)
-		{
-			_hwio.loadSensorData(&_IData);
-			_sd_card_module.logData(_IData, _rtc_module.getTime());
-		}
-		if (alarm_trigger == ALARM2_TRIGGER || !isBatteryLevelSufficient())
-		{
-			#ifdef DEBUGGING
-				displayfreeRAM();
-			#endif
-
-			entersleepMode();
-		}
-	}
-	else if (_interruptbyLoRa)
-	{
-		_interruptbyLoRa = false;
-		_lora_module.loadSensorData(_IData);
-		_lora_module.startLoRaMesh(_IData, &_hwio, &_rtc_module);
-	}
-	else
-	{
-		enterlightsleepMode();
-	}
-
-	#ifdef WDT_ENABLE
-		wdt_reset();
-	#endif
+	_lora_module.startLoRaMesh(_IData, &_hwio, &_rtc_module);
 }
 
 void SYSTEM_class::entersleepMode()
 {
-	#ifdef DEBUGGING
-		Serial.println(F("Entering Sleep Mode..."));
-		delay(DELAY_SMALL);
-	#endif
+#ifdef DEBUGGING
+	Serial.println(F("Entering Sleep Mode..."));
+	delay(DELAY_SMALL);
+#endif
 
 	// Turn off LoRa and Modules
 	_hwio.toggleModules(_hwio.GPIO_SLEEP, _hwio.LORA_SLEEP);
@@ -117,6 +83,7 @@ void SYSTEM_class::entersleepMode()
 	gotosleep();
 
 	// Turn on devices
+	detachInterrupt(digitalPinToInterrupt(RTC_INT));
 	attachInterrupt(digitalPinToInterrupt(LORA_DI0), wakeonLoRa, RISING);
 	_hwio.toggleModules(_hwio.LORA_WAKE);
 
@@ -127,14 +94,14 @@ void SYSTEM_class::entersleepMode()
 
 void SYSTEM_class::enterlightsleepMode()
 {
-	#ifdef DEBUGGING
-		Serial.println(F("Entering Light Sleep Mode..."));
-		delay(DELAY_SMALL);
-	#endif
+#ifdef DEBUGGING
+	Serial.println(F("Entering Light Sleep Mode..."));
+	delay(DELAY_SMALL);
+#endif
 
 	// Turn off other devices
 	_hwio.toggleModules(_hwio.GPIO_SLEEP);
-	LoRa.receive();	
+	LoRa.receive();
 
 	// Turn off communication to avoid power transmitted in GPIO
 	Wire.end();
@@ -171,8 +138,8 @@ inline void SYSTEM_class::gotosleep()
 	sleep_enable();
 
 	// Disable BOD for lowest power
-	MCUCR = bit (BODS) | bit (BODSE);
-	MCUCR = bit (BODS);
+	MCUCR = bit(BODS) | bit(BODSE);
+	MCUCR = bit(BODS);
 
 	// Lower clock frequency
 	clock_prescale_set(clock_div_256);
@@ -188,13 +155,13 @@ inline void SYSTEM_class::gotosleep()
 
 	// Power on!
 	power_all_enable();
-	ADCSRA = (ON << ADEN); 
+	ADCSRA = (ON << ADEN);
 	clock_prescale_set(clock_div_1);
 
-	// Reenable WDT
-	#ifdef WDT_ENABLE
-		wdt_enable(WDTO_8S);
-	#endif
+// Reenable WDT
+#ifdef WDT_ENABLE
+	wdt_enable(WDTO_8S);
+#endif
 }
 
 inline bool SYSTEM_class::isBatteryLevelSufficient()
@@ -213,17 +180,17 @@ inline void SYSTEM_class::wakeonRTC()
 }
 
 #ifdef DEBUGGING
-	uint16_t SYSTEM_class::freeRAM() 
-	{
-		extern uint16_t __heap_start,*__brkval;
-		uint16_t v;
-		return (uint16_t)&v - (__brkval == 0 ? (uint16_t)&__heap_start : (uint16_t) __brkval);  
-	}
+uint16_t SYSTEM_class::freeRAM()
+{
+	extern uint16_t __heap_start, *__brkval;
+	uint16_t v;
+	return (uint16_t)&v - (__brkval == 0 ? (uint16_t)&__heap_start : (uint16_t)__brkval);
+}
 
-	void SYSTEM_class::displayfreeRAM()
-	{
-		Serial.print(F("\033[31mSRAM Left = "));
-		Serial.print(freeRAM());
-		Serial.println(F("\033[0m"));
-	}
+void SYSTEM_class::displayfreeRAM()
+{
+	Serial.print(F("\033[31mSRAM Left = "));
+	Serial.print(freeRAM());
+	Serial.println(F("\033[0m"));
+}
 #endif
