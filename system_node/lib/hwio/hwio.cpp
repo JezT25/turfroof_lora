@@ -193,9 +193,9 @@ void HWIO_class::getSoilTemperature(float &temperature)
 	temperature = constrain(soil_temperature, MIN_VALUE, MAX_VALUE);
 }
 
-void HWIO_class::getSoilMoisture(int8_t &moisture)
+void HWIO_class::getSoilMoisture(uint16_t &moisture)
 {
-	int totaldatasamples = 0;
+	uint16_t totaldatasamples = 0;
 
 	// Purge initial boot up readings
 	for (uint8_t i = 0; i < DATA_SAMPLES; i++)
@@ -211,27 +211,12 @@ void HWIO_class::getSoilMoisture(int8_t &moisture)
 		delay(SAMPLE_DELAY);
 	}
 
-	int avgReading = totaldatasamples / DATA_SAMPLES;
-	int8_t moisturePercentage;
-
-	if (avgReading < SMOIS_DWN_BOUND + SMOIS_BUFFER || avgReading > SMOIS_UP_BOUND + SMOIS_BUFFER)
-	{
-		moisturePercentage = VAL_ERROR;
-	}
-	else
-	{
-		// Map 250 (wet) to 100%, 675 (dry) to 0%
-		moisturePercentage = map(avgReading, SMOIS_UP_BOUND, SMOIS_DWN_BOUND, MIN_PERCENT, MAX_PERCENT);
-	}
+	uint16_t avgReading = totaldatasamples / DATA_SAMPLES;
 
 	#ifdef DEBUGGING
 		Serial.print(F("Soil Analog Read: "));
 		Serial.println(avgReading);
-		Serial.print(F("Soil Moisture: "));
-		Serial.print(moisturePercentage);
-		Serial.println(F(" %"));
 	#endif
 
-	// Don't constrain so error can stay as -1
-	moisture = moisturePercentage;
+	moisture = avgReading;
 }

@@ -344,7 +344,7 @@ void LORA_MODULE_class::preloadMessageData()
 		Serial.print(F("Current Data: ["));
 		for (uint8_t i = 0; i < MAX_DEVICES; i++)
 		{
-			Serial.print(_systemValues[i], DECIMAL_VALUES);
+			Serial.print(strcmp(_loraprevHeader, _validHeaders[SOIL_MOISTURE]) == 0 ? (uint16_t)_systemValues[i] : _systemValues[i], DECIMAL_VALUES);
 			if (i < (MAX_DEVICES - 1)) Serial.print(',');
 		}
 		Serial.println(']');
@@ -386,7 +386,7 @@ void LORA_MODULE_class::processPayloadData()
 				Serial.print(F("Merged Data: ["));
 				for (uint8_t i = 0; i < MAX_DEVICES; i++)
 				{
-					Serial.print(_systemValues[i], DECIMAL_VALUES);
+					Serial.print(strcmp(_loraprevHeader, _validHeaders[SOIL_MOISTURE]) == 0 ? (uint16_t)_systemValues[i] : _systemValues[i], DECIMAL_VALUES);
 					if (i < (MAX_DEVICES - 1)) Serial.print(',');
 				}
 				Serial.println(']');
@@ -457,7 +457,15 @@ void LORA_MODULE_class::sendPayloadData(HWIO_class *hwio, RTC_MODULE_class *rtc)
 				width -= 3;
 			}
 			
-			dtostrf(_systemValues[i], width, DECIMAL_VALUES, numStr);			
+			// todo di ko sure diri
+			if (strcmp(_loraprevHeader, _validHeaders[SOIL_MOISTURE]) == 0)
+			{
+				snprintf(numStr, sizeof(numStr), "%u", (uint16_t)_systemValues[i]);
+			}
+			else
+			{
+				dtostrf(_systemValues[i], width, DECIMAL_VALUES, numStr);
+			}		
 		}
 
 		strcpy(&relay_message[pos], numStr);

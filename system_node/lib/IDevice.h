@@ -37,7 +37,7 @@ class IDATA
 
 		float SOIL_TEMPERATURE		=	0;
 
-		int8_t SOIL_MOISTURE		=	0;
+		uint16_t SOIL_MOISTURE		=	0;
 
 		float BATTERY_VOLTAGE		=	0;
 };
