@@ -4,7 +4,7 @@
   Faculty of Electrical and Computer Engineering
   School of Engineering and Natural Sciences, University of Iceland
 
-  Title: Design and Implementation of a Low-Power LoRa Mesh Sensor Network 
+  Title: Design and Implementation of a Low-Power LoRa Mesh Sensor Network
 		 for Monitoring Soil Conditions on Icelandic Turf Roofs
 
   Researcher: Jezreel Tan
@@ -81,17 +81,18 @@ class LORA_MODULE_class
 			"DATE:"
 		};
 
-		uint16_t _backoffTime;
-		uint16_t _csmaTimeout;
 		bool _newpayloadAlert;
+		bool _syncRTCDone;
 		uint8_t _hwid;
 		uint8_t _sendAttempts;
+		uint16_t _backoffTime;
+		uint16_t _csmaTimeout;
 		unsigned long _lastSystemUpdateTime;
 		float _sensorData[VALID_HEADERS];
 		float _systemValues[MAX_DEVICES];
 		char _loraPayload[MAX_MESSAGE_LENGTH];
 		char _loraprevHeader[MAX_HEADER_LENGTH];
-		
+
 		int8_t getcharIndex(char c);
 		float *getpayloadValues();
 		void resetValues();

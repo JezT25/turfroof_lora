@@ -4,7 +4,7 @@
   Faculty of Electrical and Computer Engineering
   School of Engineering and Natural Sciences, University of Iceland
 
-  Title: Design and Implementation of a Low-Power LoRa Mesh Sensor Network 
+  Title: Design and Implementation of a Low-Power LoRa Mesh Sensor Network
 		 for Monitoring Soil Conditions on Icelandic Turf Roofs
 
   Researcher: Jezreel Tan
@@ -23,7 +23,7 @@
 #include "system_node.hpp"
 
 void LORA_MODULE_class::Initialize()
-{	
+{
 	// Configure Pins
 	LoRa.setPins(LORA_NSS, LORA_RST);
 
@@ -68,17 +68,25 @@ void LORA_MODULE_class::startLoRaMesh(IDATA *IData, IOT_class *iot)
 	{
 		// Reset Everything
 		resetValues();
-		
+
 		// Send Requests
 		sendRequest(i, iot);
+		_hasNodeReplied = false;
 
 		while (millis() - _lastSystemUpdateTime <= LORA_REQ_TIMEOUT)
 		{
 			if (LoRa.parsePacket() || _newpayloadAlert)
 			{
-				if (!_newpayloadAlert && !getLoRaPayload()) continue;
+				if (!_newpayloadAlert && !getLoRaPayload(i)) continue;
 				processPayloadData();
-				sendPayloadData();
+				sendPayloadData(i);
+				_hasNodeReplied = true;
+			}
+
+			if (_hasNodeReplied == false && millis() - _lastSystemUpdateTime >= LORA_REQ_TIMEOUT / LORA_REQ_RESEND_DIV)
+			{
+				sendRequest(i, iot);
+				_hasNodeReplied = true;
 			}
 
 			// Check if all active devices have sent data
@@ -138,7 +146,7 @@ void LORA_MODULE_class::resetValues()
 {
 	// Reset values for fresh requests
 	_sendAttempts = 0;
-	_newpayloadAlert = false;	
+	_newpayloadAlert = false;
 	_lastSystemUpdateTime = millis();
 	memset(_loraPayload, 0, sizeof(_loraPayload));
 	memset(_loraprevHeader, 0, sizeof(_loraprevHeader));
@@ -208,7 +216,7 @@ void LORA_MODULE_class::sendRequest(uint8_t index, IOT_class *iot)
 		#else
 			LoRa.write((const uint8_t*)sendPayload, payloadSize - 1);		// -1 Don't send null terminator
 		#endif
-		LoRa.endPacket(true);
+		LoRa.endPacket();
 		#ifdef DEBUGGING
 			Serial.print(F("\nPayload Sent Sucessfully! ("));
 			Serial.print(j + 1);
@@ -221,7 +229,7 @@ void LORA_MODULE_class::sendRequest(uint8_t index, IOT_class *iot)
 	}
 }
 
-bool LORA_MODULE_class::getLoRaPayload()
+bool LORA_MODULE_class::getLoRaPayload(uint8_t current_header_index)
 {
 	#ifdef DEBUGGING
 		//	Display Signal Strength (RSSI) of the Received Packet
@@ -260,7 +268,7 @@ bool LORA_MODULE_class::getLoRaPayload()
 		Serial.println(_loraPayload);
 	#endif
 
-	return checkMessageValidity();
+	return checkMessageValidity(current_header_index);
 }
 
 int8_t LORA_MODULE_class::getcharIndex(char c)
@@ -295,26 +303,21 @@ float *LORA_MODULE_class::getpayloadValues()
 	return tempValues;
 }
 
-bool LORA_MODULE_class::checkMessageValidity()
+bool LORA_MODULE_class::checkMessageValidity(uint8_t current_header_index)
 {
 	uint8_t startIdx = getcharIndex('[');
 	uint8_t endIdx = getcharIndex(']');
 	uint8_t payloadLen = strlen(_loraPayload);
 	bool checkforCharacters = true;
 
-	// Check header validity
-	for (uint8_t i = 0; i < VALID_HEADERS; i++)
+	// Check header if it's the correct one we are looking for
+	if (strncmp(_loraPayload, _validHeaders[current_header_index], strlen(_validHeaders[current_header_index])) != 0)
 	{
-		if (strncmp(_loraPayload, _validHeaders[i], strlen(_validHeaders[i])) == 0) break;
+		#ifdef DEBUGGING
+			Serial.println(F("X: Invalid Packet Header!"));
+		#endif
 
-		if(i == VALID_HEADERS - 1)
-		{
-			#ifdef DEBUGGING
-				Serial.println(F("X: Invalid Packet Header!"));
-			#endif
-
-			return false;
-		}
+		return false;
 	}
 
 	// Check Payload data brackets
@@ -335,7 +338,7 @@ bool LORA_MODULE_class::checkMessageValidity()
 		if (checkforCharacters)
 		{
 			if (payloadChar == BLANK_PLACEHOLDER || (payloadChar == '[' && _loraPayload[i + 1] == ']')) continue;
-			
+
 			if (payloadChar != '[' && payloadChar != ']' && payloadChar != ',')
 			{
 				#ifdef DEBUGGING
@@ -462,7 +465,7 @@ void LORA_MODULE_class::processPayloadData()
 	}
 }
 
-void LORA_MODULE_class::sendPayloadData()
+void LORA_MODULE_class::sendPayloadData(uint8_t current_header_index)
 {
 	// Reset new Payload alert and last update to prevent forever looping messages
 	_newpayloadAlert = false;
@@ -505,8 +508,7 @@ void LORA_MODULE_class::sendPayloadData()
 			{
 				width -= 3;
 			}
-			
-			// todo di ko sure diri
+
 			if (strcmp(_loraprevHeader, _validHeaders[SOIL_MOISTURE]) == 0)
 			{
 				snprintf(numStr, sizeof(numStr), "%u", (uint16_t)_systemValues[i]);
@@ -549,7 +551,7 @@ void LORA_MODULE_class::sendPayloadData()
 			Serial.println();
 		#endif
 	#endif
-	
+
 	// CSMA/CA (Carrier Sense Multiple Access with Collision Avoidance)
 	while (_sendAttempts < SEND_ATTEMPTS)
 	{
@@ -559,8 +561,8 @@ void LORA_MODULE_class::sendPayloadData()
 		while (millis() - startTime < _csmaTimeout)
 		{
 			// Check for incoming messages
-			if (LoRa.parsePacket() && getLoRaPayload())
-			{ 
+			if (LoRa.parsePacket() && getLoRaPayload(current_header_index))
+			{
 				_newpayloadAlert = true;
 				return;
 			}
@@ -571,7 +573,7 @@ void LORA_MODULE_class::sendPayloadData()
 				#ifdef DEBUGGING
 					Serial.print('.');
 				#endif
-				
+
 				// Perform backoff without blocking execution
 				if (LoRa.packetRssi() < CSMA_NOISE_LIM) break;
 			}

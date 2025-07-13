@@ -4,7 +4,7 @@
   Faculty of Electrical and Computer Engineering
   School of Engineering and Natural Sciences, University of Iceland
 
-  Title: Design and Implementation of a Low-Power LoRa Mesh Sensor Network 
+  Title: Design and Implementation of a Low-Power LoRa Mesh Sensor Network
 		 for Monitoring Soil Conditions on Icelandic Turf Roofs
 
   Researcher: Jezreel Tan
@@ -23,7 +23,7 @@
 #include "../system_node.hpp"
 
 void LORA_MODULE_class::Initialize(IDATA IData)
-{	
+{
 	configureLoRa();
 
 	// Set HW ID
@@ -43,7 +43,7 @@ void LORA_MODULE_class::Initialize(IDATA IData)
 }
 
 void LORA_MODULE_class::configureLoRa()
-{	
+{
 	// Configure Pins
 	LoRa.setPins(LORA_NSS, LORA_RST, LORA_DI0);
 
@@ -111,7 +111,8 @@ void LORA_MODULE_class::resetValues()
 {
 	// Reset values for fresh requests
 	_sendAttempts = 0;
-	_newpayloadAlert = false;	
+	_newpayloadAlert = false;
+	_syncRTCDone = false;
 	_lastSystemUpdateTime = millis();
 	memset(_loraPayload, 0, sizeof(_loraPayload));
 	memset(_loraprevHeader, 0, sizeof(_loraprevHeader));
@@ -232,7 +233,7 @@ bool LORA_MODULE_class::checkMessageValidity()
 		if (checkforCharacters)
 		{
 			if (payloadChar == BLANK_PLACEHOLDER || (payloadChar == '[' && _loraPayload[i + 1] == ']')) continue;
-			
+
 			if (payloadChar != '[' && payloadChar != ']' && payloadChar != ',')
 			{
 				#ifdef DEBUGGING
@@ -413,7 +414,7 @@ void LORA_MODULE_class::sendPayloadData(HWIO_class *hwio, RTC_MODULE_class *rtc)
 		return;
 	}
 	// Only sync rtc on the first attempt of sending the date & time
-	else if(strncmp(_loraprevHeader, _validHeaders[DATE], sizeof(_loraprevHeader)) == 0 && _sendAttempts == 0)
+	else if(strncmp(_loraprevHeader, _validHeaders[DATE], sizeof(_loraprevHeader)) == 0 && _syncRTCDone == false)
 	{
 		#ifdef DEBUGGING
 			Serial.println(F("Syncing RTC via LoRa"));
@@ -426,6 +427,7 @@ void LORA_MODULE_class::sendPayloadData(HWIO_class *hwio, RTC_MODULE_class *rtc)
 		delay(DELAY_SMALL);
 		Wire.end();
 		hwio->toggleModules(hwio->GPIO_SLEEP);
+		_syncRTCDone = true;
 	}
 
 	// Create new Payload
@@ -456,8 +458,7 @@ void LORA_MODULE_class::sendPayloadData(HWIO_class *hwio, RTC_MODULE_class *rtc)
 			{
 				width -= 3;
 			}
-			
-			// todo di ko sure diri
+
 			if (strcmp(_loraprevHeader, _validHeaders[SOIL_MOISTURE]) == 0)
 			{
 				snprintf(numStr, sizeof(numStr), "%u", (uint16_t)_systemValues[i]);
@@ -465,7 +466,7 @@ void LORA_MODULE_class::sendPayloadData(HWIO_class *hwio, RTC_MODULE_class *rtc)
 			else
 			{
 				dtostrf(_systemValues[i], width, DECIMAL_VALUES, numStr);
-			}		
+			}
 		}
 
 		strcpy(&relay_message[pos], numStr);
@@ -500,7 +501,7 @@ void LORA_MODULE_class::sendPayloadData(HWIO_class *hwio, RTC_MODULE_class *rtc)
 			Serial.println();
 		#endif
 	#endif
-	
+
 	// CSMA/CA (Carrier Sense Multiple Access with Collision Avoidance)
 	while (_sendAttempts < SEND_ATTEMPTS)
 	{
@@ -511,7 +512,7 @@ void LORA_MODULE_class::sendPayloadData(HWIO_class *hwio, RTC_MODULE_class *rtc)
 		{
 			// Check for incoming messages
 			if (LoRa.parsePacket() && getLoRaPayload())
-			{ 
+			{
 				_newpayloadAlert = true;
 				return;
 			}
@@ -522,7 +523,7 @@ void LORA_MODULE_class::sendPayloadData(HWIO_class *hwio, RTC_MODULE_class *rtc)
 				#ifdef DEBUGGING
 					Serial.print('.');
 				#endif
-				
+
 				// Perform backoff without blocking execution
 				if (LoRa.packetRssi() < CSMA_NOISE_LIM) break;
 			}
