@@ -34,7 +34,7 @@ void SD_CARD_MODULE_class::logData(IDATA IData, time_t t)
 		Serial.print(IData.SYSTEM_TEMPERATURE, DECIMAL_VALUES);Serial.print(F("c, "));
 		Serial.print(IData.SYSTEM_HUMIDITY, DECIMAL_VALUES);Serial.print(F("%RH, "));
 		Serial.print(IData.SOIL_TEMPERATURE, DECIMAL_VALUES);Serial.print(F("c, "));
-		Serial.print(IData.SOIL_MOISTURE);Serial.print(F("%, "));
+		Serial.print(IData.SOIL_MOISTURE);Serial.print(F("RAW, "));
 		Serial.print(IData.BATTERY_VOLTAGE, DECIMAL_VALUES);Serial.println('v');
 	#else
 		Serial.begin(LOGGING_BAUD);
