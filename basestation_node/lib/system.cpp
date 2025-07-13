@@ -146,7 +146,7 @@ void SYSTEM_class::Initialize_System()
             }
             else
             {
-                Serial.print(_IData.SMOI_DATA[i], DECIMAL_VALUES);
+                Serial.print(_IData.SMOI_DATA[i]);
             }
             if (i < MAX_DEVICES - 1) Serial.print(", ");
         }

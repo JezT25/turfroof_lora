@@ -35,7 +35,7 @@ class IDATA
 
 		float STMP_DATA[MAX_DEVICES]	=	{ 0 };
 
-		float SMOI_DATA[MAX_DEVICES]	=	{ 0 };
+		uint16_t SMOI_DATA[MAX_DEVICES]	=	{ 0 };
 
 		float BATT_DATA[MAX_DEVICES]	=	{ 0 };
 };

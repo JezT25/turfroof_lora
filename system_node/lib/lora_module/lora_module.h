@@ -99,7 +99,7 @@ class LORA_MODULE_class
 		bool checkMessageValidity();
 		void preloadMessageData();
 		void processPayloadData();
-		void sendPayloadData( HWIO_class *hwio, RTC_MODULE_class *rtc);
+		void sendPayloadData(HWIO_class *hwio, RTC_MODULE_class *rtc);
 
 		#ifdef ENCRYPTING
 			void rc4EncryptDecrypt(char *data, uint8_t len);

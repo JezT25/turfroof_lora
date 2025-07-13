@@ -44,9 +44,6 @@
 #define LORA_TOGGLE 	5
 #define STEMP_IN    	7
 
-#define SMOIS_DWN_BOUND 250
-#define SMOIS_UP_BOUND  700
-#define SMOIS_BUFFER	50
 #define R1          	10000
 #define R2          	33000
 #define ADC_REF_VOL 	3.3
@@ -81,7 +78,7 @@ class HWIO_class
 		void getBattery(float &battery);
 		void getAHT10(float &temperature, float &humidity);
 		void getSoilTemperature(float &temperature);
-		void getSoilMoisture(int8_t &moisture);
+		void getSoilMoisture(uint16_t &moisture);
 
 	public:
 		HWIO_class() : oneWire(STEMP_IN), ds18b20(&oneWire) {}
