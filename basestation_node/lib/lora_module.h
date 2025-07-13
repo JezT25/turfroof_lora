@@ -38,6 +38,7 @@
 #define CODING_RATE     	5
 #define PREAMBLE        	8
 #define LORA_REQ_TIMEOUT	40000
+#define LORA_REQ_RESEND_DIV	3
 
 // CSMA/CA Settings
 #define SEND_ATTEMPTS		2
@@ -82,11 +83,12 @@ class LORA_MODULE_class
 			"DATE:"
 		};
 
-		uint16_t _backoffTime;
-		uint16_t _csmaTimeout;
 		bool _newpayloadAlert;
+		bool _hasNodeReplied;
 		uint8_t _hwid;
 		uint8_t _sendAttempts;
+		uint16_t _backoffTime;
+		uint16_t _csmaTimeout;
 		unsigned long _lastSystemUpdateTime;
 		float _systemValues[MAX_DEVICES];
 		char _loraPayload[MAX_MESSAGE_LENGTH];
@@ -95,10 +97,10 @@ class LORA_MODULE_class
 		int8_t getcharIndex(char c);
 		float *getpayloadValues();
 		void resetValues();
-		bool getLoRaPayload();
-		bool checkMessageValidity();
+		bool getLoRaPayload(uint8_t current_header_index);
+		bool checkMessageValidity(uint8_t current_header_index);
 		void processPayloadData();
-		void sendPayloadData();
+		void sendPayloadData(uint8_t current_header_index);
 		void sendRequest(uint8_t index, IOT_class *iot);
 		bool checkComplete();
 		void logData(IDATA *IData, uint8_t index);	
