@@ -116,7 +116,7 @@ void LORA_MODULE_class::logData(IDATA *IData, uint8_t index)
 				IData->STMP_DATA[i] = _systemValues[i];
 				break;
 			case SOIL_MOISTURE:
-				IData->SMOI_DATA[i] = _systemValues[i];
+				IData->SMOI_DATA[i] = static_cast<uint16_t>(_systemValues[i]);
 				break;
 			case BATT_VOLTAGE:
 				IData->BATT_DATA[i] = _systemValues[i];

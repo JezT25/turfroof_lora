@@ -4,7 +4,7 @@
   Faculty of Electrical and Computer Engineering
   School of Engineering and Natural Sciences, University of Iceland
 
-  Title: Design and Implementation of a Low-Power LoRa Mesh Sensor Network 
+  Title: Design and Implementation of a Low-Power LoRa Mesh Sensor Network
 		 for Monitoring Soil Conditions on Icelandic Turf Roofs
 
   Researcher: Jezreel Tan
@@ -77,7 +77,7 @@ void SYSTEM_class::Initialize_System()
         Serial.println("\n---- Sensor Data Contents ----");
 
         Serial.print("Air Temperature: [");
-        for (size_t i = 0; i < MAX_DEVICES; ++i)
+        for (uint8_t i = 0; i < MAX_DEVICES; ++i)
         {
             if (_IData.TEMP_DATA[i] == 0)
             {
@@ -92,7 +92,7 @@ void SYSTEM_class::Initialize_System()
         Serial.println("]");
 
         Serial.print("Humidity: [");
-        for (size_t i = 0; i < MAX_DEVICES; ++i)
+        for (uint8_t i = 0; i < MAX_DEVICES; ++i)
         {
             if (_IData.HUMI_DATA[i] == 0)
             {
@@ -104,10 +104,10 @@ void SYSTEM_class::Initialize_System()
             }
             if (i < MAX_DEVICES - 1) Serial.print(", ");
         }
-        Serial.println("]");  
+        Serial.println("]");
 
         Serial.print("Soil Temperature: [");
-        for (size_t i = 0; i < MAX_DEVICES; ++i)
+        for (uint8_t i = 0; i < MAX_DEVICES; ++i)
         {
             if (_IData.STMP_DATA[i] == 0)
             {
@@ -122,7 +122,7 @@ void SYSTEM_class::Initialize_System()
         Serial.println("]");
 
         Serial.print("Soil Moisture: [");
-        for (size_t i = 0; i < MAX_DEVICES; ++i)
+        for (uint8_t i = 0; i < MAX_DEVICES; ++i)
         {
             if (_IData.SMOI_DATA[i] == 0)
             {
@@ -137,7 +137,7 @@ void SYSTEM_class::Initialize_System()
         Serial.println("]");
 
         Serial.print("Battery Voltage: [");
-        for (size_t i = 0; i < MAX_DEVICES; ++i)
+        for (uint8_t i = 0; i < MAX_DEVICES; ++i)
         {
             if (_IData.BATT_DATA[i] == 0)
             {
