@@ -91,7 +91,7 @@ void LORA_MODULE_class::loadSensorData(IDATA IData)
 
 void LORA_MODULE_class::startLoRaMesh(IDATA IData, HWIO_class *hwio, RTC_MODULE_class *rtc)
 {
-	while (millis() - _lastSystemUpdateTime <= LORA_WAKE_TIMEOUT)
+	while (1)
 	{
 		if (LoRa.parsePacket() || _newpayloadAlert)
 		{

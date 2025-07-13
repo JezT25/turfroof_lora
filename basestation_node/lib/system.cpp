@@ -29,7 +29,7 @@ void SYSTEM_class::Initialize()
     Initialize_System();
 
     // Initialize IoT
-    // _iot.Initialize();
+    _iot.Initialize();
 
     // Initialize LoRa
     _lora_module.Initialize();

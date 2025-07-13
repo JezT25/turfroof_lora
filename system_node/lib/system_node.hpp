@@ -33,7 +33,7 @@
 
 // Encryption Settings
 #ifdef DEBUGGING
-	#define SET_RTC_TIME	1			// Set to 1 to set RTC time from PC
+	#define SET_RTC_TIME	0			// Set to 1 to set RTC time from PC
 #endif
 
 #ifdef ENCRYPTING
