@@ -143,7 +143,12 @@ bool LORA_MODULE_class::getLoRaPayload()
 	#ifdef ENCRYPTING
 		#ifdef DEBUGGING
 			Serial.print(F("Encrypted Payload: "));
-			Serial.println(_loraPayload);
+			for (uint8_t i = 0; i < payloadIndex - 1; i++)
+			{
+				Serial.print((uint8_t)_loraPayload[i], HEX);
+				Serial.print(' ');
+			}
+			Serial.println();
 		#endif
 
 		char decryptedPayload[MAX_MESSAGE_LENGTH];
@@ -496,7 +501,8 @@ void LORA_MODULE_class::sendPayloadData(HWIO_class *hwio, RTC_MODULE_class *rtc)
 			Serial.print(F("Encrypted Message: "));
 			for (uint8_t i = 0; i < payloadLen; i++)
 			{
-				Serial.print(encryptedPayload[i]);
+				Serial.print((uint8_t)encryptedPayload[i], HEX);
+				Serial.print(' ');
 			}
 			Serial.println();
 		#endif
@@ -525,7 +531,7 @@ void LORA_MODULE_class::sendPayloadData(HWIO_class *hwio, RTC_MODULE_class *rtc)
 				#endif
 
 				// Perform backoff without blocking execution
-				if (LoRa.packetRssi() < CSMA_NOISE_LIM) break;
+				// if (LoRa.packetRssi() < CSMA_NOISE_LIM) break; Note: Removed since looked like useless and only makes issues
 			}
 
 			#ifdef WDT_ENABLE
@@ -540,7 +546,7 @@ void LORA_MODULE_class::sendPayloadData(HWIO_class *hwio, RTC_MODULE_class *rtc)
 		#else
 			LoRa.write((const uint8_t*)sendPayload, payloadLen - 1);		// -1 Don't send null terminator
 		#endif
-		LoRa.endPacket(true);												// Set true for non blocking sending
+		LoRa.endPacket();												// Set true for non blocking sending
 
 		// Debugging output for the sent message
 		#ifdef DEBUGGING
