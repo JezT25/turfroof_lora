@@ -4,7 +4,7 @@
   Faculty of Electrical and Computer Engineering
   School of Engineering and Natural Sciences, University of Iceland
 
-  Title: Design and Implementation of a Low-Power LoRa Mesh Sensor Network 
+  Title: Design and Implementation of a Low-Power LoRa Mesh Sensor Network
 		 for Monitoring Soil Conditions on Icelandic Turf Roofs
 
   Researcher: Jezreel Tan
@@ -29,7 +29,7 @@ void SYSTEM_class::Initialize()
     Initialize_System();
 
     // Initialize IoT
-    _iot.Initialize();
+    // _iot.Initialize();
 
     // Initialize LoRa
     _lora_module.Initialize();
@@ -41,15 +41,21 @@ void SYSTEM_class::Run()
     // _iot.waitUntilQueryTime();
 
     #ifdef DEBUGGING
-        Serial.println("Type 'ok' to proceed...");
+        int number = 0;
+        Serial.println("Type 'ok' to proceed or enter a number (1-5):");
         while (true) {
             if (Serial.available()) {
                 String input = Serial.readStringUntil('\n');
                 input.trim();
                 if (input.equalsIgnoreCase("ok")) {
                     break;
+                } else if (input.length() == 1 && input[0] >= '1' && input[0] <= '5') {
+                    number = input.toInt();
+                    Serial.print("You entered number: ");
+                    Serial.println(number);
+                    break;
                 } else {
-                    Serial.println("Please type 'ok' to continue.");
+                    Serial.println("Please type 'ok' or a number (1-5) to continue.");
                 }
             }
             delay(10);
@@ -60,7 +66,7 @@ void SYSTEM_class::Run()
     clearData();
 
     // Collect sensor data via the LoRa mesh network
-    _lora_module.startLoRaMesh(&_IData, &_iot);
+    _lora_module.startLoRaMesh(&_IData, &_iot, number);
 
     // Display collected data if debugging is enabled
     #ifdef DEBUGGING
@@ -120,7 +126,7 @@ void SYSTEM_class::Initialize_System()
             }
             if (i < MAX_DEVICES - 1) Serial.print(", ");
         }
-        Serial.println("]");  
+        Serial.println("]");
 
         Serial.print("Soil Temperature: [");
         for (size_t i = 0; i < MAX_DEVICES; ++i)

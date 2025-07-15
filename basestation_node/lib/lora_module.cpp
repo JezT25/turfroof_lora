@@ -62,9 +62,15 @@ void LORA_MODULE_class::Initialize()
 	#endif
 }
 
-void LORA_MODULE_class::startLoRaMesh(IDATA *IData, IOT_class *iot)
+void LORA_MODULE_class::startLoRaMesh(IDATA *IData, IOT_class *iot, int number)
 {
-	for (uint8_t i = TEMPERATURE; i < VALID_HEADERS; i++)
+	uint8_t startIdx = 0;
+	uint8_t endIdx = VALID_HEADERS;
+	if (number >= 1 && number <= 5) {
+		startIdx = number - 1;
+		endIdx = number - 1;
+	}
+	for (uint8_t i = startIdx; i < endIdx; i++)
 	{
 		// Reset Everything
 		resetValues();
