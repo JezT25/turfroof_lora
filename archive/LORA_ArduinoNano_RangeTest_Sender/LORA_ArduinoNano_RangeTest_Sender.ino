@@ -5,7 +5,7 @@
 #define TX_POWER			20     // dBm
 #define BANDWIDTH			125E3  // 125 kHz
 #define SYNC_WORD			0x12
-#define SPREAD_FACTOR   	9
+#define SPREAD_FACTOR   	10
 #define CODING_RATE     	5
 #define PREAMBLE        	8
 
