@@ -12,7 +12,7 @@
 #define TX_POWER        20     // dBm
 #define BANDWIDTH       125E3  // 125 kHz
 #define SYNC_WORD       0x12
-#define SPREAD_FACTOR   7
+#define SPREAD_FACTOR   10
 #define CODING_RATE     5
 #define PREAMBLE        8
 
@@ -93,7 +93,7 @@ void setup() {
     LoRa.beginPacket();
     LoRa.write((uint8_t*)buffer, msgLen);
     LoRa.endPacket(true);
-    
+
     Serial.println("Message sent successfully!");
     Serial.println("Waiting for reply...");
 }
