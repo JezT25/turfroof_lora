@@ -35,6 +35,8 @@ namespace config
 	// WiFi Credentials
 	// constexpr const char* SSID                       = "Vodafone-7zgp";
 	// constexpr const char* PASSWORD                   = "yrdCy2x4";
+	// constexpr const char* SSID                       = "JezT 15 Pro";
+	// constexpr const char* PASSWORD                   = "lil6ix9ineZ";
 	constexpr const char* SSID                       = "Turfroof Wifi";
 	constexpr const char* PASSWORD                   = "turfroofhaskoliislands";
 
