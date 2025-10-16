@@ -5,13 +5,19 @@
 #define TX_POWER			17     // dBm
 #define BANDWIDTH			125E3  // 125 kHz
 #define SYNC_WORD			0x12
-#define SPREAD_FACTOR   	7
+#define SPREAD_FACTOR   	10
 #define CODING_RATE     	5
 #define PREAMBLE        	8
 
-#define LORA_DI0			2
-#define LORA_RST			6
-#define LORA_NSS			10
+// Arduino Pro Mini (ATmega328P)
+#define LORA_NSS            10
+#define LORA_RST            6
+#define LORA_DI0            2
+
+// // Arduino Nano
+// #define LORA_NSS            4
+// #define LORA_RST            3
+// #define LORA_DI0            2
 
 #define RC4_BYTES 255
 #define ENCRYPTION_KEY "G7v!Xz@a?>Qp!d$1"

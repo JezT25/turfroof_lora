@@ -99,7 +99,7 @@ void SYSTEM_class::Initialize_System()
         Serial.println("\n---- Sensor Data Contents ----");
 
         Serial.print("Air Temperature: [");
-        for (size_t i = 0; i < MAX_DEVICES; ++i)
+        for (uint8_t i = 0; i < MAX_DEVICES; ++i)
         {
             if (_IData.TEMP_DATA[i] == 0)
             {
@@ -114,7 +114,7 @@ void SYSTEM_class::Initialize_System()
         Serial.println("]");
 
         Serial.print("Humidity: [");
-        for (size_t i = 0; i < MAX_DEVICES; ++i)
+        for (uint8_t i = 0; i < MAX_DEVICES; ++i)
         {
             if (_IData.HUMI_DATA[i] == 0)
             {
@@ -129,7 +129,7 @@ void SYSTEM_class::Initialize_System()
         Serial.println("]");
 
         Serial.print("Soil Temperature: [");
-        for (size_t i = 0; i < MAX_DEVICES; ++i)
+        for (uint8_t i = 0; i < MAX_DEVICES; ++i)
         {
             if (_IData.STMP_DATA[i] == 0)
             {
@@ -144,7 +144,7 @@ void SYSTEM_class::Initialize_System()
         Serial.println("]");
 
         Serial.print("Soil Moisture: [");
-        for (size_t i = 0; i < MAX_DEVICES; ++i)
+        for (uint8_t i = 0; i < MAX_DEVICES; ++i)
         {
             if (_IData.SMOI_DATA[i] == 0)
             {
@@ -159,7 +159,7 @@ void SYSTEM_class::Initialize_System()
         Serial.println("]");
 
         Serial.print("Battery Voltage: [");
-        for (size_t i = 0; i < MAX_DEVICES; ++i)
+        for (uint8_t i = 0; i < MAX_DEVICES; ++i)
         {
             if (_IData.BATT_DATA[i] == 0)
             {

@@ -4,7 +4,7 @@
 	Faculty of Electrical and Computer Engineering
 	School of Engineering and Natural Sciences, University of Iceland
 
-	Title: Design and Implementation of a Low-Power LoRa Mesh Sensor Network 
+	Title: Design and Implementation of a Low-Power LoRa Mesh Sensor Network
 		 for Monitoring Soil Conditions on Icelandic Turf Roofs
 
 	Researcher: Jezreel Tan
@@ -112,7 +112,7 @@ void IOT_class::uploadData(IDATA IData)
 		if(config::ACTIVE_DEVICES[i] == ACTIVE)
 		{
 			snprintf(url, MAX_URL_LEN,
-                "http://api.thingspeak.com/update?api_key=%s&field1=%.5f&field2=%.5f&field3=%.5f&field4=%.5f&field5=%.5f",
+                "http://api.thingspeak.com/update?api_key=%s&field1=%.5f&field2=%.5f&field3=%.5f&field4=%u&field5=%.5f",
                 config::THINGSPEAK_API_KEYS[i],
                 IData.TEMP_DATA[i],
                 IData.HUMI_DATA[i],
