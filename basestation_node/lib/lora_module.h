@@ -37,7 +37,7 @@
 #define SPREAD_FACTOR   	10
 #define CODING_RATE     	5
 #define PREAMBLE        	8
-#define LORA_REQ_TIMEOUT	40000
+#define LORA_REQ_TIMEOUT	50000
 #define LORA_REQ_RESEND_DIV	3
 
 // CSMA/CA Settings

@@ -37,8 +37,10 @@ namespace config
 	// constexpr const char* PASSWORD                   = "yrdCy2x4";
 	// constexpr const char* SSID                       = "JezT 15 Pro";
 	// constexpr const char* PASSWORD                   = "lil6ix9ineZ";
-	constexpr const char* SSID                       = "Turfroof Wifi";
-	constexpr const char* PASSWORD                   = "turfroofhaskoliislands";
+	// constexpr const char* SSID                       = "Turfroof Wifi";
+	// constexpr const char* PASSWORD                   = "turfroofhaskoliislands";
+	constexpr const char* SSID                       = "Keldur Wifi";
+	constexpr const char* PASSWORD                   = "G7v!Xz@a?>Qp!d$1";
 
 	// Basestation HW_ID
 	constexpr uint8_t HW_ID                          = 8;

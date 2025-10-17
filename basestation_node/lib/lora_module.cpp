@@ -87,6 +87,7 @@ void LORA_MODULE_class::startLoRaMesh(IDATA *IData, IOT_class *iot)
 			{
 				sendRequest(i, iot);
 				_hasNodeReplied = true;
+				_lastSystemUpdateTime = millis();
 			}
 
 			// Check if all active devices have sent data
